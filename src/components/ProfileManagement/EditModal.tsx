@@ -15,6 +15,7 @@ export type EditModalField =
       required?: boolean;
       autoFocus?: boolean;
       onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+      inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
     }
   | {
       type: "textarea";
@@ -212,6 +213,7 @@ export const EditModal: React.FC<EditModalProps> = ({
                     autoFocus={field.autoFocus}
                     onChange={e => field.onChange ? field.onChange(e) : onChange(field.name, e.target.value)}
                     className="w-full"
+                    {...field.inputProps}
                   />
                 </React.Fragment>
               );
