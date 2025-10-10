@@ -42,6 +42,7 @@ export * from './hooks/useDebounce';
 export * from './hooks/useLocalStorage';
 export * from './hooks/useToggle';
 export * from './hooks/useBreakpoint';
+export * from './hooks/useIntersectionObserver';
 
 // Utils
 export * from './utils/cn';
