@@ -23,6 +23,7 @@ import { Spinner } from "../Spinner";
 import { Skeleton } from "../Skeleton";
 import { Card, CardContent } from "../Card";
 import { useBreakpoint } from "../../hooks/useBreakpoint";
+import { Select } from "../Select";
 import type {
   DataTableProps,
   Column,
@@ -195,26 +196,31 @@ const TablePagination: React.FC<{
     return pages;
   };
 
+  // Convert pageSizeOptions to SelectOption format
+  const selectOptions = pageSizeOptions.map(size => ({
+    label: String(size),
+    value: String(size),
+  }));
+
   return (
-    <div className="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200">
+    <div className="flex items-center justify-between px-4 py-3 bg-background border-t border-border">
       <div className="flex items-center space-x-4">
-        <span className="text-sm text-gray-700">
+        <span className="text-sm text-foreground">
           Showing {startRecord} to {endRecord} of {total} results
         </span>
         
         {showSizeChanger && (
           <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-700">Show</span>
-            <select
-              value={pageSize}
-              onChange={(e) => onChange(1, Number(e.target.value))}
-              className="border border-gray-300 rounded px-2 py-1 text-sm"
-            >
-              {pageSizeOptions.map(size => (
-                <option key={size} value={size}>{size}</option>
-              ))}
-            </select>
-            <span className="text-sm text-gray-700">per page</span>
+            <span className="text-sm text-foreground">Show</span>
+            <Select
+              options={selectOptions}
+              value={String(pageSize)}
+              onChange={e => onChange(1, Number(e.target.value))}
+              variant="default"
+              selectSize="sm"
+              aria-label="Select number of items per page"
+            />
+            <span className="text-sm text-foreground">per page</span>
           </div>
         )}
       </div>
@@ -225,6 +231,7 @@ const TablePagination: React.FC<{
           size="sm"
           onClick={() => onChange(1, pageSize)}
           disabled={current === 1}
+          aria-label="First page"
         >
           <ChevronsLeft className="h-4 w-4" />
         </Button>
@@ -234,6 +241,7 @@ const TablePagination: React.FC<{
           size="sm"
           onClick={() => onChange(current - 1, pageSize)}
           disabled={current === 1}
+          aria-label="Previous page"
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
@@ -245,6 +253,7 @@ const TablePagination: React.FC<{
             size="sm"
             onClick={() => onChange(page, pageSize)}
             className="min-w-[32px]"
+            aria-label={`Go to page ${page}`}
           >
             {page}
           </Button>
@@ -255,6 +264,7 @@ const TablePagination: React.FC<{
           size="sm"
           onClick={() => onChange(current + 1, pageSize)}
           disabled={current === totalPages}
+          aria-label="Next page"
         >
           <ChevronRight className="h-4 w-4" />
         </Button>
@@ -264,6 +274,7 @@ const TablePagination: React.FC<{
           size="sm"
           onClick={() => onChange(totalPages, pageSize)}
           disabled={current === totalPages}
+          aria-label="Last page"
         >
           <ChevronsRight className="h-4 w-4" />
         </Button>
@@ -454,8 +465,8 @@ export const DataTable = <T extends Record<string, any>>({
       {title && <div className="mb-4">{title()}</div>}
 
       <div className="border border-gray-200 rounded-lg overflow-hidden">
+        {/* Card layout for mobile */}
         {isBelow('md') ? (
-          // Card layout for mobile
           <div className="space-y-4 p-2">
             {paginatedData.length === 0 ? (
               <div className="text-gray-500 text-center py-8">
@@ -503,17 +514,6 @@ export const DataTable = <T extends Record<string, any>>({
                   </Card>
                 );
               })
-            )}
-            {currentPagination && (
-              <div className="pt-2">
-                <TablePagination
-                  pagination={currentPagination}
-                  onChange={(page, pageSize) => {
-                    const newPagination = { ...currentPagination, current: page, pageSize };
-                    onChange?.(newPagination, filters, sortConfig);
-                  }}
-                />
-              </div>
             )}
           </div>
         ) : (
@@ -644,6 +644,18 @@ export const DataTable = <T extends Record<string, any>>({
                 )}
               </tbody>
             </table>
+          </div>
+        )}
+        {/* Always show pagination controls below data */}
+        {currentPagination && (
+          <div className="pt-2">
+            <TablePagination
+              pagination={currentPagination}
+              onChange={(page, pageSize) => {
+                const newPagination = { ...currentPagination, current: page, pageSize };
+                onChange?.(newPagination, filters, sortConfig);
+              }}
+            />
           </div>
         )}
       </div>
