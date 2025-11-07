@@ -124,6 +124,24 @@ export const DataTableShowcase: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState<'users' | 'sales' | 'tasks'>('users');
   const [selectedRows, setSelectedRows] = useState<React.Key[]>([]);
 
+  // Pagination state
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 50, // default, will update below
+    showSizeChanger: true,
+    pageSizeOptions: [5, 10, 20, 50],
+  });
+
+  // Update total when tab/data changes
+  React.useEffect(() => {
+    let total = 0;
+    if (selectedTab === "users") total = usersData.length;
+    else if (selectedTab === "sales") total = salesData.length;
+    else if (selectedTab === "tasks") total = tasksData.length;
+    setPagination(p => ({ ...p, total, current: 1 }));
+  }, [selectedTab]);
+
   // User table columns
   const userColumns: Column<User>[] = [
     {
@@ -550,13 +568,7 @@ export const DataTableShowcase: React.FC = () => {
               columns={userColumns}
               dataSource={usersData}
               rowKey="id"
-              pagination={{
-                current: 1,
-                pageSize: 10,
-                total: usersData.length,
-                showSizeChanger: true,
-                pageSizeOptions: [5, 10, 20, 50],
-              }}
+              pagination={pagination}
               rowSelection={{
                 type: 'checkbox',
                 selectedRowKeys: selectedRows,
@@ -584,8 +596,12 @@ export const DataTableShowcase: React.FC = () => {
                   </div>
                 </div>
               )}
-              onChange={(pagination, filters, sorter) => {
-                console.log('Table changed:', { pagination, filters, sorter });
+              onChange={(newPagination, filters, sorter) => {
+                setPagination(p => ({
+                  ...p,
+                  current: newPagination.current,
+                  pageSize: newPagination.pageSize,
+                }));
               }}
             />
           )}
@@ -595,13 +611,7 @@ export const DataTableShowcase: React.FC = () => {
               columns={salesColumns}
               dataSource={salesData}
               rowKey="id"
-              pagination={{
-                current: 1,
-                pageSize: 10,
-                total: salesData.length,
-                showSizeChanger: true,
-                pageSizeOptions: [5, 10, 20, 50],
-              }}
+              pagination={pagination}
               rowSelection={{
                 type: 'checkbox',
                 selectedRowKeys: selectedRows,
@@ -629,8 +639,12 @@ export const DataTableShowcase: React.FC = () => {
                   </div>
                 </div>
               )}
-              onChange={(pagination, filters, sorter) => {
-                console.log('Table changed:', { pagination, filters, sorter });
+              onChange={(newPagination, filters, sorter) => {
+                setPagination(p => ({
+                  ...p,
+                  current: newPagination.current,
+                  pageSize: newPagination.pageSize,
+                }));
               }}
             />
           )}
@@ -640,13 +654,7 @@ export const DataTableShowcase: React.FC = () => {
               columns={taskColumns}
               dataSource={tasksData}
               rowKey="id"
-              pagination={{
-                current: 1,
-                pageSize: 10,
-                total: tasksData.length,
-                showSizeChanger: true,
-                pageSizeOptions: [5, 10, 20, 50],
-              }}
+              pagination={pagination}
               rowSelection={{
                 type: 'checkbox',
                 selectedRowKeys: selectedRows,
@@ -674,8 +682,12 @@ export const DataTableShowcase: React.FC = () => {
                   </div>
                 </div>
               )}
-              onChange={(pagination, filters, sorter) => {
-                console.log('Table changed:', { pagination, filters, sorter });
+              onChange={(newPagination, filters, sorter) => {
+                setPagination(p => ({
+                  ...p,
+                  current: newPagination.current,
+                  pageSize: newPagination.pageSize,
+                }));
               }}
             />
           )}
