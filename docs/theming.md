@@ -1,20 +1,21 @@
 # Beyond-UI Theming & Customization
 
-Beyond-UI styles every component with semantic Tailwind tokens instead of hardcoded color values. By overriding those tokens inside your own `tailwind.config.js`, you can align the library with any brand system while keeping all components, layouts, and states in sync.
+Beyond-UI styles every component with semantic Tailwind tokens rather than hardcoded color values. Override these tokens inside your own `tailwind.config.js` to align the library with any brand system while keeping components, layouts, and interactive states in sync.
 
 ## Semantic token map
 
 The library expects a small palette namespace. Each key should expose a scale (`50`–`950`) to support hover states, borders, and surface layers.
 
-| Token      | Used for                                                                 |
-|------------|--------------------------------------------------------------------------|
-| `primary`  | Action buttons, Sidebar active states, Dashboard header highlights       |
-| `secondary`| Neutral surfaces, typography accents, card borders                       |
-| `danger`   | Destructive buttons, alert banners, badge variants                       |
-| `success`  | Confirmation toasts, badge variants, input success states                |
-| `warning`  | Warning alerts, badges, inline status chips                              |
+| Token       | Used for                                                                 |
+|-------------|--------------------------------------------------------------------------|
+| `primary`   | Action buttons, Sidebar active states, Dashboard header highlights       |
+| `secondary` | Neutral surfaces, typography accents, card borders                       |
+| `accent`    | Supporting highlights, charts, secondary callouts                        |
+| `danger`    | Destructive buttons, alert banners, badge variants                       |
+| `success`   | Confirmation toasts, badge variants, input success states                |
+| `warning`   | Warning alerts, badges, inline status chips                              |
 
-When you import the packaged stylesheet (`@beyondcorp/beyond-ui/dist/styles.css`), these tokens default to the palette in `src/theme/default.ts`. Override any subset to match your design language.
+When you import the packaged stylesheet (`@beyondcorp/beyond-ui/dist/styles.css`), these tokens default to the palette in `src/theme/default.ts`. Override any subset to match your design language; leave the rest untouched to keep the builtin defaults.
 
 ## Extending Tailwind colors
 
@@ -23,7 +24,10 @@ Add or replace semantic tokens inside your application’s Tailwind config. Only
 ```js
 // tailwind.config.js (consumer app)
 export default {
-  content: ['./src/**/*.{ts,tsx}', './node_modules/@beyondcorp/beyond-ui/dist/**/*.{js,jsx,ts,tsx}'],
+  content: [
+    './src/**/*.{ts,tsx,js,jsx}',
+    './node_modules/@beyondcorp/beyond-ui/dist/**/*.{js,jsx,ts,tsx}',
+  ],
   theme: {
     extend: {
       colors: {
@@ -45,15 +49,30 @@ export default {
           500: '#344054',
           900: '#101828',
         },
+        accent: {
+          50: '#f0fdf4',
+          400: '#34d399',
+          700: '#047857',
+        },
         danger: {
           500: '#ef4444',
           600: '#dc2626',
+        },
+        success: {
+          500: '#22c55e',
+          600: '#16a34a',
+        },
+        warning: {
+          500: '#f59e0b',
+          600: '#d97706',
         },
       },
     },
   },
 };
 ```
+
+After adjusting the palette, restart your dev server or rerun Tailwind so the generated stylesheet picks up the new tokens.
 
 > **Tip:** You can keep Tailwind out of your build if you rely on the default theme and only import the generated CSS. Introduce Tailwind in the host project when you want to override tokens or author custom utility classes.
 
@@ -62,7 +81,7 @@ export default {
 `DashboardLayout` composes `Sidebar` and `DashboardHeader`, so updating the semantic palette affects every layer:
 
 - Sidebar background, brand badge, and active item highlight reference `primary` shades (`primary-50` for hover, `primary-600` for borders, `primary-700` for text).
-- Neutral surfaces such as the sidebar container, dropdown chevrons, and content backgrounds rely on `secondary` and gray hues, which you can override to produce darker shells.
+- Neutral surfaces such as the sidebar container, dropdown chevrons, and content backgrounds rely on `secondary` and `accent` hues, which you can override to produce lighter or darker shells.
 - Notification badges and destructive menu items use `danger`, `success`, and `warning` tokens.
 
 To reshape the layout quickly, pair the Tailwind overrides with friendly component props:
@@ -113,6 +132,7 @@ With a themed palette the active menu badge, header buttons, and drawer accents 
 - Supply `className` to append layout-specific utilities, e.g. `className="bg-secondary-900 text-secondary-100"`.
 - Use `headerClassName` for the brand lockup so it adapts to the new palette.
 - Customize badges by overriding the `Badge` component tokens (`danger`, `success`, etc.) in the Tailwind config.
+- Toggle `collapsed` in response to breakpoints to keep navigation usable on smaller screens.
 
 ```tsx
 import { Sidebar } from '@beyondcorp/beyond-ui';

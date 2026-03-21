@@ -306,8 +306,8 @@ export default function Demo() {
 
 ## 📖 Documentation & Storybook
 
-- [Getting Started guide](docs/getting-started.md)
-- [Theming & customization](docs/theming.md)
+- [Getting Started guide](./docs/getting-started.md)
+- [Theming & customization](./docs/theming.md)
 - `npm run storybook` (run locally for component demos)
 - Comprehensive API docs live alongside Storybook
 

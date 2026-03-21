@@ -91,6 +91,22 @@ const AnalyticsDashboardExample = () => {
 
 Use the layout to compose analytics dashboards, admin tools, or internal platforms where a collapsible navigation rail is required.
 
+## Menu model shape
+
+Menu items are plain objects—perfect for fetching from APIs or colocating with route metadata. Provide an array of items, each with an `id`, `label`, optional `icon`, and optional `children` to create nested navigation groups.
+
+<Source
+  lang="ts"
+  code={`type SidebarMenuItem = {
+  id: string;
+  label: string;
+  icon?: React.ReactNode;
+  href?: string;
+  badge?: string;
+  children?: SidebarMenuItem[];
+};`}
+/>
+
 ## Realistic dashboard shell
 
 The example below wires a data team workspace with menu routing, breadcrumbs, and header actions. Click the menu to see the active state update.
@@ -106,6 +122,9 @@ The example below wires a data team workspace with menu routing, breadcrumbs, an
 - `sidebarMenuItems`: hierarchical menu model rendered inside the sidebar.
 - `activeSidebarItem` + `onSidebarItemClick`: control the highlighted navigation node.
 - `dashboardHeaderProps`: pass search, breadcrumb, and action content to the header.
+- `sidebarTitle`, `sidebarHeaderClassName`, and `sidebarMenuFooter`: tailor the navigation rail to match your brand colors and footer content.
+
+> For design token guidance see `docs/theming.md`. The layout and sidebar surfaces immediately adopt updated `primary`, `secondary`, and `accent` hues.
 
 ## API reference
 
