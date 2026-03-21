@@ -306,10 +306,9 @@ export default function Demo() {
 
 ## 📖 Documentation & Storybook
 
-Every component and hook has a demo, props table, variant showcase, and usage guide—launch Storybook locally, or check the online docs (URL).
-
-- `npm run storybook` (from the repo)
-- Getting Started, Theming, and API docs included
+- [Getting Started guide](docs/getting-started.md)
+- `npm run storybook` (run locally for component demos)
+- Comprehensive API docs and theming guides live alongside Storybook
 
 ---
 
@@ -361,4 +360,3 @@ MIT © Beyond Corp, Soi Technology Solutions 2025
 ---
 
 # Beyond-UI: Build clean, scalable UIs faster, with every detail documented and ready to use.
-
