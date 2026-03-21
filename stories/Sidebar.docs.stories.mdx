@@ -58,6 +58,22 @@ const SupportSidebarExample = () => {
   code={`import '@beyondcorp/beyond-ui/dist/styles.css';`}
 />
 
+## Menu blueprint
+
+Each menu item is a serialisable object—ideal for sharing across route loaders or CMS-driven navigation. Children arrays create collapsible groups and badges surface quick status.
+
+<Source
+  lang="ts"
+  code={`type SidebarMenuItem = {
+  id: string;
+  label: string;
+  icon?: React.ReactNode;
+  href?: string;
+  badge?: string;
+  children?: SidebarMenuItem[];
+};`}
+/>
+
 ## Live example
 
 The support operations sidebar below demonstrates nested routes, numeric badges, and profile buttons. Toggle the collapse button in the header to see the compact state.
@@ -88,6 +104,9 @@ The support operations sidebar below demonstrates nested routes, numeric badges,
 - `menuItems`: hierarchical navigation schema with optional badges and children.
 - `collapsed` + `onToggle`: control layout width and toggle button state.
 - `profileSectionProps`, `profileButtonProps`, `logoutButtonProps`: configure the footer actions.
+- `headerClassName` and `className`: apply semantic Tailwind utilities that respond to the palette set in `docs/theming.md`.
+
+> Update `primary`, `secondary`, `accent`, or `danger` tokens in your Tailwind config to recolor the sidebar without touching component code.
 
 ## API reference
 

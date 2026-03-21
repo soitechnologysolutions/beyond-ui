@@ -1,30 +1,37 @@
 # Beyond-UI: Getting Started
 
-Kick off a new Beyond-UI integration in three short steps: install the package, load the provided CSS bundle, and render your first component. The library ships fully typed React components styled with Tailwind semantic tokens, so no Tailwind configuration is required to get started.
+Kick off a Beyond-UI integration in three focused steps: install the package, load the compiled CSS bundle, and render your first component. Every export ships fully typed and already styled with semantic Tailwind tokens, so the default experience works even without adding Tailwind to your toolchain.
 
 ## 1. Install the package
 
-Beyond-UI is published as an npm package with React and Tailwind declared as peer dependencies. Install it with your favorite package manager:
+Beyond-UI is published as an npm package with `react`, `react-dom`, and `tailwindcss` declared as peer dependencies. Install it with the package manager your project already uses:
 
 ```bash
+# npm
 npm install @beyondcorp/beyond-ui
+
+# pnpm
+pnpm add @beyondcorp/beyond-ui
+
+# yarn
+yarn add @beyondcorp/beyond-ui
 ```
 
-The package exposes ESM and CJS builds plus generated type definitions. If you consume Beyond-UI inside a monorepo, make sure the install happens in the app package that renders the components.
+The build exposes both ESM and CJS entry points plus generated type definitions. If you are working inside a monorepo, install the dependency in the app package that renders the components.
 
 ## 2. Import the generated CSS
 
-Beyond-UI compiles Tailwind styles into a distributable stylesheet. Import it once in your application entry point (for example `src/main.tsx` or `src/index.tsx`):
+Beyond-UI compiles Tailwind styles into a distributable stylesheet. Import it once in your application entry point (for example `src/main.tsx`, `src/main.jsx`, or `src/index.tsx`):
 
 ```tsx
 import '@beyondcorp/beyond-ui/dist/styles.css';
 ```
 
-The stylesheet bundles all component tokens, layout primitives, and utility classes. You can keep Tailwind out of your build entirely if you rely on the default theme, or you can still extend Tailwind in your project to override semantic tokens later.
+The stylesheet bundles every component token, layout primitive, and utility class. You can keep Tailwind out of your build entirely if you rely on the default theme, or add Tailwind later to override semantic tokens or author bespoke utilities.
 
 ## 3. Render your first component
 
-Every component is accessible through the package root. The example below renders a responsive dashboard card with a primary button:
+Every component is accessible through the package root. The example below renders a responsive dashboard card with a primary button and shows how props translate into semantic styles automatically:
 
 ```tsx
 import { Card, CardHeader, CardTitle, CardContent, Button } from '@beyondcorp/beyond-ui';
@@ -49,4 +56,4 @@ export function WelcomeCard() {
 }
 ```
 
-This setup is all you need for local development and deployment. Explore theming and layout customization in `docs/theming.md`, and check Storybook (`npm run storybook`) for interactive component examples and prop references.
+This setup is all you need for local development and deployment. Continue with `docs/theming.md` to learn how semantic tokens map to your brand palette, and open Storybook (`npm run storybook`) for interactive component examples and prop references.
