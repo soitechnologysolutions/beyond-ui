@@ -1,55 +1,10 @@
-import * as React from 'react';
-import { Meta, Canvas, Story, ArgsTable, Source } from '@storybook/blocks';
+import { Meta, Canvas, Story, ArgsTable, Source, Title, Subtitle } from '@storybook/blocks';
 import { Sidebar } from '../src/components/Sidebar';
-import { Badge } from '../src/components/Badge';
-import { Button } from '../src/components/Button';
-import { Home, Users, LifeBuoy, Headphones, MessageCircle, MonitorCheck, Settings, ShieldCheck } from 'lucide-react';
-
-const supportMenu = [
-  { id: 'overview', label: 'Overview', icon: <Home className="h-5 w-5" />, href: '#' },
-  {
-    id: 'tickets',
-    label: 'Tickets',
-    icon: <MessageCircle className="h-5 w-5" />,
-    badge: '42',
-    children: [
-      { id: 'unassigned', label: 'Unassigned', icon: <Users className="h-4 w-4" />, href: '#' },
-      { id: 'escalated', label: 'Escalated', icon: <ShieldCheck className="h-4 w-4" />, href: '#' },
-    ],
-  },
-  { id: 'knowledge-base', label: 'Knowledge Base', icon: <MonitorCheck className="h-5 w-5" />, href: '#' },
-  { id: 'automation', label: 'Automation', icon: <LifeBuoy className="h-5 w-5" />, href: '#' },
-  { id: 'team', label: 'Team', icon: <Headphones className="h-5 w-5" />, href: '#' },
-  { id: 'settings', label: 'Settings', icon: <Settings className="h-5 w-5" />, href: '#' },
-];
-
-const SupportSidebarExample = () => {
-  const [collapsed, setCollapsed] = React.useState(false);
-  const [active, setActive] = React.useState('tickets');
-
-  return (
-    <Sidebar
-      collapsed={collapsed}
-      onToggle={() => setCollapsed((value) => !value)}
-      menuItems={supportMenu}
-      activeItem={active}
-      onItemClick={setActive}
-      title="Support Hub"
-      titleLetter="S"
-      headerClassName="text-primary-600"
-      profileSectionProps={{
-        name: 'Marion Edwards',
-        email: 'marion@support.io',
-      }}
-      logoutButtonProps={{ label: 'Sign out' }}
-      profileButtonProps={{ label: 'View profile' }}
-    />
-  );
-};
 
 <Meta title="Docs/Layout/Sidebar" component={Sidebar} />
 
-# Sidebar
+<Title />
+<Subtitle />
 
 `Sidebar` renders a responsive navigation rail with support for nesting, badges, profile actions, and collapse/expand triggers. Import the compiled stylesheet to activate semantic Tailwind tokens:
 
@@ -57,6 +12,12 @@ const SupportSidebarExample = () => {
   lang="tsx"
   code={`import '@beyondcorp/beyond-ui/dist/styles.css';`}
 />
+
+## Live example
+
+<Canvas>
+  <Story id="components-sidebar--dashboard-real-use-case" />
+</Canvas>
 
 ## Menu blueprint
 
@@ -73,31 +34,6 @@ Each menu item is a serialisable object—ideal for sharing across route loaders
   children?: SidebarMenuItem[];
 };`}
 />
-
-## Live example
-
-The support operations sidebar below demonstrates nested routes, numeric badges, and profile buttons. Toggle the collapse button in the header to see the compact state.
-
-<Canvas>
-  <Story name="Support Operations Sidebar">
-    <div className="h-[32rem] bg-secondary-50 flex">
-      <SupportSidebarExample />
-      <div className="flex-1 p-10">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-xl font-semibold">Active Ticket Queue</h2>
-            <p className="text-sm text-muted-foreground">Pull metrics, escalate, and assign tickets in seconds.</p>
-          </div>
-          <Button variant="primary">New ticket</Button>
-        </div>
-        <div className="flex items-center gap-3">
-          <Badge variant="success">98.4% SLA</Badge>
-          <Badge variant="warning">5 escalations</Badge>
-        </div>
-      </div>
-    </div>
-  </Story>
-</Canvas>
 
 ## Key props
 

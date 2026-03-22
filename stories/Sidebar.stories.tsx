@@ -2,7 +2,6 @@ import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { Sidebar } from "../src/components/Sidebar";
 import { Home, Users, BarChart3, FileText, Settings, Calendar, Bell, Mail } from "lucide-react";
-import { Badge } from "../src/components/Badge";
 
 const meta = {
   title: "Components/Sidebar",
@@ -73,7 +72,7 @@ const demoMenu = [
 ];
 
 /**
- * Default Sidebar story (uses default header: "Beyond", "B")
+ * Default Sidebar story
  */
 export const Default: Story = {
   render: () => <Sidebar menuItems={demoMenu} />,
@@ -105,7 +104,7 @@ export const CustomHeader: Story = {
 /**
  * Dashboard Sidebar story (real use case)
  */
-export const DashboardUseCase: Story = {
+export const SupportOperationsSidebarStory: Story = {
   render: () => {
     const [active, setActive] = React.useState("dashboard");
     return (
@@ -126,4 +125,8 @@ export const DashboardUseCase: Story = {
       },
     },
   },
+};
+
+export const SupportOperationsSidebar = {
+  ...SupportOperationsSidebarStory,
 };

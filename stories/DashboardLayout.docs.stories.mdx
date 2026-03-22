@@ -1,86 +1,10 @@
-import * as React from 'react';
-import { Meta, Canvas, Story, ArgsTable, Source } from '@storybook/blocks';
+import { Meta, Canvas, Story, ArgsTable, Source, Title, Subtitle } from '@storybook/blocks';
 import { DashboardLayout } from '../src/components/DashboardLayout';
-import { Card, CardHeader, CardTitle, CardContent } from '../src/components/Card';
-import { StatsCard } from '../src/components/StatsCard';
-import { Button } from '../src/components/Button';
-import { Home, Users, BarChart3, FileText, Calendar, Bell, Settings, Mail } from 'lucide-react';
-
-const analyticsMenu = [
-  { id: 'overview', label: 'Overview', icon: <Home className="h-5 w-5" />, href: '#' },
-  {
-    id: 'analytics',
-    label: 'Analytics',
-    icon: <BarChart3 className="h-5 w-5" />,
-    badge: 'New',
-    href: '#',
-  },
-  {
-    id: 'customers',
-    label: 'Customers',
-    icon: <Users className="h-5 w-5" />,
-    children: [
-      { id: 'segments', label: 'Segments', icon: <Users className="h-4 w-4" />, href: '#' },
-      { id: 'churn', label: 'Churn Risk', icon: <Bell className="h-4 w-4" />, href: '#' },
-    ],
-  },
-  { id: 'reports', label: 'Reports', icon: <FileText className="h-5 w-5" />, href: '#' },
-  { id: 'calendar', label: 'Calendar', icon: <Calendar className="h-5 w-5" />, href: '#' },
-  { id: 'messages', label: 'Messages', icon: <Mail className="h-5 w-5" />, badge: '5', href: '#' },
-  { id: 'settings', label: 'Settings', icon: <Settings className="h-5 w-5" />, href: '#' },
-];
-
-const AnalyticsDashboardExample = () => {
-  const [active, setActive] = React.useState('analytics');
-
-  return (
-    <DashboardLayout
-      sidebarMenuItems={analyticsMenu}
-      activeSidebarItem={active}
-      onSidebarItemClick={setActive}
-      breadcrumbs={[
-        { label: 'Home', href: '#' },
-        { label: 'Analytics' },
-      ]}
-      dashboardHeaderProps={{
-        title: 'Engagement Overview',
-        actions: (
-          <div className="flex gap-2">
-            <Button variant="ghost">Export</Button>
-            <Button variant="primary">Create Report</Button>
-          </div>
-        ),
-      }}
-    >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <StatsCard
-          title="Active Users"
-          value="18,420"
-          trend={{ direction: 'up', value: '+3.4%', label: 'vs last week' }}
-        />
-        <StatsCard
-          title="Avg. Session Length"
-          value="7m 42s"
-          trend={{ direction: 'down', value: '-0.8%', label: 'vs last week' }}
-        />
-      </div>
-      <Card>
-        <CardHeader>
-          <CardTitle>Daily Active Users</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-24 flex items-center justify-center text-muted-foreground">
-            Embed charts or tables for analytics insights.
-          </div>
-        </CardContent>
-      </Card>
-    </DashboardLayout>
-  );
-};
 
 <Meta title="Docs/Layout/DashboardLayout" component={DashboardLayout} />
 
-# DashboardLayout
+<Title />
+<Subtitle />
 
 `DashboardLayout` stitches together the persistent `Sidebar` and `DashboardHeader` components to provide a full-page application shell. Import the bundled CSS once in your host app to ensure all semantic tokens resolve:
 
@@ -90,6 +14,12 @@ const AnalyticsDashboardExample = () => {
 />
 
 Use the layout to compose analytics dashboards, admin tools, or internal platforms where a collapsible navigation rail is required.
+
+## Live example
+
+<Canvas>
+  <Story id="components-dashboardlayout--analytics-dashboard-real-use-case" />
+</Canvas>
 
 ## Menu model shape
 
@@ -106,16 +36,6 @@ Menu items are plain objects—perfect for fetching from APIs or colocating with
   children?: SidebarMenuItem[];
 };`}
 />
-
-## Realistic dashboard shell
-
-The example below wires a data team workspace with menu routing, breadcrumbs, and header actions. Click the menu to see the active state update.
-
-<Canvas>
-  <Story name="Analytics Dashboard Shell">
-    <AnalyticsDashboardExample />
-  </Story>
-</Canvas>
 
 ## Key props
 

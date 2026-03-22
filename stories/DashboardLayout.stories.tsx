@@ -73,16 +73,22 @@ const menuItems = [
   },
 ];
 
+/**
+ * Basic usage
+ */
 export const Default: Story = {
   render: () => (
     <DashboardLayout>
       <div className="p-4">This is the dashboard content area.</div>
     </DashboardLayout>
   ),
-  args: {}
+  args: {},
 };
 
-export const AnalyticsDashboard: Story = {
+/**
+ * Analytics dashboard shell
+ */
+export const AnalyticsDashboardShellStory: Story = {
   render: () => {
     const [active, setActive] = React.useState("analytics");
     return (
@@ -130,5 +136,9 @@ export const AnalyticsDashboard: Story = {
       },
     },
   },
-  args: {}
+  args: {},
+};
+
+export const AnalyticsDashboardShell = {
+  ...AnalyticsDashboardShellStory,
 };
