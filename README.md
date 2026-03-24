@@ -15,7 +15,7 @@
 
 ```bash
 # clone the repo
-git clone git@github.com:soitechnologysolutions/beyond-ui.git
+git clone https://github.com/soitechnologysolutions/beyond-ui.git
 cd beyond-ui
 
 # install dependencies
