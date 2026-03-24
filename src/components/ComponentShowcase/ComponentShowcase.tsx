@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import {
   Search,
   Copy,
@@ -93,12 +93,15 @@ interface ComponentShowcaseProps {
 
 export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className }) => {
   const [selectedComponent, setSelectedComponent] = useState("button");
+  const [activeTab, setActiveTab] = useState<"preview" | "code" | "props">("preview");
   const [searchQuery, setSearchQuery] = useState("");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<string[]>(["Forms"]);
   const [viewMode, setViewMode] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [darkMode, setDarkMode] = useState(false);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const sidebarRef = useRef<HTMLDivElement | null>(null);
+  const [focusedIndex, setFocusedIndex] = useState<number>(-1);
 
   const toggleCategory = (category: string) => {
     setExpandedCategories((prev) =>
@@ -108,12 +111,52 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
     );
   };
 
+  const flatComponents = useMemo(() => {
+    return Object.values(componentCategories).flatMap((category) =>
+      category.components.map((component) => component.id)
+    );
+  }, []);
+
+  useEffect(() => {
+    if (focusedIndex >= 0 && sidebarRef.current && !sidebarCollapsed) {
+      const buttons = sidebarRef.current.querySelectorAll<HTMLButtonElement>(
+        '[data-component-id]'
+      );
+      const target = buttons[focusedIndex];
+      if (target) {
+        target.focus();
+      }
+    }
+  }, [focusedIndex, sidebarCollapsed]);
+
+  const handleKeyNavigation = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (sidebarCollapsed) return;
+
+    const currentIndex = flatComponents.indexOf(selectedComponent);
+
+    if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
+      event.preventDefault();
+      const nextIndex = currentIndex === flatComponents.length - 1 ? 0 : currentIndex + 1;
+      setFocusedIndex(nextIndex);
+      setSelectedComponent(flatComponents[nextIndex]);
+    } else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
+      event.preventDefault();
+      const prevIndex = currentIndex <= 0 ? flatComponents.length - 1 : currentIndex - 1;
+      setFocusedIndex(prevIndex);
+      setSelectedComponent(flatComponents[prevIndex]);
+    }
+  };
+
   const copyToClipboard = async (code: string) => {
     try {
-      await navigator.clipboard.writeText(code);
-      setCopiedCode(code);
-      showToast.success("Code copied to clipboard!");
-      setTimeout(() => setCopiedCode(null), 2000);
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(code);
+        setCopiedCode(code);
+        showToast.success("Code copied to clipboard!");
+        setTimeout(() => setCopiedCode(null), 2000);
+      } else {
+        throw new Error("Clipboard API unavailable");
+      }
     } catch (err) {
       showToast.error("Failed to copy code");
     }
@@ -138,6 +181,8 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
   );
 
   const currentDoc = componentDocs[selectedComponent as keyof typeof componentDocs];
+  const currentExample = currentDoc?.example ?? '';
+  const currentProps = currentDoc?.props ?? [];
 
   const getViewportClass = () => {
     switch (viewMode) {
@@ -156,10 +201,14 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
 
       {/* Sidebar */}
       <div
+        ref={sidebarRef}
         className={cn(
           "bg-white border-r border-gray-200 transition-all duration-300 flex flex-col",
           sidebarCollapsed ? "w-16" : "w-80"
         )}
+        tabIndex={sidebarCollapsed ? -1 : 0}
+        onKeyDown={handleKeyNavigation}
+        aria-label="Component navigation"
       >
         {/* Sidebar Header */}
         <div className="p-4 border-b border-gray-200">
@@ -234,20 +283,28 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
 
               {!sidebarCollapsed && expandedCategories.includes(categoryName) && (
                 <div className="mt-2 ml-6 space-y-1">
-                  {categoryData.components.map((component) => (
-                    <button
-                      key={component.id}
-                      onClick={() => setSelectedComponent(component.id)}
-                      className={cn(
-                        "flex items-center w-full p-2 text-sm rounded-lg transition-colors",
-                        selectedComponent === component.id
-                          ? "bg-primary-50 text-primary-700 border-r-2 border-primary-600"
-                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                      )}
-                    >
-                      {component.name}
-                    </button>
-                  ))}
+                  {categoryData.components.map((component) => {
+                    const isActive = selectedComponent === component.id;
+                    return (
+                      <button
+                        key={component.id}
+                        data-component-id={component.id}
+                        onClick={() => {
+                          setSelectedComponent(component.id);
+                          setFocusedIndex(flatComponents.indexOf(component.id));
+                        }}
+                        className={cn(
+                          "flex items-center w-full p-2 text-sm rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500",
+                          isActive
+                            ? "bg-primary-50 text-primary-700 border-r-2 border-primary-600"
+                            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                        )}
+                        aria-current={isActive ? "page" : undefined}
+                      >
+                        {component.name}
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -320,27 +377,33 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
 
               {/* Tabs */}
               <div>
-                <div className="flex gap-3 mb-4">
+                <div className="flex gap-3 mb-4" role="tablist" aria-label="Component details tabs">
                   <Button
-                    variant="ghost"
+                    variant={activeTab === "preview" ? "primary" : "ghost"}
                     size="sm"
-                    onClick={() => setSelectedComponent("button")}
+                    onClick={() => setActiveTab("preview")}
+                    role="tab"
+                    aria-selected={activeTab === "preview"}
                   >
                     <Eye className="h-4 w-4 mr-2" />
                     Preview
                   </Button>
                   <Button
-                    variant="ghost"
+                    variant={activeTab === "code" ? "primary" : "ghost"}
                     size="sm"
-                    onClick={() => setSelectedComponent("button")}
+                    onClick={() => setActiveTab("code")}
+                    role="tab"
+                    aria-selected={activeTab === "code"}
                   >
                     <Code className="h-4 w-4 mr-2" />
                     Code
                   </Button>
                   <Button
-                    variant="ghost"
+                    variant={activeTab === "props" ? "primary" : "ghost"}
                     size="sm"
-                    onClick={() => setSelectedComponent("button")}
+                    onClick={() => setActiveTab("props")}
+                    role="tab"
+                    aria-selected={activeTab === "props"}
                   >
                     <Settings className="h-4 w-4 mr-2" />
                     Props
@@ -367,85 +430,95 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
                     </div>
                   </div>
 
-                  {/* Code Example */}
-                  <div className="mt-6">
-                    <div className="bg-white rounded-lg shadow p-6">
-                      <div className="flex flex-row items-center justify-between">
-                        <h2 className="text-lg font-semibold mb-0">
-                          Usage Example
-                        </h2>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => copyToClipboard(currentDoc.example)}
-                        >
-                          {copiedCode === currentDoc.example ? (
-                            <Check className="h-4 w-4 mr-2" />
-                          ) : (
-                            <Copy className="h-4 w-4 mr-2" />
-                          )}
-                          Copy
-                        </Button>
+                  {activeTab === "code" && (
+                    <div className="mt-6" role="tabpanel" aria-label="Code example">
+                      <div className="bg-white rounded-lg shadow p-6">
+                        <div className="flex flex-row items-center justify-between">
+                          <h2 className="text-lg font-semibold mb-0">
+                            Usage Example
+                          </h2>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => copyToClipboard(currentExample)}
+                          >
+                            {copiedCode === currentExample ? (
+                              <Check className="h-4 w-4 mr-2" />
+                            ) : (
+                              <Copy className="h-4 w-4 mr-2" />
+                            )}
+                            Copy
+                          </Button>
+                        </div>
+                        <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
+                          <code>{currentExample}</code>
+                        </pre>
                       </div>
-                      <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
-                        <code>{currentDoc.example}</code>
-                      </pre>
                     </div>
-                  </div>
+                  )}
 
-                  {/* Props Table */}
-                  <div className="mt-6">
-                    <div className="bg-white rounded-lg shadow p-6">
-                      <h2 className="text-lg font-semibold mb-4">
-                        Component Props
-                      </h2>
-                      <div className="overflow-x-auto">
-                        <table className="w-full border-collapse">
-                          <thead>
-                            <tr className="border-b border-gray-200">
-                              <th className="text-left p-3 font-medium text-gray-900">
-                                Prop
-                              </th>
-                              <th className="text-left p-3 font-medium text-gray-900">
-                                Type
-                              </th>
-                              <th className="text-left p-3 font-medium text-gray-900">
-                                Default
-                              </th>
-                              <th className="text-left p-3 font-medium text-gray-900">
-                                Description
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {currentDoc.props?.map((prop: any, index: number) => (
-                              <tr key={index} className="border-b border-gray-100">
-                                <td className="p-3">
-                                  <code className="bg-gray-100 px-2 py-1 rounded text-sm">
-                                    {prop.name}
-                                  </code>
-                                  {"required" in prop && prop.required && (
-                                    <Badge variant="danger" className="ml-2 text-xs">
-                                      Required
-                                    </Badge>
-                                  )}
-                                </td>
-                                <td className="p-3 text-gray-600">{prop.type}</td>
-                                <td className="p-3 text-gray-600">
-                                  {"default" in prop && prop.default ? (
-                                    <code className="bg-gray-100 px-2 py-1 rounded text-sm">
-                                      {prop.default}
-                                    </code>
-                                  ) : null}
-                                </td>
-                                <td className="p-3 text-gray-600">{prop.description}</td>
+                  {activeTab === "props" && (
+                    <div className="mt-6" role="tabpanel" aria-label="Component props">
+                      <div className="bg-white rounded-lg shadow p-6">
+                        <h2 className="text-lg font-semibold mb-4">
+                          Component Props
+                        </h2>
+                        <div className="overflow-x-auto">
+                          <table className="w-full border-collapse">
+                            <thead>
+                              <tr className="border-b border-gray-200">
+                                <th className="text-left p-3 font-medium text-gray-900">
+                                  Prop
+                                </th>
+                                <th className="text-left p-3 font-medium text-gray-900">
+                                  Type
+                                </th>
+                                <th className="text-left p-3 font-medium text-gray-900">
+                                  Default
+                                </th>
+                                <th className="text-left p-3 font-medium text-gray-900">
+                                  Description
+                                </th>
                               </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                            </thead>
+                            <tbody>
+                              {currentProps.length > 0 ? (
+                                currentProps.map((prop, index) => (
+                                  <tr key={prop.name ?? index} className="border-b border-gray-100">
+                                    <td className="p-3">
+                                      <code className="bg-gray-100 px-2 py-1 rounded text-sm">
+                                        {prop.name}
+                                      </code>
+                                      {"required" in prop && prop.required && (
+                                        <Badge variant="danger" className="ml-2 text-xs">
+                                          Required
+                                        </Badge>
+                                      )}
+                                    </td>
+                                    <td className="p-3 text-gray-600">{prop.type}</td>
+                                    <td className="p-3 text-gray-600">
+                                      {"default" in prop && prop.default ? (
+                                        <code className="bg-gray-100 px-2 py-1 rounded text-sm">
+                                          {prop.default}
+                                        </code>
+                                      ) : null}
+                                    </td>
+                                    <td className="p-3 text-gray-600">{prop.description}</td>
+                                  </tr>
+                                ))
+                              ) : (
+                                <tr>
+                                  <td colSpan={4} className="p-4 text-center text-gray-500">
+                                    No props documented for this component yet.
+                                  </td>
+                                </tr>
+                              )}
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
