@@ -6,6 +6,35 @@
 
 ## 🚀 Overview
 
+### Local Development Setup
+
+| Requirement | Version |
+| ----------- | ------- |
+| Node.js     | >= 18.0.0 |
+| npm         | >= 9.0.0 |
+
+```bash
+# clone the repo
+git clone git@github.com:soitechnologysolutions/beyond-ui.git
+cd beyond-ui
+
+# install dependencies
+npm install
+
+# start the playground
+npm run dev
+```
+
+### Scripts you will use often
+
+| Script | Description |
+| ------ | ----------- |
+| `npm run dev` | Launches Vite playground for landing/showcase pages |
+| `npm run storybook` | Starts Storybook on http://localhost:6006 |
+| `npm run lint` | Runs ESLint across src/stories/tests |
+| `npm test` | Executes Jest + React Testing Library suites |
+| `npm run build` | Builds component library + docs assets |
+
 Beyond-UI is a comprehensive collection of ready-to-use, themeable React UI components and hooks, built with TypeScript, TailwindCSS, and Vite. Inspired by the best of modern design systems, it’s built to be both design-consistent (via semantic theming) and easily composable for dashboards, apps, platforms, and SaaS.
 
 - **Built for teams:** Use everywhere React and TailwindCSS run—admin panels, SaaS, dashboards, internal tools, consumer apps.
@@ -306,10 +335,12 @@ export default function Demo() {
 
 ## 📖 Documentation & Storybook
 
+- [Public Storybook](https://storybook.ui.beyondsoftwares.com) — hosted component gallery and prop reference
+- [Library landing page](https://ui.beyondsoftwares.com)
 - [Getting Started guide](./docs/getting-started.md)
 - [Theming & customization](./docs/theming.md)
-- `npm run storybook` (run locally for component demos)
-- Comprehensive API docs live alongside Storybook
+- [Security & DX notes](./docs/security-dx-notes.md)
+- Run `npm run storybook` locally for the full docs experience
 
 ---
 
