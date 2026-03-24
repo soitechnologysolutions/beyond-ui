@@ -46,14 +46,28 @@ const ShowcaseNavButton: React.FC = () => {
       variant="primary"
       size="xl"
       type="button"
+      asChild
+      className="flex items-center justify-center gap-2"
     >
-      <Code className="mr-2 h-5 w-5" />
-      <Link to="/showcase">View Full Showcase</Link>
-      <ArrowRight className="ml-2 h-5 w-5" />
+      <Link to="/showcase">
+        <Code aria-hidden="true" className="h-5 w-5" />
+        <span>View Full Showcase</span>
+        <ArrowRight aria-hidden="true" className="h-5 w-5" />
+      </Link>
     </Button>
   );
 };
 export const LandingPage: React.FC = () => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+
+  const navigationLinks = [
+    { label: 'Features', href: '#features' },
+    { label: 'Showcase', href: '#showcase' },
+    { label: 'Templates', href: '#templates' }
+  ];
+
+  const toggleMobileMenu = () => setIsMobileMenuOpen((prev) => !prev);
+
   return (
     <PageLayout variant="landing" maxWidth="full">
       {/* Navigation Header */}
@@ -63,7 +77,7 @@ export const LandingPage: React.FC = () => {
             {/* Brand Logo */}
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg">
-                <Globe className="h-6 w-6 text-white" />
+                <Globe aria-hidden="true" className="h-6 w-6 text-white" />
               </div>
               <div>
                 <span className="font-bold text-2xl text-gray-900">Beyond UI</span>
@@ -73,31 +87,82 @@ export const LandingPage: React.FC = () => {
 
             {/* Navigation Links */}
             <nav className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-gray-700 hover:text-primary-600 font-medium transition-colors">
-                Features
-              </a>
-              <a href="#components" className="text-gray-700 hover:text-primary-600 font-medium transition-colors">
-                Components
-              </a>
-              <a href="#showcase" className="text-gray-700 hover:text-primary-600 font-medium transition-colors">
-                Showcase
-              </a>
-              <a href="#templates" className="text-gray-700 hover:text-primary-600 font-medium transition-colors">
-                Templates
-              </a>
-              <Button variant="primary" className="shadow-lg hover:shadow-xl transition-shadow">
-                <Link to="https://www.npmjs.com/package/@beyondcorp/beyond-ui" target="_blank">Get Started </Link>
-                <ArrowRight className="ml-2 h-4 w-4" />
+              {navigationLinks.map(({ label, href }) => (
+                <a
+                  key={label}
+                  href={href}
+                  className="text-gray-700 hover:text-primary-600 font-medium transition-colors"
+                >
+                  {label}
+                </a>
+              ))}
+              <Button
+                variant="primary"
+                className="shadow-lg hover:shadow-xl transition-shadow flex items-center gap-2"
+                asChild
+              >
+                <a
+                  href="https://www.npmjs.com/package/@beyondcorp/beyond-ui"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span>Get Started</span>
+                  <ArrowRight aria-hidden="true" className="h-4 w-4" />
+                </a>
               </Button>
             </nav>
 
             {/* Mobile Menu Button */}
-            <Button variant="ghost" className="md:hidden">
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <Button
+              variant="ghost"
+              className="md:hidden"
+              onClick={toggleMobileMenu}
+              aria-label="Toggle navigation"
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-nav"
+            >
+              <svg
+                aria-hidden="true"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </Button>
           </div>
+          {isMobileMenuOpen && (
+            <div id="mobile-nav" className="md:hidden border-t border-gray-200 pt-4 pb-6 space-y-4">
+              <div className="flex flex-col space-y-3">
+                {navigationLinks.map(({ label, href }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="text-gray-700 font-medium transition-colors hover:text-primary-600"
+                  >
+                    {label}
+                  </a>
+                ))}
+              </div>
+              <Button
+                variant="primary"
+                className="w-full flex items-center justify-center gap-2"
+                asChild
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <a
+                  href="https://www.npmjs.com/package/@beyondcorp/beyond-ui"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span>Get Started</span>
+                  <ArrowRight aria-hidden="true" className="h-4 w-4" />
+                </a>
+              </Button>
+            </div>
+          )}
         </div>
       </PageHeader>
 
@@ -107,7 +172,7 @@ export const LandingPage: React.FC = () => {
           <div className="max-w-4xl mx-auto">
             {/* Hero Badge */}
             <Badge variant="outline" className="mb-6 px-4 py-2 text-sm font-medium bg-white/10 backdrop-blur-sm border-primary-200">
-              <Star className="h-4 w-4 mr-2 text-primary-600" />
+              <Star aria-hidden="true" className="h-4 w-4 mr-2 text-primary-600" />
               Production Ready Components
             </Badge>
 
@@ -127,22 +192,28 @@ export const LandingPage: React.FC = () => {
 
             {/* Hero CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-              <Button 
-                variant="primary" 
-                size="xl" 
-                className="px-8 py-4 text-lg font-semibold shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1"
+              <Button
+                variant="primary"
+                size="xl"
+                asChild
+                className="px-8 py-4 text-lg font-semibold shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1 flex items-center gap-3"
               >
-                <Code className="mr-3 h-6 w-6" />
-                <Link to="/showcase">Explore Components</Link>
-                <ArrowRight className="ml-3 h-6 w-6" />
+                <Link to="/showcase">
+                  <Code aria-hidden="true" className="h-6 w-6" />
+                  <span>Explore Components</span>
+                  <ArrowRight aria-hidden="true" className="h-6 w-6" />
+                </Link>
               </Button>
-              <Button 
-                variant="outline" 
-                size="xl" 
-                className="px-8 py-4 text-lg font-semibold bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-300"
+              <Button
+                variant="outline"
+                size="xl"
+                asChild
+                className="px-8 py-4 text-lg font-semibold bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-300 flex items-center gap-3"
               >
-                <Github className="mr-3 h-6 w-6" />
-                <Link to="https://github.com/MachineKe/beyond-ui" target="_blank">View on GitHub</Link>
+                <a href="https://github.com/MachineKe/beyond-ui" target="_blank" rel="noopener noreferrer">
+                  <Github aria-hidden="true" className="h-6 w-6" />
+                  <span>View on GitHub</span>
+                </a>
               </Button>
             </div>
 
@@ -170,7 +241,7 @@ export const LandingPage: React.FC = () => {
         <section id="features" className="py-20">
           <div className="text-center mb-16">
             <Badge variant="outline" className="mb-4 px-3 py-1">
-              <Zap className="h-4 w-4 mr-2" />
+              <Zap aria-hidden="true" className="h-4 w-4 mr-2" />
               Why Choose Beyond UI
             </Badge>
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
@@ -187,7 +258,7 @@ export const LandingPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
             <Card className="text-center p-8 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border-0 bg-gradient-to-br from-primary-50 to-blue-50">
               <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <Code className="h-8 w-8 text-white" />
+                <Code aria-hidden="true" className="h-8 w-8 text-white" />
               </div>
               <CardHeader>
                 <CardTitle className="text-xl font-bold text-gray-900 mb-3">
@@ -203,7 +274,7 @@ export const LandingPage: React.FC = () => {
 
             <Card className="text-center p-8 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border-0 bg-gradient-to-br from-success-50 to-green-50">
               <div className="w-16 h-16 bg-gradient-to-br from-success-500 to-success-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <Zap className="h-8 w-8 text-white" />
+                <Zap aria-hidden="true" className="h-8 w-8 text-white" />
               </div>
               <CardHeader>
                 <CardTitle className="text-xl font-bold text-gray-900 mb-3">
@@ -219,7 +290,7 @@ export const LandingPage: React.FC = () => {
 
             <Card className="text-center p-8 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border-0 bg-gradient-to-br from-purple-50 to-indigo-50">
               <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <Palette className="h-8 w-8 text-white" />
+                <Palette aria-hidden="true" className="h-8 w-8 text-white" />
               </div>
               <CardHeader>
                 <CardTitle className="text-xl font-bold text-gray-900 mb-3">
@@ -235,7 +306,7 @@ export const LandingPage: React.FC = () => {
 
             <Card className="text-center p-8 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border-0 bg-gradient-to-br from-orange-50 to-red-50">
               <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <Shield className="h-8 w-8 text-white" />
+                <Shield aria-hidden="true" className="h-8 w-8 text-white" />
               </div>
               <CardHeader>
                 <CardTitle className="text-xl font-bold text-gray-900 mb-3">
@@ -258,28 +329,28 @@ export const LandingPage: React.FC = () => {
               </h3>
               <div className="space-y-4">
                 <div className="flex items-start space-x-3">
-                  <CheckCircle className="h-6 w-6 text-success-600 mt-1 flex-shrink-0" />
+                  <CheckCircle aria-hidden="true" className="h-6 w-6 text-success-600 mt-1 flex-shrink-0" />
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-1">TypeScript First</h4>
                     <p className="text-gray-600">Complete type safety with comprehensive interfaces and IntelliSense support.</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
-                  <CheckCircle className="h-6 w-6 text-success-600 mt-1 flex-shrink-0" />
+                  <CheckCircle aria-hidden="true" className="h-6 w-6 text-success-600 mt-1 flex-shrink-0" />
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-1">Accessibility Built-in</h4>
                     <p className="text-gray-600">WCAG compliant components with proper ARIA labels and keyboard navigation.</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
-                  <CheckCircle className="h-6 w-6 text-success-600 mt-1 flex-shrink-0" />
+                  <CheckCircle aria-hidden="true" className="h-6 w-6 text-success-600 mt-1 flex-shrink-0" />
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-1">Responsive by Default</h4>
                     <p className="text-gray-600">Mobile-first design with breakpoints that work across all devices.</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
-                  <CheckCircle className="h-6 w-6 text-success-600 mt-1 flex-shrink-0" />
+                  <CheckCircle aria-hidden="true" className="h-6 w-6 text-success-600 mt-1 flex-shrink-0" />
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-1">Tree Shakeable</h4>
                     <p className="text-gray-600">Import only what you need to keep your bundle size optimized.</p>
@@ -299,7 +370,7 @@ export const LandingPage: React.FC = () => {
                   value: "Optimized",
                   label: "tree-shakeable"
                 }}
-                icon={<TrendingUp className="h-6 w-6" />}
+                icon={<TrendingUp aria-hidden="true" className="h-6 w-6" />}
               />
               <StatsCard
                 variant="gradient"
@@ -311,7 +382,7 @@ export const LandingPage: React.FC = () => {
                   value: "Fast",
                   label: "loading"
                 }}
-                icon={<Zap className="h-6 w-6" />}
+                icon={<Zap aria-hidden="true" className="h-6 w-6" />}
               />
               <StatsCard
                 variant="gradient"
@@ -323,7 +394,7 @@ export const LandingPage: React.FC = () => {
                   value: "Growing",
                   label: "library"
                 }}
-                icon={<Code className="h-6 w-6" />}
+                icon={<Code aria-hidden="true" className="h-6 w-6" />}
               />
               <StatsCard
                 variant="gradient"
@@ -335,7 +406,7 @@ export const LandingPage: React.FC = () => {
                   value: "AA",
                   label: "compliant"
                 }}
-                icon={<Shield className="h-6 w-6" />}
+                icon={<Shield aria-hidden="true" className="h-6 w-6" />}
               />
             </div>
           </div>
@@ -347,7 +418,7 @@ export const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <Badge variant="outline" className="mb-4 px-3 py-1">
-              <Monitor className="h-4 w-4 mr-2" />
+              <Monitor aria-hidden="true" className="h-4 w-4 mr-2" />
               Interactive Demo
             </Badge>
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
@@ -378,7 +449,7 @@ export const LandingPage: React.FC = () => {
           <Card className="text-center p-12 bg-gradient-to-br from-primary-50 via-blue-50 to-purple-50 border-0 shadow-2xl">
             <div className="max-w-3xl mx-auto">
               <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-purple-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-xl">
-                <Heart className="h-10 w-10 text-white" />
+                <Heart aria-hidden="true" className="h-10 w-10 text-white" />
               </div>
               
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
@@ -397,31 +468,31 @@ export const LandingPage: React.FC = () => {
                   size="xl" 
                   className="px-10 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
                 >
-                  <Code className="mr-3 h-6 w-6" />
+                  <Code aria-hidden="true" className="mr-3 h-6 w-6" />
                   <Link to="https://www.npmjs.com/package/@beyondcorp/beyond-ui" target="_blank">Start Building Now</Link>
-                  <ArrowRight className="ml-3 h-6 w-6" />
+                  <ArrowRight aria-hidden="true" className="ml-3 h-6 w-6" />
                 </Button>
                 <Button 
                   variant="outline" 
                   size="xl" 
                   className="px-10 py-4 text-lg font-semibold bg-white hover:bg-gray-50 transition-all duration-300"
                 >
-                  <Github className="mr-3 h-6 w-6" />
+                  <Github aria-hidden="true" className="mr-3 h-6 w-6" />
                   <Link to="https://github.com/MachineKe/beyond-ui" target="_blank">Star on GitHub</Link>
                 </Button>
               </div>
 
               <div className="flex items-center justify-center space-x-8 text-sm text-gray-500">
                 <div className="flex items-center space-x-2">
-                  <Users className="h-4 w-4" />
+                  <Users aria-hidden="true" className="h-4 w-4" />
                   <span>10k+ developers</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Star className="h-4 w-4" />
+                  <Star aria-hidden="true" className="h-4 w-4" />
                   <span>MIT License</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Shield className="h-4 w-4" />
+                  <Shield aria-hidden="true" className="h-4 w-4" />
                   <span>Production Ready</span>
                 </div>
               </div>
@@ -474,9 +545,9 @@ export const LandingPage: React.FC = () => {
               <h4 className="font-semibold text-white mb-4">Product</h4>
               <ul className="space-y-3 text-gray-300">
                 <li><Link to="/showcase" className="hover:text-white transition-colors">Components</Link></li>
-                <li><Link to="http://storybook.ui.beyondsoftwares.com/" target="_blank" className="hover:text-white transition-colors">Documentation</Link></li>
-                <li><Link to="#showcase" className="hover:text-white transition-colors">Examples</Link></li>
-                <li><Link to="#templates" className="hover:text-white transition-colors">Templates</Link></li>
+                <li><a href="https://storybook.ui.beyondsoftwares.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Documentation</a></li>
+                <li><a href="#showcase" className="hover:text-white transition-colors">Examples</a></li>
+                <li><a href="#templates" className="hover:text-white transition-colors">Templates</a></li>
               </ul>
             </div>
 
@@ -484,10 +555,9 @@ export const LandingPage: React.FC = () => {
             <div>
               <h4 className="font-semibold text-white mb-4">Company</h4>
               <ul className="space-y-3 text-gray-300">
-                <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
+                <li><Link to="/blog" className="hover:text-white transition-colors">Blog</Link></li>
+                <li><a href="https://www.linkedin.com/company/soi-technology-solutions" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Careers</a></li>
+                <li><a href="mailto:ui@beyondsoftwares.com" className="hover:text-white transition-colors">Contact</a></li>
               </ul>
             </div>
           </div>
