@@ -9,47 +9,58 @@ This quick reference highlights the most-used exports from `@beyondcorp/beyond-u
 
 ## Core layout primitives
 
-- **Navbar** – Flexible top navigation with slot-based children.
-- **Sidebar** – Collapsible navigation tree with badges and nested items.
-- **DashboardLayout** – Composes `Sidebar`, `DashboardHeader`, and main content, exposing props for menu items, header actions, and responsive behaviour.
-- **DashboardGrid** – Responsive layout helper for metric cards and charts.
-- **PageLayout** – Generic two-column layout with hero/aside pattern.
+- **Navbar** – Flexible top navigation with slot-based children. Example: [`landing/page-layout-landing.tsx`](../assets/examples/components/layout/page-layout-landing.tsx) baseline header.
+- **Sidebar** – Collapsible navigation tree with badges and nested items. Example: [`layout/sidebar-navigation.tsx`](../assets/examples/components/layout/sidebar-navigation.tsx).
+- **DashboardLayout** – Composes `Sidebar`, `DashboardHeader`, and main content, exposing props for menu items, header actions, and responsive behaviour. Example: [`layout/dashboard-page.tsx`](../assets/examples/components/layout/dashboard-page.tsx).
+- **DashboardGrid** – Responsive layout helper for metric cards and charts. See the dashboard page example above for grid usage in context.
+- **PageLayout** – Generic multi-section layout with hero/content/footer options. Example hero shell: [`layout/page-layout-landing.tsx`](../assets/examples/components/layout/page-layout-landing.tsx).
 
 ## Forms & inputs
 
-- **Button** – Variants: `primary`, `secondary`, `danger`, `ghost`; sizes `sm`, `md`, `lg`.
-- **Input** – Text inputs with support for icons, validation states (default, error, success).
-- **Textarea** – Multi-line input with char counter option.
-- **Select** – Styled select/dropdown control (searchable and async-ready).
-- **Checkbox / Radio / Switch** – Accessible form controls with label slots and state props.
-- **NightModeSwitch** – Sun/Moon toggle with `variant`, `size`, and icon style (`filled`, `outline`).
+- **Button** – Variants `primary`, `secondary`, `danger`, `ghost`, etc.; sizes `sm`–`xl`. Snippets: [`forms/button-showcase.tsx`](../assets/examples/components/forms/button-showcase.tsx).
+- **Input / Textarea** – Form controls with validation states. Full profile form composition: [`forms/input-with-validation.tsx`](../assets/examples/components/forms/input-with-validation.tsx).
+- **Select** – Styled dropdown. Filter panel example: [`forms/select-filter-panel.tsx`](../assets/examples/components/forms/select-filter-panel.tsx).
+- **Checkbox / Radio / Switch** – Accessible toggles. Notification preferences card: [`forms/radio-preferences-card.tsx`](../assets/examples/components/forms/radio-preferences-card.tsx).
+- **NightModeSwitch** – Theme toggle with optional toolbar composition: [`utilities/night-mode-toolbar.tsx`](../assets/examples/components/utilities/night-mode-toolbar.tsx).
+- **Auth form panel** – Login view composed from primitives: [`forms/auth-login-panel.tsx`](../assets/examples/components/forms/auth-login-panel.tsx).
 
-## Data display & feedback
+## Data display & dashboards
 
-- **Card** family – `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter`.
-- **Badge** – Variants `info`, `warning`, `danger`, `success`, `neutral` with optional icon.
-- **Alert** – Inline feedback (info, success, warning, danger). Includes icon slot and action area.
-- **Toast** – Imperative notifications; use provided hooks for queueing.
-- **Tabs** – Horizontal/vertical tabs with `variant` and `size` options.
-- **DataTable** – Table component with sortable columns and customizable cells.
-- **Skeleton** – Loading placeholder shapes.
-- **Spinner** – Loading indicator with size variants.
-- **ComponentShowcase** – Landing page demo blocks with clipboard integration (requires HTTPS/localhost for Clipboard API).
-- **StatsCard** – Metric tile with trend indicator slots.
-- **Image / Marketplace / Blog** – Showcase components for marketing and listings pages.
+- **Card** family – Structure metric or content blocks. Metric grid example: [`data-display/card-metrics-grid.tsx`](../assets/examples/components/data-display/card-metrics-grid.tsx).
+- **StatsCard** – Dashboard KPI tile. Leaderboard snippet: [`data-display/statscard-leaderboard.tsx`](../assets/examples/components/data-display/statscard-leaderboard.tsx).
+- **DataTable** – Sortable, filterable table. Users table composition: [`data-display/datatable-users.tsx`](../assets/examples/components/data-display/datatable-users.tsx).
+- **Tabs** – Sectioned content for analytics views (see dashboard layout example).
+- **ComponentShowcase** – Prebuilt playground with clipboard and responsive preview. Dashboard integration: [`data-display/component-showcase-dashboard.tsx`](../assets/examples/components/data-display/component-showcase-dashboard.tsx).
+- **Image** – Utility wrapper for responsive imagery. Captioned hero card: [`data-display/image-with-caption.tsx`](../assets/examples/components/data-display/image-with-caption.tsx).
 
-## Composite views
+## Feedback & overlays
 
-- **Auth** – Prebuilt login/register/reset forms; uses Beyond-UI form controls internally.
-- **ProfileManagement** – Account profile editing layout and forms.
-- **LandingPage** – Sections for hero, features, testimonials.
-- **SingleProductView / SingleBlogView** – Detail pages for catalogue/blog experiences.
+- **Alert** – Inline callouts with action buttons: [`feedback/alert-inline-callout.tsx`](../assets/examples/components/feedback/alert-inline-callout.tsx).
+- **Toast** – Imperative notifications via `showToast`. Multi-type stack: [`feedback/toast-notifications.tsx`](../assets/examples/components/feedback/toast-notifications.tsx).
+- **Modal** – Confirmation dialog scaffolding: [`feedback/modal-confirmation.tsx`](../assets/examples/components/feedback/modal-confirmation.tsx).
+- **Skeleton / Spinner** – Loading placeholders and overlays: [`feedback/skeleton-loading.tsx`](../assets/examples/components/feedback/skeleton-loading.tsx), [`feedback/spinner-overlay.tsx`](../assets/examples/components/feedback/spinner-overlay.tsx).
+
+## Auth & account surfaces
+
+- **Auth** – Login, signup, reset flows. Full security dashboard: [`auth/auth-dashboard.tsx`](../assets/examples/components/auth/auth-dashboard.tsx).
+- **ProfileManagement** – Summary card composition: [`auth/profile-summary.tsx`](../assets/examples/components/auth/profile-summary.tsx).
+
+## Marketing & storytelling
+
+- **LandingPage** – Hero, features, CTA patterns: [`marketing/landing-hero.tsx`](../assets/examples/components/marketing/landing-hero.tsx).
+- **Blog / SingleBlogView** – Feature article layout: [`marketing/blog-feature.tsx`](../assets/examples/components/marketing/blog-feature.tsx).
+- **Marketplace / SingleProductView** – Product showcase components (see repo `stories/` for product grids and docs).
+
+## Utilities & documentation aids
+
+- **CodeHighlight** – Syntax highlighting blocks: [`utilities/code-highlight-snippet.tsx`](../assets/examples/components/utilities/code-highlight-snippet.tsx).
+- **DashboardHeader / Toast / Badge** – See layout/dashboard examples for combination patterns.
 
 ## Usage notes
 
-- All exports are surfaced through `src/index.ts`, so import from the package root.
-- Components share TypeScript types; check Storybook docs for prop tables.
-- For composition-heavy views (dashboards, landing pages), combine layout primitives with Cards/Stats/Charts.
-- For charts, use `ChartWrapper` (in the repo) to integrate with `recharts` when needed.
+- All exports live in the package root (`import { Button } from '@beyondcorp/beyond-ui'`). Keep `@beyondcorp/beyond-ui/dist/styles.css` imported once at the app entry.
+- Snippets assume Tailwind token overrides live in your project; adjust utilities as needed.
+- For composite dashboards or landing pages, mix layout primitives with component snippets above.
+- Charts: pair metric cards with your preferred charting lib (e.g., `ChartWrapper` under `src/components`).
 
-See [references/hooks.md](hooks.md) for complementary hooks and utilities, and [references/workflow.md](workflow.md) for scripts to run Storybook/test suites while you integrate.
+See [references/hooks.md](hooks.md) for complementary hooks/utilities and [references/workflow.md](workflow.md) for lint/storybook/test scripts while iterating. Reload snippets from `assets/examples/` when scaffolding new screens.
