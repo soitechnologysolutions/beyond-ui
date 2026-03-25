@@ -86,6 +86,15 @@ const componentCategories = {
   }
 };
 
+// Prop documentation interface
+interface PropDoc {
+  name: string;
+  type: string;
+  default?: string;
+  description?: string;
+  required?: boolean;
+}
+
 // Props
 interface ComponentShowcaseProps {
   className?: string;
@@ -182,7 +191,7 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
 
   const currentDoc = componentDocs[selectedComponent as keyof typeof componentDocs];
   const currentExample = currentDoc?.example ?? '';
-  const currentProps = currentDoc?.props ?? [];
+  const currentProps = (currentDoc?.props ?? []) as PropDoc[];
 
   const getViewportClass = () => {
     switch (viewMode) {
@@ -483,13 +492,13 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
                             </thead>
                             <tbody>
                               {currentProps.length > 0 ? (
-                                currentProps.map((prop, index) => (
+                                currentProps.map((prop: PropDoc, index) => (
                                   <tr key={prop.name ?? index} className="border-b border-gray-100">
                                     <td className="p-3">
                                       <code className="bg-gray-100 px-2 py-1 rounded text-sm">
                                         {prop.name}
                                       </code>
-                                      {"required" in prop && prop.required && (
+                                      {prop.required && (
                                         <Badge variant="danger" className="ml-2 text-xs">
                                           Required
                                         </Badge>
@@ -497,7 +506,7 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
                                     </td>
                                     <td className="p-3 text-gray-600">{prop.type}</td>
                                     <td className="p-3 text-gray-600">
-                                      {"default" in prop && prop.default ? (
+                                      {prop.default ? (
                                         <code className="bg-gray-100 px-2 py-1 rounded text-sm">
                                           {prop.default}
                                         </code>
