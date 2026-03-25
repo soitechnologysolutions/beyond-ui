@@ -27,11 +27,11 @@
 - Sidebar: ✅ Done
 
 ## Auth
-- LoginForm: ⏳ Pending
-- SignupForm: ⏳ Pending
-- PasswordResetForm: ⏳ Pending
-- ProtectedRoute: ⏳ Pending
+- LoginForm: ✅ Done
+- SignupForm: ✅ Done
+- PasswordResetForm: ✅ Done
+- ProtectedRoute: ✅ Done
 
 ## Marketing
-- AllProductsView: ⏳ Pending
-- ProductCard: ⏳ Pending
+- AllProductsView: ✅ Done
+- ProductCard: ✅ Done
