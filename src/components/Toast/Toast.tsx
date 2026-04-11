@@ -9,11 +9,11 @@ const toastVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-white border-gray-200 text-gray-900",
-        success: "bg-success-50 border-success-200 text-success-800",
-        error: "bg-danger-50 border-danger-200 text-danger-800",
-        warning: "bg-warning-50 border-warning-200 text-warning-800",
-        info: "bg-primary-50 border-primary-200 text-primary-800",
+        default: "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white",
+        success: "bg-success-50 dark:bg-success-900/30 border-success-200 dark:border-success-800 text-success-800 dark:text-success-400",
+        error: "bg-danger-50 dark:bg-danger-900/30 border-danger-200 dark:border-danger-800 text-danger-800 dark:text-danger-400",
+        warning: "bg-warning-50 dark:bg-warning-900/30 border-warning-200 dark:border-warning-800 text-warning-800 dark:text-warning-400",
+        info: "bg-primary-50 dark:bg-primary-900/30 border-primary-200 dark:border-primary-800 text-primary-800 dark:text-primary-400",
       },
     },
     defaultVariants: {
@@ -97,7 +97,7 @@ const Toast: React.FC = () => {
               <div className="flex-1 text-sm font-medium">{message}</div>
               <button
                 onClick={() => toast.dismiss(t.id)}
-                className="inline-flex h-5 w-5 items-center justify-center rounded-full hover:bg-black/10"
+                className="inline-flex h-5 w-5 items-center justify-center rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
               >
                 <X className="h-3 w-3" />
               </button>

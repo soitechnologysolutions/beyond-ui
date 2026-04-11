@@ -7,12 +7,12 @@ const pageLayoutVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-white",
-        centered: "bg-white",
-        sidebar: "bg-gray-50",
-        landing: "bg-gradient-to-br from-gray-50 to-white",
-        product: "bg-white",
-        blog: "bg-gray-50",
+        default: "bg-white dark:bg-gray-950",
+        centered: "bg-white dark:bg-gray-950",
+        sidebar: "bg-gray-50 dark:bg-gray-900",
+        landing: "bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-950",
+        product: "bg-white dark:bg-gray-950",
+        blog: "bg-gray-50 dark:bg-gray-900",
       },
       maxWidth: {
         none: "",
@@ -101,7 +101,7 @@ const PageHeader: React.FC<HeaderProps> = ({
     className={cn(
       "w-full z-50 transition-all duration-300",
       sticky && "sticky top-0",
-      transparent ? "bg-transparent" : "bg-white border-b border-gray-200",
+      transparent ? "bg-transparent" : "bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800",
       className
     )}
     role="banner"
@@ -204,8 +204,9 @@ const PageFooter: React.FC<FooterProps> = ({
     className={cn(
       "w-full mt-auto",
       variant === "simple" && "bg-gray-50 border-t border-gray-200 py-8",
-      variant === "detailed" && "bg-gray-900 text-white py-12",
-      variant === "minimal" && "bg-white border-t border-gray-100 py-6",
+      variant === "simple" && "bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-8",
+      variant === "detailed" && "bg-gray-900 dark:bg-gray-950 text-white py-12",
+      variant === "minimal" && "bg-white dark:bg-gray-950 border-t border-gray-100 dark:border-gray-800 py-6",
       className
     )}
     role="contentinfo"
@@ -277,4 +278,3 @@ export {
   type SidebarProps,
   type FooterProps,
 };
-

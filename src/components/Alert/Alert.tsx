@@ -7,11 +7,11 @@ const alertVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-white text-gray-950 border-gray-200",
-        success: "bg-success-50 text-success-800 border-success-200",
-        warning: "bg-warning-50 text-warning-800 border-warning-200",
-        danger: "bg-danger-50 text-danger-800 border-danger-200",
-        info: "bg-primary-50 text-primary-800 border-primary-200",
+        default: "bg-white dark:bg-gray-900 text-gray-950 dark:text-gray-50 border-gray-200 dark:border-gray-800",
+        success: "bg-success-50 dark:bg-success-900/30 text-success-800 dark:text-success-400 border-success-200 dark:border-success-800",
+        warning: "bg-warning-50 dark:bg-warning-900/30 text-warning-800 dark:text-warning-400 border-warning-200 dark:border-warning-800",
+        danger: "bg-danger-50 dark:bg-danger-900/30 text-danger-800 dark:text-danger-400 border-danger-200 dark:border-danger-800",
+        info: "bg-primary-50 dark:bg-primary-900/30 text-primary-800 dark:text-primary-400 border-primary-200 dark:border-primary-800",
       },
     },
     defaultVariants: {

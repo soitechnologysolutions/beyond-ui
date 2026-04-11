@@ -4,12 +4,12 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../utils/cn";
 
 const navbarVariants = cva(
-  "flex items-center justify-between w-full px-4 py-3 bg-white border-b border-gray-200",
+  "flex items-center justify-between w-full px-4 py-3 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800",
   {
     variants: {
       variant: {
-        default: "bg-white border-gray-200",
-        dark: "bg-gray-900 border-gray-700 text-white",
+        default: "bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800",
+        dark: "bg-gray-900 dark:bg-gray-950 border-gray-700 dark:border-gray-800 text-white",
         transparent: "bg-transparent border-transparent",
       },
       size: {
@@ -53,7 +53,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 rounded-md hover:bg-gray-100"
+            className="md:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-gray-300"
             onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -62,7 +62,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-gray-200 shadow-lg z-50">
+          <div className="md:hidden absolute top-full left-0 right-0 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 shadow-lg z-50">
             <div className="px-4 py-2 space-y-2">
               {children}
             </div>
@@ -81,7 +81,7 @@ const NavItem = React.forwardRef<
   <a
     ref={ref}
     className={cn(
-      "text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+      "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-3 py-2 rounded-md text-sm font-medium transition-colors",
       className
     )}
     {...props}

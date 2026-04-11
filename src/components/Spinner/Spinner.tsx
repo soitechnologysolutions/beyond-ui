@@ -13,8 +13,8 @@ const spinnerVariants = cva(
         xl: "h-12 w-12",
       },
       variant: {
-        primary: "text-primary-600",
-        secondary: "text-secondary-600",
+        primary: "text-primary-600 dark:text-primary-400",
+        secondary: "text-secondary-600 dark:text-secondary-400",
         white: "text-white",
         current: "text-current",
       },
