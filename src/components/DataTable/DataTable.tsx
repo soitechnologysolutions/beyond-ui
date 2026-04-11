@@ -437,6 +437,9 @@ export const DataTable = <T extends Record<string, any>>({
   const isAllSelected = selectedRowKeys.length === dataSource.length && dataSource.length > 0;
   const isIndeterminate = selectedRowKeys.length > 0 && selectedRowKeys.length < dataSource.length;
 
+  // Mobile-first responsive: useBreakpoint to switch between table and card layouts
+  const { isBelow } = useBreakpoint();
+
   if (loading) {
     return (
       <div className={cn("w-full", className)}>
@@ -456,9 +459,6 @@ export const DataTable = <T extends Record<string, any>>({
       </div>
     );
   }
-
-  // Mobile-first responsive: useBreakpoint to switch between table and card layouts
-  const { isBelow } = useBreakpoint();
 
   return (
     <div className={cn("w-full", className)}>
