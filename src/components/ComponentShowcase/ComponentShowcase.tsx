@@ -205,14 +205,14 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
   };
 
   return (
-    <div className={cn("flex h-screen bg-gray-50", className)}>
+    <div className={cn("flex h-screen bg-gray-50 dark:bg-gray-950", darkMode && "dark", className)}>
       <Toast />
 
       {/* Sidebar */}
       <div
         ref={sidebarRef}
         className={cn(
-          "bg-white border-r border-gray-200 transition-all duration-300 flex flex-col",
+          "bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300 flex flex-col",
           sidebarCollapsed ? "w-16" : "w-80"
         )}
         tabIndex={sidebarCollapsed ? -1 : 0}
@@ -220,14 +220,14 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
         aria-label="Component navigation"
       >
         {/* Sidebar Header */}
-        <div className="p-4 border-b border-gray-200">
+        <div className="p-4 border-b border-gray-200 dark:border-gray-800">
           {!sidebarCollapsed && (
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
                   <Palette className="h-4 w-4 text-white" />
                 </div>
-                <span className="font-bold text-lg text-gray-900">Beyond UI</span>
+                <span className="font-bold text-lg text-gray-900 dark:text-white">Beyond UI</span>
               </div>
               <Button
                 variant="ghost"
@@ -253,7 +253,7 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
 
           {!sidebarCollapsed && (
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
               <Input
                 placeholder="Search components..."
                 value={searchQuery}
@@ -272,7 +272,7 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
                 onClick={() => !sidebarCollapsed && toggleCategory(categoryName)}
                 className={cn(
                   "flex items-center w-full p-2 text-sm font-medium rounded-lg transition-colors",
-                  "hover:bg-gray-100 text-gray-700",
+                "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300",
                   sidebarCollapsed ? "justify-center" : "justify-between"
                 )}
               >
@@ -305,8 +305,8 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
                         className={cn(
                           "flex items-center w-full p-2 text-sm rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500",
                           isActive
-                            ? "bg-primary-50 text-primary-700 border-r-2 border-primary-600"
-                            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                          ? "bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 border-r-2 border-primary-600 dark:border-primary-500"
+                          : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-white"
                         )}
                         aria-current={isActive ? "page" : undefined}
                       >
@@ -324,10 +324,10 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 p-4">
+        <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                 {currentDoc?.name || "Component Showcase"}
               </h1>
               {currentDoc && <Badge variant="outline">{currentDoc.name}</Badge>}
@@ -335,7 +335,7 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
 
             <div className="flex items-center space-x-2">
               {/* Viewport Controls */}
-              <div className="flex items-center bg-gray-100 rounded-lg p-1">
+              <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
                 <Button
                   variant={viewMode === "desktop" ? "primary" : "ghost"}
                   size="sm"
@@ -381,7 +381,7 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
             <div className="max-w-6xl mx-auto space-y-8">
               {/* Description */}
               <div>
-                <p className="text-lg text-gray-600">{currentDoc.description}</p>
+                <p className="text-lg text-gray-600 dark:text-gray-400">{currentDoc.description}</p>
               </div>
 
               {/* Tabs */}
@@ -420,7 +420,7 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
                 </div>
                 <div>
                   <div className="mt-6">
-                    <div className="bg-white rounded-lg shadow p-6">
+                    <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6">
                       {/* Preview */}
                       <div
                         className={cn(
@@ -428,7 +428,7 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
                           getViewportClass()
                         )}
                       >
-                        <div className={cn(darkMode && "dark")}>
+                        <div>
                           {showcaseRegistry[selectedComponent]
                             ? React.createElement(
                                 showcaseRegistry[selectedComponent]
@@ -441,9 +441,9 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
 
                   {activeTab === "code" && (
                     <div className="mt-6" role="tabpanel" aria-label="Code example">
-                      <div className="bg-white rounded-lg shadow p-6">
+                      <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6">
                         <div className="flex flex-row items-center justify-between">
-                          <h2 className="text-lg font-semibold mb-0">
+                          <h2 className="text-lg font-semibold mb-0 dark:text-white">
                             Usage Example
                           </h2>
                           <Button
@@ -468,24 +468,24 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
 
                   {activeTab === "props" && (
                     <div className="mt-6" role="tabpanel" aria-label="Component props">
-                      <div className="bg-white rounded-lg shadow p-6">
-                        <h2 className="text-lg font-semibold mb-4">
+                      <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6">
+                        <h2 className="text-lg font-semibold mb-4 dark:text-white">
                           Component Props
                         </h2>
                         <div className="overflow-x-auto">
                           <table className="w-full border-collapse">
                             <thead>
-                              <tr className="border-b border-gray-200">
-                                <th className="text-left p-3 font-medium text-gray-900">
+                              <tr className="border-b border-gray-200 dark:border-gray-800">
+                                <th className="text-left p-3 font-medium text-gray-900 dark:text-gray-100">
                                   Prop
                                 </th>
-                                <th className="text-left p-3 font-medium text-gray-900">
+                                <th className="text-left p-3 font-medium text-gray-900 dark:text-gray-100">
                                   Type
                                 </th>
-                                <th className="text-left p-3 font-medium text-gray-900">
+                                <th className="text-left p-3 font-medium text-gray-900 dark:text-gray-100">
                                   Default
                                 </th>
-                                <th className="text-left p-3 font-medium text-gray-900">
+                                <th className="text-left p-3 font-medium text-gray-900 dark:text-gray-100">
                                   Description
                                 </th>
                               </tr>
@@ -493,9 +493,9 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
                             <tbody>
                               {currentProps.length > 0 ? (
                                 currentProps.map((prop: PropDoc, index) => (
-                                  <tr key={prop.name ?? index} className="border-b border-gray-100">
+                                  <tr key={prop.name ?? index} className="border-b border-gray-100 dark:border-gray-800/50">
                                     <td className="p-3">
-                                      <code className="bg-gray-100 px-2 py-1 rounded text-sm">
+                                      <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm dark:text-gray-300">
                                         {prop.name}
                                       </code>
                                       {prop.required && (
@@ -504,20 +504,20 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
                                         </Badge>
                                       )}
                                     </td>
-                                    <td className="p-3 text-gray-600">{prop.type}</td>
-                                    <td className="p-3 text-gray-600">
+                                    <td className="p-3 text-gray-600 dark:text-gray-400">{prop.type}</td>
+                                    <td className="p-3 text-gray-600 dark:text-gray-400">
                                       {prop.default ? (
-                                        <code className="bg-gray-100 px-2 py-1 rounded text-sm">
+                                        <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm dark:text-gray-300">
                                           {prop.default}
                                         </code>
                                       ) : null}
                                     </td>
-                                    <td className="p-3 text-gray-600">{prop.description}</td>
+                                    <td className="p-3 text-gray-600 dark:text-gray-400">{prop.description}</td>
                                   </tr>
                                 ))
                               ) : (
                                 <tr>
-                                  <td colSpan={4} className="p-4 text-center text-gray-500">
+                                  <td colSpan={4} className="p-4 text-center text-gray-500 dark:text-gray-400">
                                     No props documented for this component yet.
                                   </td>
                                 </tr>
@@ -534,11 +534,11 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
           ) : (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
-                <Book className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                <Book className="h-16 w-16 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                   Select a Component
                 </h2>
-                <p className="text-gray-600">
+                <p className="text-gray-600 dark:text-gray-400">
                   Choose a component from the sidebar to view its documentation and examples.
                 </p>
               </div>

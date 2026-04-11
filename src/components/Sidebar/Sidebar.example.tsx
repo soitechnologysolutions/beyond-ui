@@ -18,5 +18,7 @@ const demoMenu: MenuItem[] = [
 ];
 
 export const SidebarExample: React.FC = () => (
-  <Sidebar menuItems={demoMenu} />
+  <div className="h-screen w-full relative bg-gray-50 dark:bg-gray-950">
+    <Sidebar menuItems={demoMenu} />
+  </div>
 );

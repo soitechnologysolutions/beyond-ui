@@ -182,8 +182,8 @@ export const PageLayoutShowcase: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Page Layout System</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Page Layout System</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
             Flexible, responsive layout components for building various page types
           </p>
         </div>
@@ -195,7 +195,7 @@ export const PageLayoutShowcase: React.FC = () => {
 
       {/* Example Selection */}
       <div className="flex items-center justify-between">
-        <div className="flex bg-gray-100 rounded-lg p-1">
+        <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
           <Button
             variant={selectedExample === 'landing' ? 'primary' : 'ghost'}
             size="sm"
@@ -223,7 +223,7 @@ export const PageLayoutShowcase: React.FC = () => {
         </div>
 
         {/* Viewport Controls */}
-        <div className="flex items-center bg-gray-100 rounded-lg p-1">
+        <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
           <Button
             variant={viewMode === 'desktop' ? 'primary' : 'ghost'}
             size="sm"
@@ -265,7 +265,7 @@ export const PageLayoutShowcase: React.FC = () => {
           <Card>
             <CardContent className="p-0">
               <div className={`mx-auto transition-all duration-300 ${getViewportClass()}`}>
-                <div className="border border-gray-200 rounded-lg overflow-hidden bg-white">
+                <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden bg-white dark:bg-gray-900">
                   <div className="transform scale-75 origin-top-left w-[133.33%] h-[133.33%]">
                     {renderExample()}
                   </div>
@@ -312,7 +312,7 @@ export const PageLayoutShowcase: React.FC = () => {
             <CardTitle>Layout Components</CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2 text-sm text-gray-600">
+            <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
               <li><strong>PageLayout:</strong> Main container with variant support</li>
               <li><strong>PageHeader:</strong> Sticky/transparent header with navigation</li>
               <li><strong>PageHero:</strong> Full-height hero sections with backgrounds</li>
@@ -329,7 +329,7 @@ export const PageLayoutShowcase: React.FC = () => {
             <CardTitle>Key Features</CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2 text-sm text-gray-600">
+            <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
               <li>• Responsive design with mobile-first approach</li>
               <li>• Flexible layout variants (default, centered, sidebar)</li>
               <li>• Semantic HTML with proper ARIA landmarks</li>

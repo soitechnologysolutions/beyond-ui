@@ -42,12 +42,12 @@ export const LandingPageExample: React.FC = () => (
             <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
               <Globe className="h-5 w-5 text-white" />
             </div>
-            <span className="font-bold text-xl text-gray-900">Beyond</span>
+            <span className="font-bold text-xl text-gray-900 dark:text-white">Beyond</span>
           </div>
           <nav className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-gray-700 hover:text-primary-600">Features</a>
-            <a href="#pricing" className="text-gray-700 hover:text-primary-600">Pricing</a>
-            <a href="#about" className="text-gray-700 hover:text-primary-600">About</a>
+            <a href="#features" className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">Features</a>
+            <a href="#pricing" className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">Pricing</a>
+            <a href="#about" className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">About</a>
             <Button variant="primary">Get Started</Button>
           </nav>
         </div>
@@ -58,11 +58,11 @@ export const LandingPageExample: React.FC = () => (
     <PageHero fullHeight>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
             Build Amazing
-            <span className="text-primary-600"> Web Experiences</span>
+            <span className="text-primary-600 dark:text-primary-400"> Web Experiences</span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+          <p className="text-xl text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
             Create stunning, responsive websites with our comprehensive UI component library. 
             Built for developers, designed for users.
           </p>
@@ -83,10 +83,10 @@ export const LandingPageExample: React.FC = () => (
     <PageLayoutContent layout="centered" spacing="xl">
       <section id="features" className="py-16">
         <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
             Everything You Need
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
             Comprehensive components, responsive design, and developer-friendly APIs
           </p>
         </div>
@@ -113,10 +113,10 @@ export const LandingPageExample: React.FC = () => (
               <div className="flex justify-center mb-4">
                 {feature.icon}
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
                 {feature.title}
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-400">
                 {feature.description}
               </p>
             </Card>
@@ -188,7 +188,7 @@ export const ProductPageExample: React.FC = () => (
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-2">
             <ShoppingCart className="h-6 w-6 text-primary-600" />
-            <span className="font-bold text-xl">Store</span>
+            <span className="font-bold text-xl dark:text-white">Store</span>
           </div>
           <div className="flex items-center space-x-4">
             <Input placeholder="Search products..." className="w-64" />
@@ -203,15 +203,15 @@ export const ProductPageExample: React.FC = () => (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         {/* Product Images */}
         <div>
-          <div className="aspect-square bg-gray-100 rounded-lg mb-4 flex items-center justify-center">
-            <div className="text-center text-gray-500">
+          <div className="aspect-square bg-gray-100 dark:bg-gray-800 rounded-lg mb-4 flex items-center justify-center">
+            <div className="text-center text-gray-500 dark:text-gray-400">
               <ShoppingCart className="h-16 w-16 mx-auto mb-2" />
               <p>Product Image</p>
             </div>
           </div>
           <div className="grid grid-cols-4 gap-2">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="aspect-square bg-gray-100 rounded border-2 border-transparent hover:border-primary-500 cursor-pointer" />
+              <div key={i} className="aspect-square bg-gray-100 dark:bg-gray-800 rounded border-2 border-transparent hover:border-primary-500 cursor-pointer" />
             ))}
           </div>
         </div>
@@ -223,7 +223,7 @@ export const ProductPageExample: React.FC = () => (
             <Badge variant="outline">Free Shipping</Badge>
           </div>
           
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
             Premium Wireless Headphones
           </h1>
           
@@ -233,28 +233,28 @@ export const ProductPageExample: React.FC = () => (
                 <Star key={star} className="h-5 w-5 text-yellow-400 fill-current" />
               ))}
             </div>
-            <span className="text-gray-600">(128 reviews)</span>
+            <span className="text-gray-600 dark:text-gray-400">(128 reviews)</span>
           </div>
 
           <div className="mb-6">
-            <span className="text-3xl font-bold text-gray-900">$299.99</span>
-            <span className="text-lg text-gray-500 line-through ml-2">$399.99</span>
+            <span className="text-3xl font-bold text-gray-900 dark:text-white">$299.99</span>
+            <span className="text-lg text-gray-500 dark:text-gray-400 line-through ml-2">$399.99</span>
             <Badge variant="danger" className="ml-2">25% OFF</Badge>
           </div>
 
-          <p className="text-gray-600 mb-6 leading-relaxed">
+          <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
             Experience premium sound quality with our latest wireless headphones. 
             Featuring active noise cancellation, 30-hour battery life, and premium materials.
           </p>
 
           <div className="space-y-4 mb-8">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Color</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Color</label>
               <div className="flex space-x-2">
                 {['Black', 'White', 'Blue'].map((color) => (
                   <button
                     key={color}
-                    className="px-4 py-2 border border-gray-300 rounded-lg hover:border-primary-500 focus:border-primary-500"
+                    className="px-4 py-2 border border-gray-300 dark:border-gray-700 dark:text-gray-200 rounded-lg hover:border-primary-500 dark:hover:border-primary-400 focus:border-primary-500"
                   >
                     {color}
                   </button>
@@ -276,9 +276,9 @@ export const ProductPageExample: React.FC = () => (
             </Button>
           </div>
 
-          <div className="border-t pt-6">
-            <h3 className="font-semibold text-gray-900 mb-3">Key Features</h3>
-            <ul className="space-y-2 text-gray-600">
+          <div className="border-t dark:border-gray-800 pt-6">
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Key Features</h3>
+            <ul className="space-y-2 text-gray-600 dark:text-gray-400">
               <li className="flex items-center">
                 <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
                 Active Noise Cancellation
@@ -300,7 +300,7 @@ export const ProductPageExample: React.FC = () => (
     {/* Footer */}
     <PageFooter variant="simple">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <p className="text-gray-600">&copy; 2024 Store. All rights reserved.</p>
+        <p className="text-gray-600 dark:text-gray-400">&copy; 2024 Store. All rights reserved.</p>
       </div>
     </PageFooter>
   </PageLayout>
@@ -320,12 +320,12 @@ export const BlogPostExample: React.FC = () => (
             <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
               <User className="h-5 w-5 text-white" />
             </div>
-            <span className="font-bold text-xl">Blog</span>
+            <span className="font-bold text-xl dark:text-white">Blog</span>
           </div>
           <nav className="flex items-center space-x-6">
-            <a href="#" className="text-gray-700 hover:text-primary-600">Home</a>
-            <a href="#" className="text-gray-700 hover:text-primary-600">Categories</a>
-            <a href="#" className="text-gray-700 hover:text-primary-600">About</a>
+            <a href="#" className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">Home</a>
+            <a href="#" className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">Categories</a>
+            <a href="#" className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">About</a>
           </nav>
         </div>
       </div>
@@ -335,18 +335,18 @@ export const BlogPostExample: React.FC = () => (
     <PageLayoutContent layout="sidebar" spacing="lg">
       {/* Main Content */}
       <PageContent maxWidth="full" className="lg:flex-1">
-        <article className="prose prose-lg max-w-none">
+        <article className="prose prose-lg dark:prose-invert max-w-none text-gray-700 dark:text-gray-300">
           <header className="mb-8">
             <div className="flex items-center space-x-2 mb-4">
               <Badge variant="default">Technology</Badge>
               <Badge variant="outline">React</Badge>
             </div>
             
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
               Building Modern Web Applications with React and TypeScript
             </h1>
             
-            <div className="flex items-center space-x-4 text-gray-600 mb-6">
+            <div className="flex items-center space-x-4 text-gray-600 dark:text-gray-400 mb-6">
               <div className="flex items-center space-x-2">
                 <Avatar size="sm">
                   <AvatarImage src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=64" />
@@ -362,14 +362,14 @@ export const BlogPostExample: React.FC = () => (
             </div>
           </header>
 
-          <div className="aspect-video bg-gray-100 rounded-lg mb-8 flex items-center justify-center">
-            <div className="text-center text-gray-500">
+          <div className="aspect-video bg-gray-100 dark:bg-gray-800 rounded-lg mb-8 flex items-center justify-center">
+            <div className="text-center text-gray-500 dark:text-gray-400">
               <Globe className="h-16 w-16 mx-auto mb-2" />
               <p>Featured Image</p>
             </div>
           </div>
 
-          <div className="space-y-6 text-gray-700 leading-relaxed">
+          <div className="space-y-6 text-gray-700 dark:text-gray-300 leading-relaxed">
             <p>
               Modern web development has evolved significantly over the past few years. 
               With the introduction of React and TypeScript, developers now have powerful 
@@ -382,7 +382,7 @@ export const BlogPostExample: React.FC = () => (
               from project setup to deployment strategies.
             </p>
 
-            <h2 className="text-2xl font-bold text-gray-900 mt-8 mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mt-8 mb-4">
               Getting Started
             </h2>
             
@@ -392,9 +392,9 @@ export const BlogPostExample: React.FC = () => (
               TypeScript template for beginners.
             </p>
 
-            <div className="bg-gray-50 p-6 rounded-lg border-l-4 border-primary-500">
-              <p className="font-medium text-gray-900 mb-2">Pro Tip:</p>
-              <p className="text-gray-700">
+            <div className="bg-gray-50 dark:bg-gray-800/50 p-6 rounded-lg border-l-4 border-primary-500 dark:border-primary-400">
+              <p className="font-medium text-gray-900 dark:text-white mb-2">Pro Tip:</p>
+              <p className="text-gray-700 dark:text-gray-300">
                 Always start with a solid project structure. This will save you 
                 countless hours as your application grows.
               </p>
@@ -403,15 +403,15 @@ export const BlogPostExample: React.FC = () => (
         </article>
 
         {/* Author Bio */}
-        <div className="mt-12 p-6 bg-gray-50 rounded-lg">
+        <div className="mt-12 p-6 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
           <div className="flex items-start space-x-4">
             <Avatar size="lg">
               <AvatarImage src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=64" />
               <AvatarFallback>JD</AvatarFallback>
             </Avatar>
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">John Doe</h3>
-              <p className="text-gray-600 mb-3">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">John Doe</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-3">
                 Senior Frontend Developer with 8+ years of experience building 
                 scalable web applications. Passionate about React, TypeScript, 
                 and modern web technologies.
@@ -454,7 +454,7 @@ export const BlogPostExample: React.FC = () => (
                   { name: 'Web Design', count: 8 },
                 ].map((category) => (
                   <div key={category.name} className="flex items-center justify-between">
-                    <a href="#" className="text-gray-700 hover:text-primary-600">
+                  <a href="#" className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">
                       {category.name}
                     </a>
                     <Badge variant="outline">{category.count}</Badge>
@@ -477,10 +477,10 @@ export const BlogPostExample: React.FC = () => (
                   'Building Accessible Web Components',
                 ].map((title, index) => (
                   <div key={index}>
-                    <a href="#" className="text-gray-900 hover:text-primary-600 font-medium block mb-1">
+                  <a href="#" className="text-gray-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 font-medium block mb-1">
                       {title}
                     </a>
-                    <p className="text-sm text-gray-500">March {10 + index}, 2024</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">March {10 + index}, 2024</p>
                   </div>
                 ))}
               </div>
@@ -495,7 +495,7 @@ export const BlogPostExample: React.FC = () => (
             <CardContent>
               <div className="flex flex-wrap gap-2">
                 {['React', 'TypeScript', 'JavaScript', 'CSS', 'HTML', 'Node.js', 'GraphQL'].map((tag) => (
-                  <Badge key={tag} variant="outline" className="cursor-pointer hover:bg-primary-50">
+                <Badge key={tag} variant="outline" className="cursor-pointer hover:bg-primary-50 dark:hover:bg-primary-900/30">
                     <Tag className="h-3 w-3 mr-1" />
                     {tag}
                   </Badge>
@@ -510,7 +510,7 @@ export const BlogPostExample: React.FC = () => (
     {/* Footer */}
     <PageFooter variant="minimal">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <p className="text-gray-600">&copy; 2024 Blog. All rights reserved.</p>
+        <p className="text-gray-600 dark:text-gray-400">&copy; 2024 Blog. All rights reserved.</p>
       </div>
     </PageFooter>
   </PageLayout>
