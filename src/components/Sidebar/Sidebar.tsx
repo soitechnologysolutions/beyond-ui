@@ -22,7 +22,7 @@ import { ProfileButton } from "./ProfileButton";
 import { LogoutButton } from "./LogoutButton";
 
 const sidebarVariants = cva(
-  "fixed left-0 top-0 z-40 h-screen bg-white border-r border-gray-200 transition-all duration-300 ease-in-out",
+  "fixed left-0 top-0 z-40 h-screen bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300 ease-in-out",
   {
     variants: {
       collapsed: {
@@ -41,8 +41,8 @@ const menuItemVariants = cva(
   {
     variants: {
       active: {
-        true: "bg-primary-50 text-primary-700 border-r-2 border-primary-600",
-        false: "text-gray-700 hover:bg-gray-50 hover:text-gray-900",
+        true: "bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 border-r-2 border-primary-600",
+        false: "text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-white",
       },
       collapsed: {
         true: "justify-center px-2",
@@ -260,7 +260,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         {...props}
       >
         {/* Sidebar Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
           {!collapsed && (
             <SidebarHeader
               title={title}
@@ -270,12 +270,12 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           )}
           <button
             onClick={onToggle}
-            className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+          className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           >
             {collapsed ? (
-              <ChevronRight className="h-4 w-4 text-gray-600" />
+            <ChevronRight className="h-4 w-4 text-gray-600 dark:text-gray-400" />
             ) : (
-              <ChevronLeft className="h-4 w-4 text-gray-600" />
+            <ChevronLeft className="h-4 w-4 text-gray-600 dark:text-gray-400" />
             )}
           </button>
         </div>
@@ -286,7 +286,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         </nav>
 
         {/* User Profile Section */}
-        <div className="border-t border-gray-200 p-4">
+      <div className="border-t border-gray-200 dark:border-gray-800 p-4">
           {collapsed ? (
             <div className="flex justify-center">
               <div
@@ -324,10 +324,10 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                   <AvatarFallback>{avatarFallback}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">
+              <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
                     {name}
                   </p>
-                  <p className="text-xs text-gray-500 truncate">
+              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                     {email}
                   </p>
                 </div>

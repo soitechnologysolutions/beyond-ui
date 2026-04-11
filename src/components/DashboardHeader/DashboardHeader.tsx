@@ -104,7 +104,7 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
       <header
         ref={ref}
         className={cn(
-          "z-30 bg-white border-b border-gray-200 transition-all duration-300",
+          "z-30 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 transition-all duration-300",
           className
         )}
         style={props.style}
@@ -157,7 +157,7 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
                     {item.href ? (
                       <a
                         href={item.href}
-                        className="text-gray-600 hover:text-gray-900 transition-colors"
+                        className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                         onClick={e => {
                           onBreadcrumbClick?.(item, index);
                         }}
@@ -166,7 +166,7 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
                       </a>
                     ) : (
                       <span
-                        className="text-gray-900 font-medium"
+                        className="text-gray-900 dark:text-white font-medium"
                         onClick={e => {
                           onBreadcrumbClick?.(item, index);
                         }}
@@ -200,13 +200,13 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
             isSectionVisible(showSearch, isMobile ? "mobile" : "desktop") && (
               <div className="flex-1 min-w-0 mx-2">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
                   <Input
                     type="text"
                     placeholder={searchPlaceholder}
                     value={searchValue}
                     onChange={handleSearchChange}
-                    className="pl-10 bg-gray-50 border-gray-200 focus:bg-white w-full"
+                    className="pl-10 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:bg-white dark:focus:bg-gray-900 dark:text-white w-full"
                   />
                 </div>
               </div>

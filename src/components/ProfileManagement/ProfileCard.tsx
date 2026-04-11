@@ -32,7 +32,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
 }) => (
   <Card
     className={cn(
-      "flex flex-col gap-4 p-6 rounded-xl bg-white shadow-sm border border-gray-100 mb-6",
+      "flex flex-col gap-4 p-6 rounded-xl bg-white dark:bg-gray-900 shadow-sm border border-gray-100 dark:border-gray-800 mb-6",
       className
     )}
     style={style}

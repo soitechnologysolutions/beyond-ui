@@ -34,7 +34,7 @@ import type {
 } from "./DataTable.types";
 
 const tableVariants = cva(
-  "w-full border-collapse bg-white",
+  "w-full border-collapse bg-white dark:bg-gray-900",
   {
     variants: {
       size: {
@@ -43,7 +43,7 @@ const tableVariants = cva(
         large: "text-base",
       },
       bordered: {
-        true: "border border-gray-200",
+        true: "border border-gray-200 dark:border-gray-800",
         false: "",
       },
     },
@@ -55,7 +55,7 @@ const tableVariants = cva(
 );
 
 const cellVariants = cva(
-  "border-b border-gray-200 transition-colors",
+  "border-b border-gray-200 dark:border-gray-800 transition-colors",
   {
     variants: {
       size: {
@@ -69,8 +69,8 @@ const cellVariants = cva(
         right: "text-right",
       },
       type: {
-        header: "bg-gray-50 font-semibold text-gray-900 border-b-2 border-gray-200",
-        body: "text-gray-700 hover:bg-gray-50",
+        header: "bg-gray-50 dark:bg-gray-800/50 font-semibold text-gray-900 dark:text-gray-100 border-b-2 border-gray-200 dark:border-gray-800",
+        body: "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50",
       },
     },
     defaultVariants: {
@@ -444,7 +444,7 @@ export const DataTable = <T extends Record<string, any>>({
     return (
       <div className={cn("w-full", className)}>
         {title && <div className="mb-4">{title()}</div>}
-        <div className="border border-gray-200 rounded-lg overflow-hidden">
+      <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
           <div className="p-4 space-y-3">
             {Array.from({ length: 5 }).map((_, i) => (
               <div key={i} className="flex space-x-4">
@@ -464,12 +464,12 @@ export const DataTable = <T extends Record<string, any>>({
     <div className={cn("w-full", className)}>
       {title && <div className="mb-4">{title()}</div>}
 
-      <div className="border border-gray-200 rounded-lg overflow-hidden">
+      <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
         {/* Card layout for mobile */}
         {isBelow('md') ? (
           <div className="space-y-4 p-2">
             {paginatedData.length === 0 ? (
-              <div className="text-gray-500 text-center py-8">
+              <div className="text-gray-500 dark:text-gray-400 text-center py-8">
                 <div className="text-4xl mb-2">📋</div>
                 <div>No data available</div>
               </div>

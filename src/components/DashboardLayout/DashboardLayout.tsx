@@ -69,7 +69,7 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
     };
 
     return (
-      <div ref={ref} className={cn("bg-gray-50 w-full h-screen overflow-hidden", className)} {...props}>
+      <div ref={ref} className={cn("bg-gray-50 dark:bg-gray-900 w-full h-screen overflow-hidden", className)} {...props}>
         {/* Fixed Sidebar */}
         <Sidebar
           collapsed={sidebarCollapsed}
