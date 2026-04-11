@@ -299,13 +299,31 @@ export const DataTable = <T extends Record<string, any>>({
   onSort,
   onFilter,
   onChange,
+  emptyLabel = 'No data available',
   ...props
-}: DataTableProps<T>) => {
+}: DataTableProps<T> & { emptyLabel?: React.ReactNode }) => {
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: '', direction: null });
   const [filters, setFilters] = useState<FilterValue>({});
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>(
     rowSelection?.selectedRowKeys || []
   );
+
+  const [internalPage, setInternalPage] = useState(
+    pagination && typeof pagination === 'object' && pagination.current ? pagination.current : 1
+  );
+  const [internalPageSize, setInternalPageSize] = useState(
+    pagination && typeof pagination === 'object' && pagination.pageSize ? pagination.pageSize : 10
+  );
+
+  React.useEffect(() => {
+    if (pagination && typeof pagination === 'object') {
+      if (pagination.current) setInternalPage(pagination.current);
+      if (pagination.pageSize) setInternalPageSize(pagination.pageSize);
+    }
+  }, [
+    pagination && typeof pagination === 'object' ? pagination.current : undefined,
+    pagination && typeof pagination === 'object' ? pagination.pageSize : undefined
+  ]);
 
   // Get row key function
   const getRowKey = useCallback((record: T, index: number): React.Key => {
@@ -417,21 +435,22 @@ export const DataTable = <T extends Record<string, any>>({
 
   // Pagination logic
   const paginatedData = useMemo(() => {
-    if (!pagination) return processedData;
+    if (pagination === false) return processedData;
     
-    const { current, pageSize } = pagination;
-    const startIndex = (current - 1) * pageSize;
-    return processedData.slice(startIndex, startIndex + pageSize);
-  }, [processedData, pagination]);
+    const startIndex = (internalPage - 1) * internalPageSize;
+    return processedData.slice(startIndex, startIndex + internalPageSize);
+  }, [processedData, pagination, internalPage, internalPageSize]);
 
   // Update pagination total
   const currentPagination = useMemo(() => {
-    if (!pagination) return false;
+    if (pagination === false) return false;
     return {
-      ...pagination,
+      ...(typeof pagination === 'object' ? pagination : {}),
+      current: internalPage,
+      pageSize: internalPageSize,
       total: processedData.length,
     };
-  }, [pagination, processedData.length]);
+  }, [pagination, internalPage, internalPageSize, processedData.length]);
 
   // Selection state
   const isAllSelected = selectedRowKeys.length === dataSource.length && dataSource.length > 0;
@@ -471,7 +490,7 @@ export const DataTable = <T extends Record<string, any>>({
             {paginatedData.length === 0 ? (
               <div className="text-gray-500 dark:text-gray-400 text-center py-8">
                 <div className="text-4xl mb-2">📋</div>
-                <div>No data available</div>
+                <div>{emptyLabel}</div>
               </div>
             ) : (
               paginatedData.map((record, index) => {
@@ -596,7 +615,7 @@ export const DataTable = <T extends Record<string, any>>({
                     >
                       <div className="text-gray-500">
                         <div className="text-4xl mb-2">📋</div>
-                        <div>No data available</div>
+                        <div>{emptyLabel}</div>
                       </div>
                     </td>
                   </tr>
@@ -651,8 +670,10 @@ export const DataTable = <T extends Record<string, any>>({
           <div className="pt-2">
             <TablePagination
               pagination={currentPagination}
-              onChange={(page, pageSize) => {
-                const newPagination = { ...currentPagination, current: page, pageSize };
+              onChange={(page, size) => {
+                setInternalPage(page);
+                setInternalPageSize(size);
+                const newPagination = { ...currentPagination, current: page, pageSize: size };
                 onChange?.(newPagination, filters, sortConfig);
               }}
             />
