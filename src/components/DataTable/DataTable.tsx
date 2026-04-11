@@ -172,8 +172,8 @@ const TablePagination: React.FC<{
   onChange: (page: number, pageSize: number) => void;
 }> = ({ pagination, onChange }) => {
   const { current, pageSize, total, showSizeChanger = true, pageSizeOptions = [10, 20, 50, 100] } = pagination;
-  const totalPages = Math.ceil(total / pageSize);
-  const startRecord = (current - 1) * pageSize + 1;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const startRecord = total === 0 ? 0 : (current - 1) * pageSize + 1;
   const endRecord = Math.min(current * pageSize, total);
 
   const getPageNumbers = () => {
@@ -196,8 +196,13 @@ const TablePagination: React.FC<{
     return pages;
   };
 
-  // Convert pageSizeOptions to SelectOption format
-  const selectOptions = pageSizeOptions.map(size => ({
+  const effectivePageSizeOptions = [...pageSizeOptions];
+  if (!effectivePageSizeOptions.includes(pageSize)) {
+    effectivePageSizeOptions.push(pageSize);
+    effectivePageSizeOptions.sort((a, b) => a - b);
+  }
+
+  const selectOptions = effectivePageSizeOptions.map(size => ({
     label: String(size),
     value: String(size),
   }));
@@ -308,80 +313,22 @@ export const DataTable = <T extends Record<string, any>>({
     rowSelection?.selectedRowKeys || []
   );
 
-  // Get row key function
-  const getRowKey = useCallback((record: T, index: number): React.Key => {
-    if (typeof rowKey === 'function') {
-      return rowKey(record);
-    }
-    return record[rowKey] || index;
-  }, [rowKey]);
+  const isControlled = !!onChange;
 
-  // Handle sorting
-  const handleSort = useCallback((columnKey: string) => {
-    let newDirection: 'asc' | 'desc' | null;
-    if (sortConfig.key !== columnKey) {
-      newDirection = 'asc';
-    } else if (sortConfig.direction === 'asc') {
-      newDirection = 'desc';
-    } else if (sortConfig.direction === 'desc') {
-      newDirection = null;
-    } else {
-      newDirection = 'asc';
-    }
-    const newSortConfig: SortConfig = { key: columnKey, direction: newDirection };
-    setSortConfig(newSortConfig);
-    onSort?.(newSortConfig);
-    onChange?.(pagination as PaginationConfig, filters, newSortConfig);
-  }, [sortConfig, pagination, filters, onSort, onChange]);
+  const [internalPage, setInternalPage] = useState<number>(() => 
+    (pagination && typeof pagination === 'object' && pagination.current) ? Math.max(1, Number(pagination.current)) : 1
+  );
+  const [internalPageSize, setInternalPageSize] = useState<number>(() => 
+    (pagination && typeof pagination === 'object' && pagination.pageSize) ? Math.max(1, Number(pagination.pageSize)) : 10
+  );
 
-  // Handle filtering
-  const handleFilter = useCallback((columnKey: string, value: any) => {
-    const newFilters = { ...filters };
-    if (value === '' || value === null || value === undefined) {
-      delete newFilters[columnKey];
-    } else {
-      newFilters[columnKey] = value;
-    }
+  const current = isControlled ? 
+    ((pagination && typeof pagination === 'object' && pagination.current) ? Math.max(1, Number(pagination.current)) : 1) 
+    : internalPage;
     
-    setFilters(newFilters);
-    onFilter?.(newFilters);
-    onChange?.(pagination as PaginationConfig, newFilters, sortConfig);
-  }, [filters, pagination, sortConfig, onFilter, onChange]);
-
-  // Handle row selection
-  const handleRowSelect = useCallback((record: T, selected: boolean) => {
-    const key = getRowKey(record, 0);
-    let newSelectedKeys: React.Key[];
-    
-    if (rowSelection?.type === 'radio') {
-      newSelectedKeys = selected ? [key] : [];
-    } else {
-      newSelectedKeys = selected 
-        ? [...selectedRowKeys, key]
-        : selectedRowKeys.filter(k => k !== key);
-    }
-    
-    setSelectedRowKeys(newSelectedKeys);
-    const selectedRows = dataSource.filter(item => 
-      newSelectedKeys.includes(getRowKey(item, 0))
-    );
-    
-    rowSelection?.onChange?.(newSelectedKeys, selectedRows);
-    rowSelection?.onSelect?.(record, selected, selectedRows, {} as Event);
-  }, [selectedRowKeys, rowSelection, dataSource, getRowKey]);
-
-  // Handle select all
-  const handleSelectAll = useCallback((selected: boolean) => {
-    const newSelectedKeys = selected 
-      ? dataSource.map((item, index) => getRowKey(item, index))
-      : [];
-    
-    setSelectedRowKeys(newSelectedKeys);
-    const selectedRows = selected ? dataSource : [];
-    
-    rowSelection?.onChange?.(newSelectedKeys, selectedRows);
-    rowSelection?.onSelectAll?.(selected, selectedRows, dataSource);
-  }, [dataSource, rowSelection, getRowKey]);
+  const pageSize = isControlled ? 
+    ((pagination && typeof pagination === 'object' && pagination.pageSize) ? Math.max(1, Number(pagination.pageSize)) : 10) 
+    : internalPageSize;
 
   // Filter and sort data
   const processedData = useMemo(() => {
@@ -419,24 +366,104 @@ export const DataTable = <T extends Record<string, any>>({
   // Pagination logic
   const paginatedData = useMemo(() => {
     if (pagination === false) return processedData;
-    
-    const current = (pagination && typeof pagination === 'object' && pagination.current) ? Math.max(1, Number(pagination.current) || 1) : 1;
-    const pageSize = (pagination && typeof pagination === 'object' && pagination.pageSize) ? Math.max(1, Number(pagination.pageSize) || 10) : 10;
     const startIndex = (current - 1) * pageSize;
-    
     return processedData.slice(startIndex, startIndex + pageSize);
-  }, [processedData, pagination]);
+  }, [processedData, pagination, current, pageSize]);
 
   // Update pagination total
   const currentPagination = useMemo(() => {
     if (pagination === false) return false;
     return {
       ...(typeof pagination === 'object' ? pagination : {}),
-      current: (pagination && typeof pagination === 'object' && pagination.current) ? Math.max(1, Number(pagination.current) || 1) : 1,
-      pageSize: (pagination && typeof pagination === 'object' && pagination.pageSize) ? Math.max(1, Number(pagination.pageSize) || 10) : 10,
+      current,
+      pageSize,
       total: processedData.length,
     };
-  }, [pagination, processedData.length]);
+  }, [pagination, current, pageSize, processedData.length]);
+
+  React.useEffect(() => {
+    if (!isControlled) {
+      const maxPage = Math.max(1, Math.ceil(processedData.length / pageSize));
+      if (internalPage > maxPage) {
+        setInternalPage(maxPage);
+      }
+    }
+  }, [processedData.length, pageSize, internalPage, isControlled]);
+
+  // Get row key function
+  const getRowKey = useCallback((record: T, index: number): React.Key => {
+    if (typeof rowKey === 'function') {
+      return rowKey(record);
+    }
+    return record[rowKey] || index;
+  }, [rowKey]);
+
+  // Handle sorting
+  const handleSort = useCallback((columnKey: string) => {
+    let newDirection: 'asc' | 'desc' | null;
+    if (sortConfig.key !== columnKey) {
+      newDirection = 'asc';
+    } else if (sortConfig.direction === 'asc') {
+      newDirection = 'desc';
+    } else if (sortConfig.direction === 'desc') {
+      newDirection = null;
+    } else {
+      newDirection = 'asc';
+    }
+    const newSortConfig: SortConfig = { key: columnKey, direction: newDirection };
+    setSortConfig(newSortConfig);
+    onSort?.(newSortConfig);
+    onChange?.((currentPagination || pagination) as PaginationConfig, filters, newSortConfig);
+  }, [sortConfig, pagination, currentPagination, filters, onSort, onChange]);
+
+  // Handle filtering
+  const handleFilter = useCallback((columnKey: string, value: any) => {
+    const newFilters = { ...filters };
+    if (value === '' || value === null || value === undefined) {
+      delete newFilters[columnKey];
+    } else {
+      newFilters[columnKey] = value;
+    }
+    
+    setFilters(newFilters);
+    onFilter?.(newFilters);
+    onChange?.((currentPagination || pagination) as PaginationConfig, newFilters, sortConfig);
+  }, [filters, pagination, currentPagination, sortConfig, onFilter, onChange]);
+
+  // Handle row selection
+  const handleRowSelect = useCallback((record: T, selected: boolean) => {
+    const key = getRowKey(record, 0);
+    let newSelectedKeys: React.Key[];
+    
+    if (rowSelection?.type === 'radio') {
+      newSelectedKeys = selected ? [key] : [];
+    } else {
+      newSelectedKeys = selected 
+        ? [...selectedRowKeys, key]
+        : selectedRowKeys.filter(k => k !== key);
+    }
+    
+    setSelectedRowKeys(newSelectedKeys);
+    const selectedRows = dataSource.filter(item => 
+      newSelectedKeys.includes(getRowKey(item, 0))
+    );
+    
+    rowSelection?.onChange?.(newSelectedKeys, selectedRows);
+    rowSelection?.onSelect?.(record, selected, selectedRows, {} as Event);
+  }, [selectedRowKeys, rowSelection, dataSource, getRowKey]);
+
+  // Handle select all
+  const handleSelectAll = useCallback((selected: boolean) => {
+    const newSelectedKeys = selected 
+      ? dataSource.map((item, index) => getRowKey(item, index))
+      : [];
+    
+    setSelectedRowKeys(newSelectedKeys);
+    const selectedRows = selected ? dataSource : [];
+    
+    rowSelection?.onChange?.(newSelectedKeys, selectedRows);
+    rowSelection?.onSelectAll?.(selected, selectedRows, dataSource);
+  }, [dataSource, rowSelection, getRowKey]);
 
   // Selection state
   const isAllSelected = selectedRowKeys.length === dataSource.length && dataSource.length > 0;
@@ -657,6 +684,10 @@ export const DataTable = <T extends Record<string, any>>({
             <TablePagination
               pagination={currentPagination}
               onChange={(page, size) => {
+                if (!isControlled) {
+                  setInternalPage(page);
+                  setInternalPageSize(size);
+                }
                 const newPagination = { ...currentPagination, current: page, pageSize: size };
                 onChange?.(newPagination, filters, sortConfig);
               }}
