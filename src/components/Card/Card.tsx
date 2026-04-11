@@ -4,13 +4,13 @@ import { cn } from "../../utils/cn";
 
 const cardVariants = cva(
   // Mobile-first responsive, content-fitting, vertical stacking
-  "w-full max-w-full flex flex-col rounded-lg border bg-white text-gray-950 shadow-sm",
+  "w-full max-w-full flex flex-col rounded-lg border bg-white dark:bg-gray-900 text-gray-950 dark:text-gray-50 shadow-sm",
   {
     variants: {
       variant: {
-        default: "border-gray-200",
-        elevated: "border-gray-200 shadow-md",
-        outlined: "border-2 border-primary-200",
+        default: "border-gray-200 dark:border-gray-800",
+        elevated: "border-gray-200 dark:border-gray-800 shadow-md",
+        outlined: "border-2 border-primary-200 dark:border-primary-800",
       },
       padding: {
         none: "p-0",
@@ -74,7 +74,7 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("text-sm text-gray-500", className)}
+    className={cn("text-sm text-gray-500 dark:text-gray-400", className)}
     {...props}
   />
 ));

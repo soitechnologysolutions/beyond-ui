@@ -3,13 +3,13 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../utils/cn";
 
 const tabsListVariants = cva(
-  "inline-flex h-10 items-center justify-center rounded-md bg-gray-100 p-1 text-gray-500",
+  "inline-flex h-10 items-center justify-center rounded-md bg-gray-100 dark:bg-gray-800 p-1 text-gray-500 dark:text-gray-400",
   {
     variants: {
       variant: {
-        default: "bg-gray-100",
+        default: "bg-gray-100 dark:bg-gray-800",
         pills: "bg-transparent gap-2",
-        underline: "bg-transparent border-b border-gray-200",
+        underline: "bg-transparent border-b border-gray-200 dark:border-gray-800",
       },
     },
     defaultVariants: {
@@ -23,9 +23,9 @@ const tabsTriggerVariants = cva(
   {
     variants: {
       variant: {
-        default: "data-[state=active]:bg-white data-[state=active]:text-gray-950 data-[state=active]:shadow-sm",
-        pills: "data-[state=active]:bg-primary-100 data-[state=active]:text-primary-700 hover:bg-gray-100",
-        underline: "data-[state=active]:border-b-2 data-[state=active]:border-primary-600 data-[state=active]:text-primary-600 hover:text-gray-900 rounded-none border-b-2 border-transparent",
+        default: "data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:text-gray-950 dark:data-[state=active]:text-white data-[state=active]:shadow-sm",
+        pills: "data-[state=active]:bg-primary-100 dark:data-[state=active]:bg-primary-900/30 data-[state=active]:text-primary-700 dark:data-[state=active]:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800",
+        underline: "data-[state=active]:border-b-2 data-[state=active]:border-primary-600 dark:data-[state=active]:border-primary-500 data-[state=active]:text-primary-600 dark:data-[state=active]:text-primary-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-none border-b-2 border-transparent",
       },
     },
     defaultVariants: {

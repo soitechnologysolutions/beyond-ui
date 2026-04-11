@@ -278,8 +278,8 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
                 aria-label={onProfileClick ? "Profile section" : undefined}
               >
                 <div className="hidden sm:block text-right">
-                  <p className="text-sm font-medium text-gray-900">John Doe</p>
-                  <p className="text-xs text-gray-500">Administrator</p>
+              <p className="text-sm font-medium text-gray-900 dark:text-white">John Doe</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Administrator</p>
                 </div>
                 <Avatar size="sm">
                   <AvatarImage src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=64" />

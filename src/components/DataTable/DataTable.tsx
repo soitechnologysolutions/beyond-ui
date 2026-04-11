@@ -127,7 +127,7 @@ const ColumnFilter = <T extends Record<string, any>>({
             className="fixed inset-0 z-10" 
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute top-full left-0 z-20 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-3 min-w-[200px]">
+          <div className="absolute top-full left-0 z-20 mt-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-lg p-3 min-w-[200px]">
             {column.filterType === 'select' && column.filterOptions ? (
               <div className="space-y-2">
                 {column.filterOptions.map((option) => (
@@ -138,7 +138,7 @@ const ColumnFilter = <T extends Record<string, any>>({
                         tempValue === option.value ? '' : option.value
                       )}
                     />
-                    <span className="text-sm">{option.label}</span>
+                    <span className="text-sm dark:text-gray-300">{option.label}</span>
                   </label>
                 ))}
               </div>
@@ -203,15 +203,15 @@ const TablePagination: React.FC<{
   }));
 
   return (
-    <div className="flex items-center justify-between px-4 py-3 bg-background border-t border-border">
+    <div className="flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
       <div className="flex items-center space-x-4">
-        <span className="text-sm text-foreground">
+        <span className="text-sm text-gray-700 dark:text-gray-300">
           Showing {startRecord} to {endRecord} of {total} results
         </span>
         
         {showSizeChanger && (
           <div className="flex items-center space-x-2">
-            <span className="text-sm text-foreground">Show</span>
+            <span className="text-sm text-gray-700 dark:text-gray-300">Show</span>
             <Select
               options={selectOptions}
               value={String(pageSize)}
@@ -220,7 +220,7 @@ const TablePagination: React.FC<{
               selectSize="sm"
               aria-label="Select number of items per page"
             />
-            <span className="text-sm text-foreground">per page</span>
+            <span className="text-sm text-gray-700 dark:text-gray-300">per page</span>
           </div>
         )}
       </div>
@@ -500,9 +500,9 @@ export const DataTable = <T extends Record<string, any>>({
                         </div>
                       )}
                       {columns.map((column) => (
-                        <div key={column.key} className="flex justify-between items-center py-1 border-b last:border-b-0">
-                          <span className="font-medium text-gray-700">{column.title}</span>
-                          <span className="text-gray-900">
+                        <div key={column.key} className="flex justify-between items-center py-1 border-b border-gray-200 dark:border-gray-800 last:border-b-0">
+                          <span className="font-medium text-gray-700 dark:text-gray-300">{column.title}</span>
+                          <span className="text-gray-900 dark:text-gray-100">
                             {column.render
                               ? column.render(record[column.dataIndex], record, index)
                               : String(record[column.dataIndex] || '')
@@ -560,7 +560,7 @@ export const DataTable = <T extends Record<string, any>>({
                                     "h-3 w-3",
                                     sortConfig.key === column.key && sortConfig.direction === 'asc'
                                       ? "text-primary-600"
-                                      : "text-gray-400"
+                                      : "text-gray-400 dark:text-gray-500"
                                   )}
                                 />
                                 <ChevronDown
@@ -568,7 +568,7 @@ export const DataTable = <T extends Record<string, any>>({
                                     "h-3 w-3 -mt-1",
                                     sortConfig.key === column.key && sortConfig.direction === 'desc'
                                       ? "text-primary-600"
-                                      : "text-gray-400"
+                                      : "text-gray-400 dark:text-gray-500"
                                   )}
                                 />
                               </button>
@@ -609,8 +609,8 @@ export const DataTable = <T extends Record<string, any>>({
                       <tr
                         key={key}
                         className={cn(
-                          "hover:bg-gray-50 transition-colors",
-                          isSelected && "bg-primary-50"
+                          "hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors",
+                          isSelected && "bg-primary-50 dark:bg-primary-900/20"
                         )}
                         {...(props.onRow?.(record, index) ?? {})}
                       >

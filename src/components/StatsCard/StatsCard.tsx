@@ -59,11 +59,11 @@ const StatsCard = React.forwardRef<HTMLDivElement, StatsCardProps>(
       
       switch (direction) {
         case "up":
-          return "text-success-600";
+          return "text-success-600 dark:text-success-400";
         case "down":
-          return "text-danger-600";
+          return "text-danger-600 dark:text-danger-400";
         default:
-          return "text-gray-600";
+          return "text-gray-600 dark:text-gray-400";
       }
     };
 
@@ -79,14 +79,14 @@ const StatsCard = React.forwardRef<HTMLDivElement, StatsCardProps>(
             <div className="flex-1">
               <p className={cn(
                 "text-sm font-medium",
-                variant === "gradient" ? "text-white/80" : "text-gray-600"
+                variant === "gradient" ? "text-white/80" : "text-gray-600 dark:text-gray-400"
               )}>
                 {title}
               </p>
               <div className="mt-2">
                 <p className={cn(
                   "text-3xl font-bold",
-                  variant === "gradient" ? "text-white" : "text-gray-900"
+                  variant === "gradient" ? "text-white" : "text-gray-900 dark:text-white"
                 )}>
                   {value}
                 </p>
@@ -99,7 +99,7 @@ const StatsCard = React.forwardRef<HTMLDivElement, StatsCardProps>(
                     <span>{trend.value}</span>
                     {trend.label && (
                       <span className={cn(
-                        variant === "gradient" ? "text-white/60" : "text-gray-500"
+                        variant === "gradient" ? "text-white/60" : "text-gray-500 dark:text-gray-400"
                       )}>
                         {trend.label}
                       </span>
@@ -111,7 +111,7 @@ const StatsCard = React.forwardRef<HTMLDivElement, StatsCardProps>(
             {icon && (
               <div className={cn(
                 "p-3 rounded-full",
-                variant === "gradient" ? "bg-white/20" : "bg-gray-100"
+                variant === "gradient" ? "bg-white/20" : "bg-gray-100 dark:bg-gray-800"
               )}>
                 {icon}
               </div>
