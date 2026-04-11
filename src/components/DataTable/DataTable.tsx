@@ -308,23 +308,6 @@ export const DataTable = <T extends Record<string, any>>({
     rowSelection?.selectedRowKeys || []
   );
 
-  const [internalPage, setInternalPage] = useState<number>(() => 
-    (pagination && typeof pagination === 'object' && pagination.current) ? Number(pagination.current) : 1
-  );
-  const [internalPageSize, setInternalPageSize] = useState<number>(() => 
-    (pagination && typeof pagination === 'object' && pagination.pageSize) ? Number(pagination.pageSize) : 10
-  );
-
-  React.useEffect(() => {
-    if (pagination && typeof pagination === 'object') {
-      if (pagination.current !== undefined) setInternalPage(Number(pagination.current) || 1);
-      if (pagination.pageSize !== undefined) setInternalPageSize(Number(pagination.pageSize) || 10);
-    }
-  }, [
-    pagination && typeof pagination === 'object' ? pagination.current : undefined,
-    pagination && typeof pagination === 'object' ? pagination.pageSize : undefined
-  ]);
-
   // Get row key function
   const getRowKey = useCallback((record: T, index: number): React.Key => {
     if (typeof rowKey === 'function') {
@@ -437,23 +420,23 @@ export const DataTable = <T extends Record<string, any>>({
   const paginatedData = useMemo(() => {
     if (pagination === false) return processedData;
     
-    const page = Math.max(1, Number(internalPage) || 1);
-    const size = Math.max(1, Number(internalPageSize) || 10);
-    const startIndex = (page - 1) * size;
+    const current = (pagination && typeof pagination === 'object' && pagination.current) ? Math.max(1, Number(pagination.current) || 1) : 1;
+    const pageSize = (pagination && typeof pagination === 'object' && pagination.pageSize) ? Math.max(1, Number(pagination.pageSize) || 10) : 10;
+    const startIndex = (current - 1) * pageSize;
     
-    return processedData.slice(startIndex, startIndex + size);
-  }, [processedData, pagination, internalPage, internalPageSize]);
+    return processedData.slice(startIndex, startIndex + pageSize);
+  }, [processedData, pagination]);
 
   // Update pagination total
   const currentPagination = useMemo(() => {
     if (pagination === false) return false;
     return {
       ...(typeof pagination === 'object' ? pagination : {}),
-      current: Math.max(1, Number(internalPage) || 1),
-      pageSize: Math.max(1, Number(internalPageSize) || 10),
+      current: (pagination && typeof pagination === 'object' && pagination.current) ? Math.max(1, Number(pagination.current) || 1) : 1,
+      pageSize: (pagination && typeof pagination === 'object' && pagination.pageSize) ? Math.max(1, Number(pagination.pageSize) || 10) : 10,
       total: processedData.length,
     };
-  }, [pagination, internalPage, internalPageSize, processedData.length]);
+  }, [pagination, processedData.length]);
 
   // Selection state
   const isAllSelected = selectedRowKeys.length === dataSource.length && dataSource.length > 0;
@@ -674,8 +657,6 @@ export const DataTable = <T extends Record<string, any>>({
             <TablePagination
               pagination={currentPagination}
               onChange={(page, size) => {
-                setInternalPage(page);
-                setInternalPageSize(size);
                 const newPagination = { ...currentPagination, current: page, pageSize: size };
                 onChange?.(newPagination, filters, sortConfig);
               }}
