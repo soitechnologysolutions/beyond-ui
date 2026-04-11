@@ -308,17 +308,17 @@ export const DataTable = <T extends Record<string, any>>({
     rowSelection?.selectedRowKeys || []
   );
 
-  const [internalPage, setInternalPage] = useState(
-    pagination && typeof pagination === 'object' && pagination.current ? pagination.current : 1
+  const [internalPage, setInternalPage] = useState<number>(() => 
+    (pagination && typeof pagination === 'object' && pagination.current) ? Number(pagination.current) : 1
   );
-  const [internalPageSize, setInternalPageSize] = useState(
-    pagination && typeof pagination === 'object' && pagination.pageSize ? pagination.pageSize : 10
+  const [internalPageSize, setInternalPageSize] = useState<number>(() => 
+    (pagination && typeof pagination === 'object' && pagination.pageSize) ? Number(pagination.pageSize) : 10
   );
 
   React.useEffect(() => {
     if (pagination && typeof pagination === 'object') {
-      if (pagination.current) setInternalPage(pagination.current);
-      if (pagination.pageSize) setInternalPageSize(pagination.pageSize);
+      if (pagination.current !== undefined) setInternalPage(Number(pagination.current) || 1);
+      if (pagination.pageSize !== undefined) setInternalPageSize(Number(pagination.pageSize) || 10);
     }
   }, [
     pagination && typeof pagination === 'object' ? pagination.current : undefined,
@@ -437,8 +437,11 @@ export const DataTable = <T extends Record<string, any>>({
   const paginatedData = useMemo(() => {
     if (pagination === false) return processedData;
     
-    const startIndex = (internalPage - 1) * internalPageSize;
-    return processedData.slice(startIndex, startIndex + internalPageSize);
+    const page = Math.max(1, Number(internalPage) || 1);
+    const size = Math.max(1, Number(internalPageSize) || 10);
+    const startIndex = (page - 1) * size;
+    
+    return processedData.slice(startIndex, startIndex + size);
   }, [processedData, pagination, internalPage, internalPageSize]);
 
   // Update pagination total
@@ -446,8 +449,8 @@ export const DataTable = <T extends Record<string, any>>({
     if (pagination === false) return false;
     return {
       ...(typeof pagination === 'object' ? pagination : {}),
-      current: internalPage,
-      pageSize: internalPageSize,
+      current: Math.max(1, Number(internalPage) || 1),
+      pageSize: Math.max(1, Number(internalPageSize) || 10),
       total: processedData.length,
     };
   }, [pagination, internalPage, internalPageSize, processedData.length]);
