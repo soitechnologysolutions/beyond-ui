@@ -61,7 +61,8 @@ const componentCategories = {
       { name: "Toast", id: "toast" },
       { name: "Modal", id: "modal" },
       { name: "Spinner", id: "spinner" },
-      { name: "Skeleton", id: "skeleton" }
+      { name: "Skeleton", id: "skeleton" },
+      { name: "Chat Widget", id: "chatwidget" }
     ]
   },
   Authentication: {

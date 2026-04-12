@@ -32,6 +32,7 @@ export * from './components/Marketplace';
 export * from './components/Blog'
 export * from './components/CodeHighlight';
 export * from "./components/Image"
+export * from "./components/ChatWidget"
 
 
 

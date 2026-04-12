@@ -236,4 +236,16 @@ function Example() {
       { name: "errorMessage", type: "string", description: "Error feedback message" }
     ],
   },
+  chatwidget: {
+    name: "Chat Widget",
+    description: "A floating AI/Human support chat widget with customizable positions.",
+    example: `<ChatWidget \n  position="bottom-right" \n  title="Support"\n  onSendMessage={(msg) => console.log(msg)}\n/>`,
+    props: [
+      { name: "position", type: '\"bottom-right\" | \"bottom-left\"', default: '\"bottom-right\"', description: "Controls horizontal anchoring." },
+      { name: "strategy", type: '\"fixed\" | \"absolute\"', default: '\"fixed\"', description: "Use fixed for whole page, absolute for container bounds." },
+      { name: "title", type: "string", default: '\"Support\"', description: "Header title text." },
+      { name: "subtitle", type: "string", default: '\"We typically reply in a few minutes\"', description: "Header subtitle text." },
+      { name: "onSendMessage", type: "(message: string) => Promise<void> | void", description: "Callback hook when the user sends a message." }
+    ]
+  },
 };
