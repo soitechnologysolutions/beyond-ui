@@ -35,6 +35,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '../Avatar';
 import { StatsCard } from '../StatsCard';
 import { Link } from 'react-router-dom';
 import { AuthShowcase } from '../Auth/AuthShowcase';
+import { ChatWidget } from '../ChatWidget';
 
 /**
  * Professional Landing Page for Beyond UI Component Library
@@ -594,6 +595,8 @@ export const LandingPage: React.FC = () => {
           </div>
         </div>
       </PageFooter>
+
+      <ChatWidget position="bottom-right" />
     </PageLayout>
   );
 };
