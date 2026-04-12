@@ -41,6 +41,9 @@ export interface ChatWidgetProps extends VariantProps<typeof chatWidgetVariants>
   subtitle?: string;
   greeting?: string;
   onSendMessage?: (message: string) => Promise<void> | void;
+  headerClassName?: string;
+  triggerButtonClassName?: string;
+  userMessageClassName?: string;
 }
 
 export const ChatWidget: React.FC<ChatWidgetProps> = ({
@@ -51,6 +54,9 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   subtitle = "We typically reply in a few minutes",
   greeting = "Hello! How can we help you today?",
   onSendMessage,
+  headerClassName,
+  triggerButtonClassName,
+  userMessageClassName,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -110,22 +116,22 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
       {/* Chat Window */}
       {isOpen && (
         <Card className="w-80 sm:w-96 h-[32rem] mb-4 flex flex-col shadow-2xl border-gray-200 dark:border-gray-800 animate-in slide-in-from-bottom-4 fade-in overflow-hidden">
-          <CardHeader className="bg-primary-600 dark:bg-primary-700 text-white p-4 flex flex-row items-center justify-between rounded-none rounded-t-lg">
+          <CardHeader className={cn("bg-primary-600 dark:bg-primary-700 text-white p-4 flex flex-row items-center justify-between rounded-none rounded-t-lg", headerClassName)}>
             <div className="flex items-center space-x-3">
               <Avatar size="sm" className="border border-white/20">
-                <AvatarFallback className="bg-primary-800 text-white">
+                <AvatarFallback className="bg-black/20 text-white">
                   <Bot size={16} />
                 </AvatarFallback>
               </Avatar>
               <div>
                 <CardTitle className="text-white text-base font-semibold">{title}</CardTitle>
-                <p className="text-primary-100 text-xs font-normal">{subtitle}</p>
+                <p className="text-white/80 text-xs font-normal">{subtitle}</p>
               </div>
             </div>
             <Button
               variant="ghost"
               size="sm"
-              className="text-white hover:bg-primary-800 hover:text-white rounded-full p-2 h-8 w-8"
+              className="text-white hover:bg-black/20 hover:text-white rounded-full p-2 h-8 w-8"
               onClick={() => setIsOpen(false)}
             >
               <X size={16} />
@@ -141,7 +147,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                     className={cn(
                       "max-w-[85%] rounded-2xl px-4 py-2.5 text-sm",
                       isUser
-                        ? "bg-primary-600 text-white rounded-tr-sm"
+                        ? cn("bg-primary-600 text-white rounded-tr-sm", userMessageClassName)
                         : "bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-gray-900 dark:text-gray-100 rounded-tl-sm shadow-sm"
                     )}
                   >
@@ -174,7 +180,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
       )}
 
       {/* Floating Toggle Button */}
-      <Button onClick={() => setIsOpen(!isOpen)} className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl bg-primary-600 hover:bg-primary-700 text-white transition-transform hover:scale-105 flex items-center justify-center p-0">
+      <Button onClick={() => setIsOpen(!isOpen)} className={cn("h-14 w-14 rounded-full shadow-lg hover:shadow-xl bg-primary-600 hover:bg-primary-700 text-white transition-transform hover:scale-105 flex items-center justify-center p-0", triggerButtonClassName)}>
         {isOpen ? <X size={24} /> : <MessageCircle size={24} />}
       </Button>
     </div>
