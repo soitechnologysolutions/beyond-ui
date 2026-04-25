@@ -227,7 +227,8 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
         ref={sidebarRef}
         className={cn(
           "bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300 flex flex-col z-20 shrink-0",
-          sidebarCollapsed ? "w-16" : "w-80 max-lg:absolute max-lg:h-full max-lg:shadow-2xl"
+          "max-lg:absolute max-lg:h-full max-lg:shadow-2xl",
+          sidebarCollapsed ? "lg:w-16 max-lg:w-80 max-lg:-translate-x-full" : "w-80 max-lg:translate-x-0"
         )}
         tabIndex={sidebarCollapsed ? -1 : 0}
         onKeyDown={handleKeyNavigation}
@@ -235,8 +236,7 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
       >
         {/* Sidebar Header */}
         <div className="p-4 border-b border-gray-200 dark:border-gray-800">
-          {!sidebarCollapsed && (
-            <div className="flex items-center justify-between mb-4">
+          <div className={cn("flex items-center justify-between mb-4", sidebarCollapsed ? "lg:hidden" : "")}>
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
                   <Palette className="h-4 w-4 text-white" />
@@ -251,10 +251,8 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
-          )}
 
-          {sidebarCollapsed && (
-            <div className="flex justify-center">
+          <div className={cn("justify-center", sidebarCollapsed ? "flex max-lg:hidden" : "hidden")}>
               <Button
                 variant="ghost"
                 size="sm"
@@ -263,10 +261,8 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
                 <Palette className="h-4 w-4" />
               </Button>
             </div>
-          )}
 
-          {!sidebarCollapsed && (
-            <div className="relative">
+          <div className={cn("relative", sidebarCollapsed ? "lg:hidden" : "")}>
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
               <Input
                 placeholder="Search components..."
@@ -275,7 +271,6 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
                 className="pl-10"
               />
             </div>
-          )}
         </div>
 
         {/* Navigation */}
@@ -283,29 +278,34 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
           {Object.entries(filteredCategories).map(([categoryName, categoryData]) => (
             <div key={categoryName} className="mb-4">
               <button
-                onClick={() => !sidebarCollapsed && toggleCategory(categoryName)}
+                onClick={() => {
+                  if (typeof window !== "undefined" && window.innerWidth < 1024) {
+                    toggleCategory(categoryName);
+                  } else if (!sidebarCollapsed) {
+                    toggleCategory(categoryName);
+                  }
+                }}
                 className={cn(
                   "flex items-center w-full p-2 text-sm font-medium rounded-lg transition-colors",
                 "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300",
-                  sidebarCollapsed ? "justify-center" : "justify-between"
+                  sidebarCollapsed ? "lg:justify-center max-lg:justify-between" : "justify-between"
                 )}
               >
                 <div className="flex items-center space-x-2">
                   {categoryData.icon}
-                  {!sidebarCollapsed && <span>{categoryName}</span>}
+                  <span className={cn(sidebarCollapsed ? "lg:hidden" : "")}>{categoryName}</span>
                 </div>
-                {!sidebarCollapsed && (
                   <ChevronDown
                     className={cn(
                       "h-4 w-4 transition-transform",
-                      expandedCategories.includes(categoryName) && "rotate-180"
+                      expandedCategories.includes(categoryName) && "rotate-180",
+                      sidebarCollapsed ? "lg:hidden" : ""
                     )}
                   />
-                )}
               </button>
 
-              {!sidebarCollapsed && expandedCategories.includes(categoryName) && (
-                <div className="mt-2 ml-6 space-y-1">
+              {expandedCategories.includes(categoryName) && (
+                <div className={cn("mt-2 ml-6 space-y-1", sidebarCollapsed ? "lg:hidden" : "")}>
                   {categoryData.components.map((component) => {
                     const isActive = selectedComponent === component.id;
                     return (
