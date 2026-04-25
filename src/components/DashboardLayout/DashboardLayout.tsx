@@ -157,8 +157,9 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
         {/* Mobile Overlay */}
         {!sidebarCollapsed && (
           <div
-            className="fixed inset-0 bg-black/50 dark:bg-black/80 z-40 backdrop-blur-sm transition-opacity lg:hidden"
+            className="fixed inset-0 bg-black/50 dark:bg-black/80 z-40 backdrop-blur-sm transition-opacity lg:hidden cursor-pointer"
             onClick={toggleSidebar}
+            aria-label="Close sidebar overlay"
           />
         )}
       </div>

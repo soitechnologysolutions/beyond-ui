@@ -127,25 +127,28 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
               : leftSlot}
 
             {/* Mobile Menu Button */}
-            <div className={getVisibilityClasses(showMenuButton, "flex lg:hidden")}>
-               <Button
-                 variant="ghost"
-                 size="sm"
-                 onClick={e => {
-                   onMenuButtonClick?.();
-                   onMenuToggle?.();
-                 }}
-               >
-                 <Menu className="h-5 w-5" />
-               </Button>
-            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className={cn(
+                getVisibilityClasses(showMenuButton, "flex lg:hidden"),
+                "p-2 -ml-2 shrink-0 mr-2"
+              )}
+              aria-label="Open mobile menu"
+              onClick={e => {
+                onMenuButtonClick?.();
+                onMenuToggle?.();
+              }}
+            >
+              <Menu className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+            </Button>
 
             {/* Breadcrumbs */}
               <nav
                 className={cn(
                   getVisibilityClasses(showBreadcrumbs, "flex"),
                   "items-center space-x-2 text-sm",
-                  "w-full overflow-x-auto whitespace-nowrap py-1 lg:w-auto lg:overflow-visible lg:whitespace-normal lg:py-0"
+                  "min-w-0 max-w-full overflow-x-auto whitespace-nowrap py-1 lg:w-auto lg:overflow-visible lg:whitespace-normal lg:py-0"
                 )}
               >
                 {breadcrumbs.map((item, index) => (

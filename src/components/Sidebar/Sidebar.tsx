@@ -268,7 +268,8 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           </div>
           <button
             onClick={onToggle}
-          className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+            aria-label={collapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
             <ChevronLeft className={cn("h-4 w-4 text-gray-600 dark:text-gray-400 transition-transform duration-200", collapsed ? "lg:rotate-180 max-lg:rotate-0" : "")} />
           </button>
