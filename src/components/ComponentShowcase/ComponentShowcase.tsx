@@ -31,6 +31,7 @@ import { Toast, showToast } from "../Toast";
 
 import { showcaseRegistry } from "./showcaseRegistry";
 import { componentDocs } from "./componentDocs";
+import { useDarkMode } from "../../hooks/useDarkMode";
 
 // Component categories and their items
 const componentCategories = {
@@ -114,7 +115,7 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
   });
   const [expandedCategories, setExpandedCategories] = useState<string[]>(["Forms"]);
   const [viewMode, setViewMode] = useState<"desktop" | "tablet" | "mobile">("desktop");
-  const [darkMode, setDarkMode] = useState(false);
+  const { isDarkMode, toggle: toggleDarkMode } = useDarkMode();
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const sidebarRef = useRef<HTMLDivElement | null>(null);
   const [focusedIndex, setFocusedIndex] = useState<number>(-1);
@@ -212,7 +213,7 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
   };
 
   return (
-    <div className={cn("flex h-screen bg-gray-50 dark:bg-gray-950", darkMode && "dark", className)}>
+    <div className={cn("flex h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100", isDarkMode && "dark", className)}>
       <Toast />
 
       {/* Mobile Overlay for Showcase Sidebar */}
@@ -392,9 +393,9 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setDarkMode(!darkMode)}
+                onClick={toggleDarkMode}
               >
-                {darkMode ? (
+                {isDarkMode ? (
                   <Sun className="h-4 w-4" />
                 ) : (
                   <Moon className="h-4 w-4" />
@@ -405,7 +406,7 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
         </header>
 
         {/* Content */}
-        <main className="flex-1 overflow-auto p-6">
+        <main className="flex-1 overflow-auto p-6 bg-gray-50 dark:bg-gray-950">
           {currentDoc ? (
             <div className="max-w-6xl mx-auto space-y-8">
               {/* Description */}
