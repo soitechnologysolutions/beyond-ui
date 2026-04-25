@@ -2,6 +2,7 @@ import * as React from "react";
 import { cn } from "../../utils/cn";
 import { Sidebar, type MenuItem, type SidebarProfileSectionProps } from "../Sidebar";
 import { DashboardHeader, type BreadcrumbItem } from "../DashboardHeader";
+import { useBreakpoint } from "../../hooks/useBreakpoint";
 
 /**
  * DashboardLayoutProps
@@ -62,7 +63,15 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
     dashboardHeaderProps,
     ...props
   }, ref) => {
-    const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
+    const { isBelow } = useBreakpoint();
+    // Use lg (1024px) for mobile/tablet sidebar collapsing
+    const isMobile = isBelow("lg");
+
+    const [sidebarCollapsed, setSidebarCollapsed] = React.useState(isMobile);
+
+    React.useEffect(() => {
+      setSidebarCollapsed(isMobile);
+    }, [isMobile]);
 
     const toggleSidebar = () => {
       setSidebarCollapsed(prev => !prev);
@@ -76,19 +85,22 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
           onToggle={toggleSidebar}
           menuItems={sidebarMenuItems}
           activeItem={activeSidebarItem}
-          onItemClick={onSidebarItemClick}
-          className={props.sidebarClassName}
+          onItemClick={(id) => {
+            onSidebarItemClick?.(id);
+            if (typeof window !== "undefined" && window.innerWidth < 1024) {
+              setSidebarCollapsed(true);
+            }
+          }}
+          className={cn(
+            props.sidebarClassName,
+            "max-lg:w-72 max-lg:z-50",
+            sidebarCollapsed ? "max-lg:-translate-x-full" : "max-lg:translate-x-0"
+          )}
           title={sidebarTitle}
           titleLetter={sidebarTitleLetter}
           headerClassName={sidebarHeaderClassName}
           style={{
             zIndex: 50,
-            position: "fixed",
-            left: 0,
-            top: 0,
-            height: "100vh",
-            width: sidebarCollapsed ? "4rem" : "18rem", // Tailwind: w-16 or w-72
-            transition: "width 0.3s",
           }}
           profileButtonProps={profileButtonProps}
           logoutButtonProps={logoutButtonProps}
@@ -103,33 +115,37 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
           showSearch={showSearch}
           searchPlaceholder={searchPlaceholder}
           onSearchChange={onSearchChange}
+          {...dashboardHeaderProps}
+          className={cn(
+            "transition-all duration-300 ease-in-out",
+            "max-lg:left-0 max-lg:w-full",
+            sidebarCollapsed ? "lg:left-16 lg:w-[calc(100%-4rem)]" : "lg:left-72 lg:w-[calc(100%-18rem)]",
+            dashboardHeaderProps?.className
+          )}
           style={{
             zIndex: 30,
             position: "fixed",
             top: 0,
-            left: sidebarCollapsed ? "4rem" : "18rem",
-            right: 0,
-            width: `calc(100% - ${sidebarCollapsed ? "4rem" : "18rem"})`,
-            transition: "left 0.3s, width 0.3s",
+            ...dashboardHeaderProps?.style
           }}
-          {...dashboardHeaderProps}
         />
 
         {/* Main Content Area (scrollable) */}
         <div
           className={cn(
-            "relative w-full h-full",
-            props.disableSidebarMargin ? "" : ""
+            "relative h-full transition-all duration-300 ease-in-out",
+            props.disableSidebarMargin ? "w-full" : cn(
+              "max-lg:ml-0 max-lg:w-full",
+              sidebarCollapsed ? "lg:ml-16 lg:w-[calc(100%-4rem)]" : "lg:ml-72 lg:w-[calc(100%-18rem)]"
+            )
           )}
           style={{
-            marginLeft: sidebarCollapsed ? "4rem" : "18rem",
             marginTop: "4.5rem", // Header height (py-4 + border)
             height: "calc(100vh - 4.5rem)",
             overflowY: "auto",
-            transition: "margin-left 0.3s",
           }}
         >
-          <main className="p-10 w-[90vw]">
+          <main className="p-4 md:p-10 w-full max-w-full overflow-x-hidden">
             {children}
           </main>
         </div>
@@ -137,7 +153,7 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
         {/* Mobile Overlay */}
         {!sidebarCollapsed && (
           <div
-            className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+            className="fixed inset-0 bg-black/50 dark:bg-black/80 z-40 backdrop-blur-sm transition-opacity lg:hidden"
             onClick={toggleSidebar}
           />
         )}

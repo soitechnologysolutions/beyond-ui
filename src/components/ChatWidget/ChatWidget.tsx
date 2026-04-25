@@ -40,10 +40,12 @@ export interface ChatWidgetProps extends VariantProps<typeof chatWidgetVariants>
   title?: string;
   subtitle?: string;
   greeting?: string;
+  messages?: Message[];
   onSendMessage?: (message: string) => Promise<void> | void;
   headerClassName?: string;
   triggerButtonClassName?: string;
   userMessageClassName?: string;
+  defaultOpen?: boolean;
 }
 
 export const ChatWidget: React.FC<ChatWidgetProps> = ({
@@ -53,12 +55,14 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   title = "Support",
   subtitle = "We typically reply in a few minutes",
   greeting = "Hello! How can we help you today?",
+  messages: externalMessages,
   onSendMessage,
   headerClassName,
   triggerButtonClassName,
   userMessageClassName,
+  defaultOpen = false,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -66,6 +70,8 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   const [messages, setMessages] = useState<Message[]>([
     { id: "1", content: greeting, sender: "ai", timestamp: new Date() },
   ]);
+
+  const displayMessages = externalMessages || messages;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -75,39 +81,48 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     if (isOpen) {
       scrollToBottom();
     }
-  }, [isOpen, messages, isTyping]);
+  }, [isOpen, displayMessages, isTyping]);
 
   const handleSend = async () => {
     if (!inputValue.trim()) return;
 
-    const newUserMessage: Message = {
-      id: Date.now().toString(),
-      content: inputValue,
-      sender: "user",
-      timestamp: new Date(),
-    };
-
-    setMessages((prev) => [...prev, newUserMessage]);
+    const messageContent = inputValue;
     setInputValue("");
-    setIsTyping(true);
-
-    if (onSendMessage) {
-      await onSendMessage(newUserMessage.content);
+    
+    if (externalMessages && onSendMessage) {
+      setIsTyping(true);
+      try {
+        await onSendMessage(messageContent);
+      } catch (err) {
+        console.error("ChatWidget: error sending message", err);
+      }
       setIsTyping(false);
     } else {
-      // Default fallback mock response
-      setTimeout(() => {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: (Date.now() + 1).toString(),
-            content: "Thanks for reaching out! A representative will be with you shortly.",
-            sender: "ai",
-            timestamp: new Date(),
-          },
-        ]);
+      const newUserMessage: Message = {
+        id: Date.now().toString(),
+        content: messageContent,
+        sender: "user",
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, newUserMessage]);
+      setIsTyping(true);
+      if (onSendMessage) {
+        await onSendMessage(messageContent);
         setIsTyping(false);
-      }, 1500);
+      } else {
+        setTimeout(() => {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: (Date.now() + 1).toString(),
+              content: "Thanks for reaching out! A representative will be with you shortly.",
+              sender: "ai",
+              timestamp: new Date(),
+            },
+          ]);
+          setIsTyping(false);
+        }, 1500);
+      }
     }
   };
 
@@ -139,7 +154,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
           </CardHeader>
 
           <CardContent className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900/50">
-            {messages.map((msg) => {
+            {displayMessages.map((msg) => {
               const isUser = msg.sender === "user";
               return (
                 <div key={msg.id} className={cn("flex", isUser ? "justify-end" : "justify-start")}>
