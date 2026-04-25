@@ -26,8 +26,8 @@ const sidebarVariants = cva(
   {
     variants: {
       collapsed: {
-        false: "w-72",
-        true: "lg:w-16 max-lg:w-72",
+        false: "w-72 max-lg:translate-x-0",
+        true: "lg:w-16 max-lg:w-72 max-lg:-translate-x-full",
       },
     },
     defaultVariants: {

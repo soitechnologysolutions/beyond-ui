@@ -63,15 +63,20 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
     dashboardHeaderProps,
     ...props
   }, ref) => {
-    const { isBelow } = useBreakpoint();
-    // Use lg (1024px) for mobile/tablet sidebar collapsing
-    const isMobile = isBelow("lg");
+    const { currentBreakpoint } = useBreakpoint();
 
-    const [sidebarCollapsed, setSidebarCollapsed] = React.useState(isMobile);
+    const [sidebarCollapsed, setSidebarCollapsed] = React.useState(() => {
+      if (typeof window !== "undefined") {
+        return window.innerWidth < 1024;
+      }
+      return true; // Default to mobile/hidden on SSR
+    });
 
     React.useEffect(() => {
-      setSidebarCollapsed(isMobile);
-    }, [isMobile]);
+      if (typeof window !== "undefined") {
+        setSidebarCollapsed(window.innerWidth < 1024);
+      }
+    }, [currentBreakpoint]);
 
     const toggleSidebar = () => {
       setSidebarCollapsed(prev => !prev);
@@ -93,8 +98,7 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
           }}
           className={cn(
             props.sidebarClassName,
-            "max-lg:z-50",
-            sidebarCollapsed ? "max-lg:-translate-x-full" : "max-lg:translate-x-0"
+            "max-lg:z-50"
           )}
           title={sidebarTitle}
           titleLetter={sidebarTitleLetter}

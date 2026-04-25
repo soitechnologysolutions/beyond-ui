@@ -105,7 +105,12 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
   const [selectedComponent, setSelectedComponent] = useState("button");
   const [activeTab, setActiveTab] = useState<"preview" | "code" | "props">("preview");
   const [searchQuery, setSearchQuery] = useState("");
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    if (typeof window !== "undefined") {
+      return window.innerWidth < 1024;
+    }
+    return false; // Default for SSR
+  });
   const [expandedCategories, setExpandedCategories] = useState<string[]>(["Forms"]);
   const [viewMode, setViewMode] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [darkMode, setDarkMode] = useState(false);
@@ -209,12 +214,20 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
     <div className={cn("flex h-screen bg-gray-50 dark:bg-gray-950", darkMode && "dark", className)}>
       <Toast />
 
+      {/* Mobile Overlay for Showcase Sidebar */}
+      {!sidebarCollapsed && (
+        <div
+          className="fixed inset-0 bg-black/50 dark:bg-black/80 z-10 lg:hidden backdrop-blur-sm transition-opacity"
+          onClick={() => setSidebarCollapsed(true)}
+        />
+      )}
+
       {/* Sidebar */}
       <div
         ref={sidebarRef}
         className={cn(
-          "bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300 flex flex-col",
-          sidebarCollapsed ? "w-16" : "w-80"
+          "bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300 flex flex-col z-20 shrink-0",
+          sidebarCollapsed ? "w-16" : "w-80 max-lg:absolute max-lg:h-full max-lg:shadow-2xl"
         )}
         tabIndex={sidebarCollapsed ? -1 : 0}
         onKeyDown={handleKeyNavigation}
@@ -302,6 +315,9 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({ className 
                         onClick={() => {
                           setSelectedComponent(component.id);
                           setFocusedIndex(flatComponents.indexOf(component.id));
+                  if (window.innerWidth < 1024) {
+                    setSidebarCollapsed(true);
+                  }
                         }}
                         className={cn(
                           "flex items-center w-full p-2 text-sm rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500",
