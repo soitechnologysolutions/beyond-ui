@@ -27,7 +27,7 @@ const sidebarVariants = cva(
     variants: {
       collapsed: {
         false: "w-72",
-        true: "w-16",
+        true: "lg:w-16 max-lg:w-72",
       },
     },
     defaultVariants: {
@@ -45,7 +45,7 @@ const menuItemVariants = cva(
         false: "text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-white",
       },
       collapsed: {
-        true: "justify-center px-2",
+        true: "lg:justify-center lg:px-2 max-lg:justify-start",
         false: "justify-start",
       },
     },
@@ -207,29 +207,27 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
               <div className="flex-shrink-0">
                 {item.icon}
               </div>
-              {!collapsed && (
-                <>
-                  <span className="ml-3 truncate">{item.label}</span>
-                  {item.badge && (
-                    <Badge variant="danger" className="ml-auto text-xs">
-                      {item.badge}
-                    </Badge>
-                  )}
-                  {hasChildren && (
-                    <ChevronDown 
-                      className={cn(
-                        "ml-auto h-4 w-4 transition-transform duration-200",
-                        isExpanded && "rotate-180"
-                      )}
-                    />
-                  )}
-                </>
-              )}
+              <div className={cn("flex flex-1 items-center min-w-0", collapsed ? "lg:hidden" : "")}>
+                <span className="ml-3 truncate">{item.label}</span>
+                {item.badge && (
+                  <Badge variant="danger" className="ml-auto text-xs">
+                    {item.badge}
+                  </Badge>
+                )}
+                {hasChildren && (
+                  <ChevronDown 
+                    className={cn(
+                      "ml-auto h-4 w-4 transition-transform duration-200",
+                      isExpanded && "rotate-180"
+                    )}
+                  />
+                )}
+              </div>
             </div>
           </button>
           
-          {hasChildren && !collapsed && isExpanded && (
-            <div className="mt-1 space-y-1">
+          {hasChildren && isExpanded && (
+            <div className={cn("mt-1 space-y-1", collapsed ? "lg:hidden" : "")}>
               {item.children?.map(child => renderMenuItem(child, level + 1))}
             </div>
           )}
@@ -261,22 +259,18 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       >
         {/* Sidebar Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
-          {!collapsed && (
+          <div className={cn(collapsed ? "lg:hidden" : "")}>
             <SidebarHeader
               title={title}
               letter={titleLetter}
               className={headerClassName}
             />
-          )}
+          </div>
           <button
             onClick={onToggle}
           className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           >
-            {collapsed ? (
-            <ChevronRight className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-            ) : (
-            <ChevronLeft className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-            )}
+            <ChevronLeft className={cn("h-4 w-4 text-gray-600 dark:text-gray-400 transition-transform duration-200", collapsed ? "lg:rotate-180 max-lg:rotate-0" : "")} />
           </button>
         </div>
 
@@ -287,8 +281,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
 
         {/* User Profile Section */}
       <div className="border-t border-gray-200 dark:border-gray-800 p-4">
-          {collapsed ? (
-            <div className="flex justify-center">
+          <div className={cn("flex justify-center", collapsed ? "max-lg:hidden" : "hidden")}>
               <div
                 className={cn(
                   "rounded-lg transition-colors",
@@ -306,8 +299,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                 </Avatar>
               </div>
             </div>
-          ) : (
-            <div className="space-y-3">
+          <div className={cn("space-y-3", collapsed ? "lg:hidden" : "")}>
               <div
                 className={cn(
                   "flex items-center space-x-3 rounded-lg transition-colors",
@@ -338,7 +330,6 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                 <LogoutButton className="flex-1" {...logoutButtonProps} />
               </div>
             </div>
-          )}
         </div>
       </div>
     );

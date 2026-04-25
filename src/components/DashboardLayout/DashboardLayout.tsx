@@ -93,7 +93,7 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
           }}
           className={cn(
             props.sidebarClassName,
-            "max-lg:w-72 max-lg:z-50",
+            "max-lg:z-50",
             sidebarCollapsed ? "max-lg:-translate-x-full" : "max-lg:translate-x-0"
           )}
           title={sidebarTitle}

@@ -50,8 +50,6 @@ interface DashboardHeaderProps {
   rightSlot?: DashboardHeaderSlot;
 }
 
-import { useBreakpoint } from "../../hooks/useBreakpoint";
-
 const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
   ({
     className,
@@ -77,22 +75,24 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
     ...props
   }, ref) => {
     const [searchValue, setSearchValue] = React.useState("");
-    const { currentBreakpoint } = useBreakpoint();
 
-    // Helper to resolve ResponsiveShow prop
-    const isSectionVisible = (
+    // Helper to resolve ResponsiveShow prop directly to Tailwind display classes
+    const getVisibilityClasses = (
       prop: ResponsiveShow | undefined,
-      view: "mobile" | "desktop"
-    ): boolean => {
-      if (typeof prop === "boolean") return prop;
-      if (!prop) return true;
-      if (view === "mobile") return prop.mobile ?? false;
-      if (view === "desktop") return prop.desktop ?? false;
-      return true;
+      baseDisplayClass: string = "flex"
+    ): string => {
+      if (typeof prop === "boolean") return prop ? baseDisplayClass : "hidden";
+      if (prop === undefined) return baseDisplayClass;
+      
+      const showMobile = prop.mobile ?? false;
+      const showDesktop = prop.desktop ?? false;
+      
+      if (showMobile && showDesktop) return baseDisplayClass;
+      if (!showMobile && !showDesktop) return "hidden";
+      if (showMobile && !showDesktop) return `${baseDisplayClass} lg:hidden`;
+      if (!showMobile && showDesktop) return `hidden lg:${baseDisplayClass}`;
+      return baseDisplayClass;
     };
-
-    const isMobile = currentBreakpoint === "sm" || currentBreakpoint === "md";
-    const isDesktop = currentBreakpoint === "lg" || currentBreakpoint === "xl" || currentBreakpoint === "2xl";
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
@@ -127,26 +127,25 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
               : leftSlot}
 
             {/* Mobile Menu Button */}
-            {(isSectionVisible(showMenuButton, isMobile ? "mobile" : "desktop")) && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={e => {
-                  onMenuButtonClick?.();
-                  onMenuToggle?.();
-                }}
-                className="md:hidden"
-              >
-                <Menu className="h-5 w-5" />
-              </Button>
-            )}
+            <div className={getVisibilityClasses(showMenuButton, "flex lg:hidden")}>
+               <Button
+                 variant="ghost"
+                 size="sm"
+                 onClick={e => {
+                   onMenuButtonClick?.();
+                   onMenuToggle?.();
+                 }}
+               >
+                 <Menu className="h-5 w-5" />
+               </Button>
+            </div>
 
             {/* Breadcrumbs */}
-            {isSectionVisible(showBreadcrumbs, isMobile ? "mobile" : "desktop") && (
               <nav
                 className={cn(
-                  "flex items-center space-x-2 text-sm",
-                  isMobile ? "w-full overflow-x-auto whitespace-nowrap py-1" : ""
+                  getVisibilityClasses(showBreadcrumbs, "flex"),
+                  "items-center space-x-2 text-sm",
+                  "w-full overflow-x-auto whitespace-nowrap py-1 lg:w-auto lg:overflow-visible lg:whitespace-normal lg:py-0"
                 )}
               >
                 {breadcrumbs.map((item, index) => (
@@ -178,7 +177,6 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
                   </React.Fragment>
                 ))}
               </nav>
-            )}
           </div>
 
           {/* Center Section - Search or custom center slot */}
@@ -197,8 +195,7 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
                 : centerSlot}
             </div>
           ) : (
-            isSectionVisible(showSearch, isMobile ? "mobile" : "desktop") && (
-              <div className="flex-1 min-w-0 mx-2">
+              <div className={cn(getVisibilityClasses(showSearch, "flex"), "flex-1 min-w-0 mx-2")}>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
                   <Input
@@ -210,7 +207,6 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
                   />
                 </div>
               </div>
-            )
           )}
 
           {/* Right Section */}
@@ -229,8 +225,7 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
               : rightSlot}
 
             {/* Notifications */}
-            {isSectionVisible(showNotifications, isMobile ? "mobile" : "desktop") && (
-              <div className="relative">
+              <div className={cn(getVisibilityClasses(showNotifications, "block"), "relative")}>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -246,24 +241,23 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
                   </Badge>
                 </Button>
               </div>
-            )}
 
             {/* Settings */}
-            {isSectionVisible(showSettings, isMobile ? "mobile" : "desktop") && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onSettingsClick}
-              >
-                <Settings className="h-5 w-5" />
-              </Button>
-            )}
+            <div className={getVisibilityClasses(showSettings, "block")}>
+               <Button
+                 variant="ghost"
+                 size="sm"
+                 onClick={onSettingsClick}
+               >
+                 <Settings className="h-5 w-5" />
+               </Button>
+            </div>
 
             {/* User Profile */}
-            {isSectionVisible(showProfile, isMobile ? "mobile" : "desktop") && (
               <div
                 className={cn(
-                  "flex items-center space-x-3 pl-3 border-l border-gray-200",
+                  getVisibilityClasses(showProfile, "flex"),
+                  "items-center space-x-3 pl-3 border-l border-gray-200",
                   onProfileClick ? "cursor-pointer hover:bg-gray-100 transition" : ""
                 )}
                 onClick={onProfileClick}
@@ -286,7 +280,6 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
                   <AvatarFallback>JD</AvatarFallback>
                 </Avatar>
               </div>
-            )}
           </div>
         </div>
       </header>
