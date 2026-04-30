@@ -1,5 +1,5 @@
 import * as React from "react";
-import { PasswordResetForm } from "./ForgotPasswordForm";
+import { ForgotPasswordForm } from "./ForgotPasswordForm";
 import { Card, CardHeader, CardTitle, CardContent } from "../Card";
 import { toast } from "react-hot-toast";
 
@@ -21,7 +21,7 @@ export const PasswordResetFormExample: React.FC = () => {
           <CardTitle>Password Reset</CardTitle>
         </CardHeader>
         <CardContent>
-          <PasswordResetForm
+          <ForgotPasswordForm
             onReset={handleReset}
             isLoading={loading}
           />
