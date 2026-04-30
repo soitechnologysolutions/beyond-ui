@@ -8,12 +8,13 @@ import { Input } from '../Input';
 import { Checkbox } from '../Checkbox';
 import { Alert, AlertDescription } from '../Alert';
 import { Spinner } from '../Spinner';
-import { useAuth } from '../../contexts/AuthContext';
 import { loginSchema, type LoginFormData } from '../../utils/validation';
 
 interface LoginFormProps {
   className?: string;
-  onSuccess?: () => void;
+  onSubmit: (data: LoginFormData) => Promise<void>;
+  isLoading?: boolean;
+  error?: string | null;
   onForgotPassword?: () => void;
   onSignupClick?: () => void;
 }
@@ -23,11 +24,12 @@ interface LoginFormProps {
  */
 export const LoginForm: React.FC<LoginFormProps> = ({
   className,
-  onSuccess,
+  onSubmit,
+  isLoading,
+  error,
   onForgotPassword,
   onSignupClick,
 }) => {
-  const { login, isLoading, error, clearError } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -44,15 +46,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     },
   });
 
-  const onSubmit = async (data: LoginFormData) => {
+  const handleFormSubmit = async (data: LoginFormData) => {
     try {
-      clearError();
-      await login(data);
+      await onSubmit(data);
       reset();
-      onSuccess?.();
-    } catch (error) {
-      // Error is handled by the auth context
-      console.error('Login failed:', error);
+    } catch (err) {
+      console.error('Login failed:', err);
     }
   };
 
@@ -82,7 +81,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         )}
 
         {/* Login Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
           {/* Email Field */}
           <div>
             <label

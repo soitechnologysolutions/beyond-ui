@@ -9,12 +9,13 @@ import { Checkbox } from '../Checkbox';
 import { Alert, AlertDescription } from '../Alert';
 import { Spinner } from '../Spinner';
 import { Badge } from '../Badge';
-import { useAuth } from '../../contexts/AuthContext';
 import { signupSchema, type SignupFormData, calculatePasswordStrength } from '../../utils/validation';
 
 interface SignupFormProps {
   className?: string;
-  onSuccess?: () => void;
+  onSubmit: (data: SignupFormData) => Promise<void>;
+  isLoading?: boolean;
+  error?: string | null;
   onLoginClick?: () => void;
 }
 
@@ -23,10 +24,11 @@ interface SignupFormProps {
  */
 export const SignupForm: React.FC<SignupFormProps> = ({
   className,
-  onSuccess,
+  onSubmit,
+  isLoading,
+  error,
   onLoginClick,
 }) => {
-  const { signup, isLoading, error, clearError } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -51,15 +53,12 @@ export const SignupForm: React.FC<SignupFormProps> = ({
   const password = watch('password');
   const passwordStrength = password ? calculatePasswordStrength(password) : null;
 
-  const onSubmit = async (data: SignupFormData) => {
+  const handleFormSubmit = async (data: SignupFormData) => {
     try {
-      clearError();
-      await signup(data);
+      await onSubmit(data);
       reset();
-      onSuccess?.();
-    } catch (error) {
-      // Error is handled by the auth context
-      console.error('Signup failed:', error);
+    } catch (err) {
+      console.error('Signup failed:', err);
     }
   };
 
@@ -93,7 +92,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
         )}
 
         {/* Signup Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
           {/* Name Field */}
           <div>
             <label
