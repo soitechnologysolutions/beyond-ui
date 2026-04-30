@@ -28,7 +28,7 @@ import { AuthShowcase } from '../Auth/AuthShowcase';
 import { LoginFormExample } from "../Auth/LoginForm.example";
 import { SignupFormExample } from "../Auth/SignupForm.example";
 import { ProtectedRouteExample } from "../Auth/ProtectedRoute.example";
-import { PasswordResetFormExample } from "../Auth/PasswordResetForm.example";
+import { PasswordResetFormExample } from "../Auth/ForgotPasswordForm.example";
 import { PageLayoutShowcase } from '../PageLayout/PageLayoutShowcase';
 import { ChatWidgetExample } from '../ChatWidget/ChatWidget.example';
 

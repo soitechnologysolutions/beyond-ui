@@ -1,5 +1,5 @@
 import * as React from "react";
-import { PasswordResetForm } from "./PasswordResetForm";
+import { PasswordResetForm } from "./ForgotPasswordForm";
 import { Card, CardHeader, CardTitle, CardContent } from "../Card";
 import { toast } from "react-hot-toast";
 

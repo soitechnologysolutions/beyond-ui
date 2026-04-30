@@ -10,9 +10,9 @@ const schema = z.object({
   email: z.string().min(1, "Email is required").email("Enter a valid email")
 });
 
-type PasswordResetFormData = z.infer<typeof schema>;
+type ForgotPasswordFormData = z.infer<typeof schema>;
 
-export interface PasswordResetFormProps {
+export interface ForgotPasswordFormProps {
   onReset?: (email: string) => Promise<void> | void;
   className?: string;
   isLoading?: boolean;
@@ -20,7 +20,7 @@ export interface PasswordResetFormProps {
   errorMessage?: string;
 }
 
-export const PasswordResetForm: React.FC<PasswordResetFormProps> = ({
+export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
   onReset,
   className,
   isLoading,
@@ -31,11 +31,11 @@ export const PasswordResetForm: React.FC<PasswordResetFormProps> = ({
     register,
     handleSubmit,
     formState: { errors, isSubmitting, isSubmitSuccessful }
-  } = useForm<PasswordResetFormData>({ resolver: zodResolver(schema) });
+  } = useForm<ForgotPasswordFormData>({ resolver: zodResolver(schema) });
 
   const [status, setStatus] = React.useState<"idle" | "success" | "error">("idle");
 
-  const onSubmit = async (data: PasswordResetFormData) => {
+  const onSubmit = async (data: ForgotPasswordFormData) => {
     setStatus("idle");
     try {
       await onReset?.(data.email);
@@ -75,11 +75,11 @@ export const PasswordResetForm: React.FC<PasswordResetFormProps> = ({
         disabled={isSubmitting || isLoading}
         className="w-full"
       >
-        Send Password Reset Link
+        Send Reset Link
       </Button>
       {status === "success" && (
         <div className="text-success-700 bg-success-50 border border-success-200 p-2 text-sm rounded text-center">
-          {successMessage || "A password reset link was sent if the address exists in our system."}
+          {successMessage || "A reset link was sent if the address exists in our system."}
         </div>
       )}
       {status === "error" && (
