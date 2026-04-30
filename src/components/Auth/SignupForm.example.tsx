@@ -11,7 +11,7 @@ export const SignupFormExample: React.FC = () => (
           <CardTitle>Sign Up</CardTitle>
         </CardHeader>
         <CardContent>
-          <SignupForm />
+        <SignupForm onSubmit={async (data) => console.log('Signup submitted:', data)} />
         </CardContent>
       </Card>
     </div>

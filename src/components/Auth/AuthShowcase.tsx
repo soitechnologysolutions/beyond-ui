@@ -79,8 +79,8 @@ const codeExamples = {
 function LoginPage() {
   return (
     <LoginForm
-      onSuccess={() => {
-        console.log('Login successful!');
+      onSubmit={async (data) => {
+        console.log('Login successful!', data);
         // Redirect to dashboard
       }}
       onForgotPassword={() => {
@@ -94,8 +94,8 @@ function LoginPage() {
 function SignupPage() {
   return (
     <SignupForm
-      onSuccess={() => {
-        console.log('Signup successful!');
+      onSubmit={async (data) => {
+        console.log('Signup successful!', data);
         // Redirect to dashboard
       }}
     />
@@ -215,13 +215,13 @@ export const AuthShowcase: React.FC = () => {
                   <CardContent>
                     {authMode === 'login' ? (
                       <LoginForm
-                        onSuccess={() => showToast.success('Login successful!')}
+                        onSubmit={async () => { showToast.success('Login successful!'); }}
                         onForgotPassword={() => showToast.info('Forgot password clicked')}
                         onSignupClick={() => setAuthMode('signup')}
                       />
                     ) : (
                       <SignupForm
-                        onSuccess={() => showToast.success('Signup successful!')}
+                        onSubmit={async () => { showToast.success('Signup successful!'); }}
                         onLoginClick={() => setAuthMode('login')}
                       />
                     )}

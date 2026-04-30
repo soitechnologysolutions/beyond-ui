@@ -11,7 +11,7 @@ export const LoginFormExample: React.FC = () => (
           <CardTitle>Login</CardTitle>
         </CardHeader>
         <CardContent>
-          <LoginForm />
+        <LoginForm onSubmit={async (data) => console.log('Login submitted:', data)} />
         </CardContent>
       </Card>
     </div>
