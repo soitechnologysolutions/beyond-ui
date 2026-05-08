@@ -17,11 +17,11 @@ export const EmailChangeVerification: React.FC<EmailChangeVerificationProps> = (
 }) => {
   return (
     <EmailLayout previewText="Verify your new email address" title="Verify Email Change">
-      <Text className="text-2xl font-bold text-gray-900 mb-4">Verify your new email</Text>
-      <Text className="text-gray-700 text-base leading-relaxed mb-6">
+      <Text className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Verify your new email</Text>
+      <Text className="text-gray-700 dark:text-gray-300 text-base leading-relaxed mb-6">
         Hi {userName}, you recently requested to change the email address associated with your account to <strong>{newEmail}</strong>.
       </Text>
-      <Text className="text-gray-700 text-base leading-relaxed mb-6">Please click the button below to confirm this change. This link will expire in {expiryMinutes} minutes.</Text>
+      <Text className="text-gray-700 dark:text-gray-300 text-base leading-relaxed mb-6">Please click the button below to confirm this change. This link will expire in {expiryMinutes} minutes.</Text>
       <Section className="text-center mb-6">
         <EmailButton href={verificationLink}>Verify New Email</EmailButton>
       </Section>

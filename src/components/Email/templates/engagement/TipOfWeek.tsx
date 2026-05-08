@@ -17,10 +17,10 @@ export const TipOfWeek: React.FC<TipOfWeekProps> = ({
 }) => {
   return (
     <EmailLayout previewText={`Tip of the Week: ${tipTitle}`} title="Tip of the Week">
-      <Text className="text-gray-500 font-bold tracking-widest text-xs uppercase mb-2">Tip of the Week</Text>
-      <Text className="text-2xl font-bold text-gray-900 mb-4">{tipTitle} 💡</Text>
-      <Text className="text-gray-700 text-base leading-relaxed mb-6">Hi {userName},</Text>
-      <Text className="text-gray-700 text-base leading-relaxed mb-6">{tipContent}</Text>
+      <Text className="text-gray-500 dark:text-gray-400 font-bold tracking-widest text-xs uppercase mb-2">Tip of the Week</Text>
+      <Text className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{tipTitle} 💡</Text>
+      <Text className="text-gray-700 dark:text-gray-300 text-base leading-relaxed mb-6">Hi {userName},</Text>
+      <Text className="text-gray-700 dark:text-gray-300 text-base leading-relaxed mb-6">{tipContent}</Text>
       <Section className="text-center mb-6"><EmailButton href={learnMoreLink}>Read Full Guide</EmailButton></Section>
     </EmailLayout>
   );

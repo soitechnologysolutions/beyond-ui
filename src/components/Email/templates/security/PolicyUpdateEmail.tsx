@@ -17,16 +17,16 @@ export const PolicyUpdateEmail: React.FC<PolicyUpdateEmailProps> = ({
 }) => {
   return (
     <EmailLayout previewText="Updates to our Privacy Policy" title="Policy Update Notice">
-      <Text className="text-2xl font-bold text-gray-900 mb-4">Updates to our Privacy Policy</Text>
-      <Text className="text-gray-700 text-base leading-relaxed mb-4">Hi {userName},</Text>
-      <Text className="text-gray-700 text-base leading-relaxed mb-6">
+      <Text className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Updates to our Privacy Policy</Text>
+      <Text className="text-gray-700 dark:text-gray-300 text-base leading-relaxed mb-4">Hi {userName},</Text>
+      <Text className="text-gray-700 dark:text-gray-300 text-base leading-relaxed mb-6">
         We are writing to let you know that we have published an updated Privacy Policy, which will take effect on <strong>{effectiveDate}</strong>.
       </Text>
-      <Section className="bg-gray-50 p-4 rounded-lg mb-6 border border-gray-100">
-        <Text className="font-semibold text-gray-900 m-0 mb-2">What changed?</Text>
-        <Text className="text-gray-700 m-0">{whatChanged}</Text>
+      <Section className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg mb-6 border border-gray-100 dark:border-gray-600">
+        <Text className="font-semibold text-gray-900 dark:text-white m-0 mb-2">What changed?</Text>
+        <Text className="text-gray-700 dark:text-gray-300 m-0">{whatChanged}</Text>
       </Section>
-      <Text className="text-gray-700 text-base leading-relaxed mb-6">By continuing to use our services on or after {effectiveDate}, you agree to the updated policy.</Text>
+      <Text className="text-gray-700 dark:text-gray-300 text-base leading-relaxed mb-6">By continuing to use our services on or after {effectiveDate}, you agree to the updated policy.</Text>
       <Section className="text-center mb-6"><EmailButton href={policyLink}>Read the Full Policy</EmailButton></Section>
     </EmailLayout>
   );

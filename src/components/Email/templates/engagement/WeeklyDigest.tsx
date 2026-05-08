@@ -19,19 +19,19 @@ export const WeeklyDigest: React.FC<WeeklyDigestProps> = ({
 }) => {
   return (
     <EmailLayout previewText="Your weekly activity summary" title="Weekly Activity Digest">
-      <Text className="text-2xl font-bold text-gray-900 mb-4">Your Weekly Summary</Text>
-      <Text className="text-gray-700 text-base leading-relaxed mb-6">
+      <Text className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Your Weekly Summary</Text>
+      <Text className="text-gray-700 dark:text-gray-300 text-base leading-relaxed mb-6">
         Hi {userName}, here's a quick look at your activity and achievements from the past week.
       </Text>
       
       <Section className="mb-6">
         {stats.map((stat, index) => (
-          <Row key={index} className="bg-gray-50 p-4 mb-2 rounded-lg border border-gray-100">
+          <Row key={index} className="bg-gray-50 dark:bg-gray-700 p-4 mb-2 rounded-lg border border-gray-100 dark:border-gray-600">
             <Column>
-              <Text className="text-gray-600 m-0 font-medium">{stat.label}</Text>
+              <Text className="text-gray-600 dark:text-gray-300 m-0 font-medium">{stat.label}</Text>
             </Column>
             <Column className="text-right">
-              <Text className="text-blue-600 font-bold m-0 text-xl">{stat.value}</Text>
+              <Text className="text-blue-600 dark:text-blue-400 font-bold m-0 text-xl">{stat.value}</Text>
             </Column>
           </Row>
         ))}

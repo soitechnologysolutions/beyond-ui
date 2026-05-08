@@ -13,8 +13,8 @@ export const MagicLinkEmail: React.FC<MagicLinkEmailProps> = ({
 }) => {
   return (
     <EmailLayout previewText="Your magic link is here" title="Log in to your account">
-      <Text className="text-2xl font-bold text-gray-900 mb-4">Log in to your account</Text>
-      <Text className="text-gray-700 text-base leading-relaxed mb-6">
+      <Text className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Log in to your account</Text>
+      <Text className="text-gray-700 dark:text-gray-300 text-base leading-relaxed mb-6">
         Click the button below to securely log into your account. This link will expire in {expiryMinutes} minutes.
       </Text>
       <Section className="text-center mb-6">
@@ -23,7 +23,7 @@ export const MagicLinkEmail: React.FC<MagicLinkEmailProps> = ({
         </EmailButton>
       </Section>
       <EmailDivider />
-      <Text className="text-gray-500 text-sm">If you didn't request this email, you can safely ignore it.</Text>
+      <Text className="text-gray-500 dark:text-gray-400 text-sm">If you didn't request this email, you can safely ignore it.</Text>
     </EmailLayout>
   );
 };

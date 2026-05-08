@@ -19,16 +19,16 @@ export const NewLoginAlert: React.FC<NewLoginAlertProps> = ({
 }) => {
   return (
     <EmailLayout previewText="New login to your account" title="New Login Alert">
-      <Text className="text-2xl font-bold text-gray-900 mb-4">New login detected</Text>
-      <Text className="text-gray-700 text-base leading-relaxed mb-4">
+      <Text className="text-2xl font-bold text-gray-900 dark:text-white mb-4">New login detected</Text>
+      <Text className="text-gray-700 dark:text-gray-300 text-base leading-relaxed mb-4">
         Hi {userName}, we noticed a new login to your account from an unrecognized device.
       </Text>
-      <Section className="bg-gray-50 p-4 rounded-lg mb-6 border border-gray-100">
-        <Text className="text-gray-700 m-0 mb-2"><strong>Device:</strong> {deviceInfo}</Text>
-        <Text className="text-gray-700 m-0 mb-2"><strong>Location:</strong> {location}</Text>
-        <Text className="text-gray-700 m-0"><strong>Time:</strong> {time}</Text>
+      <Section className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg mb-6 border border-gray-100 dark:border-gray-600">
+        <Text className="text-gray-700 dark:text-gray-300 m-0 mb-2"><strong>Device:</strong> {deviceInfo}</Text>
+        <Text className="text-gray-700 dark:text-gray-300 m-0 mb-2"><strong>Location:</strong> {location}</Text>
+        <Text className="text-gray-700 dark:text-gray-300 m-0"><strong>Time:</strong> {time}</Text>
       </Section>
-      <Text className="text-gray-700 text-base leading-relaxed mb-6">
+      <Text className="text-gray-700 dark:text-gray-300 text-base leading-relaxed mb-6">
         If this was you, you can safely ignore this email. If you don't recognize this activity, please secure your account immediately.
       </Text>
       <Section className="text-center mb-6">

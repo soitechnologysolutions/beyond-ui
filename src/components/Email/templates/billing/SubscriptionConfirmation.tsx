@@ -19,19 +19,19 @@ export const SubscriptionConfirmation: React.FC<SubscriptionConfirmationProps> =
 }) => {
   return (
     <EmailLayout previewText={`Your ${planName} subscription is active`} title="Subscription Confirmed">
-      <Text className="text-2xl font-bold text-gray-900 mb-4">Subscription Confirmed</Text>
-      <Text className="text-gray-700 text-base leading-relaxed mb-6">
+      <Text className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Subscription Confirmed</Text>
+      <Text className="text-gray-700 dark:text-gray-300 text-base leading-relaxed mb-6">
         Hi {userName}, your account has been successfully upgraded. You now have full access to all the features included in the {planName}.
       </Text>
-      <Section className="bg-gray-50 p-6 rounded-lg mb-6 text-center border border-gray-100">
-        <Text className="text-gray-500 m-0 mb-2 uppercase tracking-wide text-xs font-bold">Current Plan</Text>
-        <Text className="text-2xl font-bold text-gray-900 m-0 mb-1">{planName}</Text>
-        <Text className="text-gray-600 m-0">{price} {billingCycle}</Text>
+      <Section className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg mb-6 text-center border border-gray-100 dark:border-gray-600">
+        <Text className="text-gray-500 dark:text-gray-400 m-0 mb-2 uppercase tracking-wide text-xs font-bold">Current Plan</Text>
+        <Text className="text-2xl font-bold text-gray-900 dark:text-white m-0 mb-1">{planName}</Text>
+        <Text className="text-gray-600 dark:text-gray-300 m-0">{price} {billingCycle}</Text>
       </Section>
       <Section className="text-center mb-6">
         <EmailButton href={dashboardLink}>Go to Dashboard</EmailButton>
       </Section>
-      <Text className="text-gray-700 text-base leading-relaxed mb-4">Thank you for choosing us!</Text>
+      <Text className="text-gray-700 dark:text-gray-300 text-base leading-relaxed mb-4">Thank you for choosing us!</Text>
     </EmailLayout>
   );
 };

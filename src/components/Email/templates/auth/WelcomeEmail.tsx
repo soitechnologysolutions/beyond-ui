@@ -18,8 +18,8 @@ export const WelcomeEmail: React.FC<WelcomeEmailProps> = ({
       previewText={`Welcome to ${companyName}!`}
       title={`Welcome to ${companyName}`}
     >
-      <Text className="text-2xl font-bold text-gray-900 mb-4">Welcome to {companyName}, {userName}!</Text>
-      <Text className="text-gray-700 text-base leading-relaxed mb-6">
+      <Text className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Welcome to {companyName}, {userName}!</Text>
+      <Text className="text-gray-700 dark:text-gray-300 text-base leading-relaxed mb-6">
         We're thrilled to have you on board. To get started, please log in to your account.
       </Text>
       <Section className="text-center mb-6">
@@ -27,7 +27,7 @@ export const WelcomeEmail: React.FC<WelcomeEmailProps> = ({
           Get Started
         </EmailButton>
       </Section>
-      <Text className="text-gray-700 text-base">
+      <Text className="text-gray-700 dark:text-gray-300 text-base">
         Best,<br />
         The {companyName} Team
       </Text>

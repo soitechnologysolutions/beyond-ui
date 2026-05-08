@@ -10,11 +10,11 @@ export const EmailLayout = ({ children, previewText, title }: {
   title?: string;
 }) => (
   <Html>
-    <Head><title>{title}</title></Head>
-    {previewText && <Preview>{previewText}</Preview>}
     <Tailwind config={{ theme: { extend: { colors: theme.colors } } }}>
-      <Body className="bg-gray-50 my-auto mx-auto font-sans px-2">
-        <Container className="max-w-[600px] mx-auto bg-white rounded-lg p-8 my-8 shadow-sm border border-gray-100">
+      <Head><title>{title}</title></Head>
+      {previewText && <Preview>{previewText}</Preview>}
+      <Body className="bg-gray-50 dark:bg-gray-900 my-auto mx-auto font-sans px-2">
+        <Container className="max-w-[600px] mx-auto bg-white dark:bg-gray-800 rounded-lg p-8 my-8 shadow-sm border border-gray-100 dark:border-gray-700">
           <EmailHeader />
           {children}
           <EmailFooter />
