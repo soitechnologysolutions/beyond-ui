@@ -248,4 +248,21 @@ function Example() {
       { name: "onSendMessage", type: "(message: string) => Promise<void> | void", description: "Callback hook when the user sends a message." }
     ]
   },
+  "email-templates": {
+    name: "Email Templates",
+    description: "A comprehensive suite of 100+ React Email templates spanning marketing, billing, auth, and internal operations.",
+    example: `import { WelcomeEmail, renderEmailParams } from "@/components/Email";
+
+// In your Next.js API route:
+const { html, text } = await renderEmailParams(<WelcomeEmail userName="Alex" />);
+
+await resend.emails.send({
+  from: 'hello@beyondcorp.com',
+  to: 'user@example.com',
+  subject: 'Welcome!',
+  html,
+  text
+});`,
+    props: []
+  }
 };

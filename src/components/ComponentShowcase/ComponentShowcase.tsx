@@ -21,7 +21,8 @@ import {
   BarChart3,
   Settings,
   Shield,
-  Menu
+  Menu,
+  Mail
 } from "lucide-react";
 import { cn } from "../../utils/cn";
 import { Button } from "../Button";
@@ -85,6 +86,12 @@ const componentCategories = {
       { name: "DashboardGrid", id: "dashboard-grid" },
       { name: "Sidebar", id: "sidebar" },
       { name: "Navbar", id: "navbar" }
+    ]
+  },
+  Emails: {
+    icon: <Mail className="h-4 w-4" />,
+    components: [
+      { name: "Email Templates", id: "email-templates" }
     ]
   }
 };

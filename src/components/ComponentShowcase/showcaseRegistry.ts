@@ -31,6 +31,7 @@ import { ProtectedRouteExample } from "../Auth/ProtectedRoute.example";
 import { PasswordResetFormExample } from "../Auth/ForgotPasswordForm.example";
 import { PageLayoutShowcase } from '../PageLayout/PageLayoutShowcase';
 import { ChatWidgetExample } from '../ChatWidget/ChatWidget.example';
+import { EmailShowcase } from '../Email/EmailShowcase';
 
 
 
@@ -62,6 +63,7 @@ export const showcaseRegistry: Record<string, React.FC> = {
   "password-reset": PasswordResetFormExample,
   shield: ProtectedRouteExample,
   "page-layout": PageLayoutShowcase,
-  chatwidget: ChatWidgetExample
+  chatwidget: ChatWidgetExample,
+  "email-templates": EmailShowcase
   // Extend with other demos as needed
 };
