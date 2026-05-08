@@ -31,3 +31,5 @@ export const PaymentFailedEmail: React.FC<PaymentFailedEmailProps> = ({
     </EmailLayout>
   );
 };
+
+export default PaymentFailedEmail;

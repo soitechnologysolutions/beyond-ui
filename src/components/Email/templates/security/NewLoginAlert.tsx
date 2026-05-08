@@ -39,3 +39,5 @@ export const NewLoginAlert: React.FC<NewLoginAlertProps> = ({
     </EmailLayout>
   );
 };
+
+export default NewLoginAlert;

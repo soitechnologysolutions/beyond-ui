@@ -27,3 +27,5 @@ export const TrialEndingEmail: React.FC<TrialEndingEmailProps> = ({
     </EmailLayout>
   );
 };
+
+export default TrialEndingEmail;

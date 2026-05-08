@@ -36,3 +36,5 @@ export const MaintenanceNotice: React.FC<MaintenanceNoticeProps> = ({
     </EmailLayout>
   );
 };
+
+export default MaintenanceNotice;

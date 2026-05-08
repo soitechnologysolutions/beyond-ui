@@ -28,3 +28,5 @@ export const ReferralInvite: React.FC<ReferralInviteProps> = ({
     </EmailLayout>
   );
 };
+
+export default ReferralInvite;

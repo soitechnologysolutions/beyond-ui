@@ -28,3 +28,5 @@ export const DataExportReady: React.FC<DataExportReadyProps> = ({
     </EmailLayout>
   );
 };
+
+export default DataExportReady;

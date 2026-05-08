@@ -25,3 +25,5 @@ export const ConfirmEmail: React.FC<ConfirmEmailProps> = ({
     </EmailLayout>
   );
 };
+
+export default ConfirmEmail;

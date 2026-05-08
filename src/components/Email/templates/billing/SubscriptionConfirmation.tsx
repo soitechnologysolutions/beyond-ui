@@ -35,3 +35,5 @@ export const SubscriptionConfirmation: React.FC<SubscriptionConfirmationProps> =
     </EmailLayout>
   );
 };
+
+export default SubscriptionConfirmation;

@@ -36,3 +36,5 @@ export const IncidentReport: React.FC<IncidentReportProps> = ({
     </EmailLayout>
   );
 };
+
+export default IncidentReport;

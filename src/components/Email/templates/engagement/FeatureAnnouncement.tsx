@@ -39,3 +39,5 @@ export const FeatureAnnouncement: React.FC<FeatureAnnouncementProps> = ({
     </EmailLayout>
   );
 };
+
+export default FeatureAnnouncement;

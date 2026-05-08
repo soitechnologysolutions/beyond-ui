@@ -44,3 +44,5 @@ export const WeeklyDigest: React.FC<WeeklyDigestProps> = ({
     </EmailLayout>
   );
 };
+
+export default WeeklyDigest;

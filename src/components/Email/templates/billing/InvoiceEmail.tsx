@@ -48,3 +48,5 @@ export const InvoiceEmail: React.FC<InvoiceEmailProps> = ({
     </EmailLayout>
   );
 };
+
+export default InvoiceEmail;

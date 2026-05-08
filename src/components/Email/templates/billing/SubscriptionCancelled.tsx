@@ -29,3 +29,5 @@ export const SubscriptionCancelled: React.FC<SubscriptionCancelledProps> = ({
     </EmailLayout>
   );
 };
+
+export default SubscriptionCancelled;

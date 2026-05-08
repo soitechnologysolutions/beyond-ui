@@ -27,3 +27,5 @@ export const MagicLinkEmail: React.FC<MagicLinkEmailProps> = ({
     </EmailLayout>
   );
 };
+
+export default MagicLinkEmail;

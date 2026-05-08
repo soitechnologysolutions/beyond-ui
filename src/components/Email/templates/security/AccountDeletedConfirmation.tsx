@@ -29,3 +29,5 @@ export const AccountDeletedConfirmation: React.FC<AccountDeletedConfirmationProp
     </EmailLayout>
   );
 };
+
+export default AccountDeletedConfirmation;

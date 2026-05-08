@@ -30,3 +30,5 @@ export const InactivityWarning: React.FC<InactivityWarningProps> = ({
     </EmailLayout>
   );
 };
+
+export default InactivityWarning;

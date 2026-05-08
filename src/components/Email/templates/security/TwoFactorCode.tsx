@@ -30,3 +30,5 @@ export const TwoFactorCode: React.FC<TwoFactorCodeProps> = ({
     </EmailLayout>
   );
 };
+
+export default TwoFactorCode;

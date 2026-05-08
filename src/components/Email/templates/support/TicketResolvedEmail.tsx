@@ -36,3 +36,5 @@ export const TicketResolvedEmail: React.FC<TicketResolvedEmailProps> = ({
     </EmailLayout>
   );
 };
+
+export default TicketResolvedEmail;

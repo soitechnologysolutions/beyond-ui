@@ -34,3 +34,5 @@ export const ReferralReward: React.FC<ReferralRewardProps> = ({
     </EmailLayout>
   );
 };
+
+export default ReferralReward;

@@ -32,3 +32,5 @@ export const NotificationEmail: React.FC<NotificationEmailProps> = ({
     </EmailLayout>
   );
 };
+
+export default NotificationEmail;

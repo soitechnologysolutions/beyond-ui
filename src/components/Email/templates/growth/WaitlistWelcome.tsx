@@ -32,3 +32,5 @@ export const WaitlistWelcome: React.FC<WaitlistWelcomeProps> = ({
     </EmailLayout>
   );
 };
+
+export default WaitlistWelcome;

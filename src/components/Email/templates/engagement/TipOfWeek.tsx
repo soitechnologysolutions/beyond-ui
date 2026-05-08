@@ -25,3 +25,5 @@ export const TipOfWeek: React.FC<TipOfWeekProps> = ({
     </EmailLayout>
   );
 };
+
+export default TipOfWeek;

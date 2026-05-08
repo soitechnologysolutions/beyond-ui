@@ -36,3 +36,5 @@ export const MilestoneEmail: React.FC<MilestoneEmailProps> = ({
     </EmailLayout>
   );
 };
+
+export default MilestoneEmail;

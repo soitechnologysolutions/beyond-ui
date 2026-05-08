@@ -31,3 +31,5 @@ export const PolicyUpdateEmail: React.FC<PolicyUpdateEmailProps> = ({
     </EmailLayout>
   );
 };
+
+export default PolicyUpdateEmail;

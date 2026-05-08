@@ -33,3 +33,5 @@ export const TicketCreatedEmail: React.FC<TicketCreatedEmailProps> = ({
     </EmailLayout>
   );
 };
+
+export default TicketCreatedEmail;
