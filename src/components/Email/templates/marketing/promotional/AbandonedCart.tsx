@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, Section, Row, Column, Img } from '@react-email/components';
 import { EmailLayout, EmailButton, EmailDivider } from '../../../components';
 
-export interface CartItem {
+export interface EmailCartItem {
   name: string;
   price: string;
   image: string;
@@ -10,7 +10,7 @@ export interface CartItem {
 
 export interface AbandonedCartProps {
   userName?: string;
-  cartItems?: CartItem[];
+  cartItems?: EmailCartItem[];
   totalValue?: string;
   checkoutLink?: string;
   discountCode?: string;
