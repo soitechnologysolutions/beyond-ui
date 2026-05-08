@@ -2,3 +2,8 @@ export * from './WeeklyNewsletter';
 export * from './AbandonedCart';
 export * from './FlashSale';
 export * from './ExitSurvey';
+export * from './MonthlyDigest';
+export * from './WebinarConfirmation';
+export * from './EventAnnouncement';
+export * from './WeMissYou30Day';
+export * from './NPSSurvey';
