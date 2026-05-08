@@ -1,2 +1,2 @@
-export * from './WelcomeEmail';
-export * from './ResetPasswordEmail';
+export * from './components';
+export * from './templates';
