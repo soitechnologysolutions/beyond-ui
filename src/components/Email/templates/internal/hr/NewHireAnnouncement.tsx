@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, Section } from '@react-email/components';
-import { EmailLayout, EmailButton, EmailDivider } from '../../components';
+import { EmailLayout, EmailButton, EmailDivider } from '../../../components';
 
 export interface NewHireAnnouncementProps {
   newHireName?: string;
