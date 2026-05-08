@@ -5,3 +5,4 @@ export * from './InactivityWarning';
 export * from './TipOfWeek';
 export * from './FeedbackRequestEmail';
 export * from './TeamInviteEmail'
+export * from './ProductChangelog';
