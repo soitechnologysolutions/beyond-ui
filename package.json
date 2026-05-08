@@ -19,6 +19,8 @@
   ],
   "scripts": {
     "dev": "vite",
+    "email:dev": "email dev --dir src/components/Email",
+    "email:export": "email export --dir src/components/Email",
     "build": "npm run build:css && tsc && vite build",
     "build:css": "tailwindcss -i ./src/styles/lib.css -o ./dist/styles.css --content \"./dist/components/**/*.{js,jsx}\" --minify",
     "build:lib": "rollup -c && tsc --project tsconfig.build.json --emitDeclarationOnly && npm run build:css",
@@ -42,19 +44,23 @@
   "author": "Beyond Corp",
   "license": "MIT",
   "peerDependencies": {
-    "react": ">=18.0.0",
-    "react-dom": ">=18.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "tailwindcss": ">=3.0.0"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-slot": "^1.0.2",
+    "@react-email/components": "^1.0.12",
     "@types/prismjs": "^1.26.5",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
+    "i": "^0.3.7",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.344.0",
+    "npm": "^11.14.0",
     "prismjs": "^1.30.0",
+    "react-email": "^6.1.1",
     "react-hook-form": "^7.62.0",
     "react-hot-toast": "^2.4.1",
     "react-markdown": "^10.1.0",
@@ -67,6 +73,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
+    "@react-email/ui": "6.1.1",
     "@rollup/plugin-commonjs": "^28.0.6",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.1",
@@ -89,6 +96,7 @@
     "@types/react-syntax-highlighter": "^15.5.13",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.18",
+    "browserslist": "^4.24.0",
     "eslint": "^9.9.1",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.11",
@@ -103,8 +111,7 @@
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.3.0",
     "vite": "^5.4.2",
-    "vite-plugin-dts": "^3.9.1",
-    "browserslist": "^4.24.0"
+    "vite-plugin-dts": "^3.9.1"
   },
   "engines": {
     "node": ">=18.0.0",

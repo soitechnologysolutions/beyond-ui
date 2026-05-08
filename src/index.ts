@@ -33,6 +33,8 @@ export * from './components/Blog'
 export * from './components/CodeHighlight';
 export * from "./components/Image"
 export * from "./components/ChatWidget"
+export * from "./components/Email"
+
 
 
 
