@@ -5,3 +5,7 @@ export * from './security';
 export * from './engagement';
 export * from './growth';
 export * from './system';
+export * from './internal';
+export * from './sales';
+export * from './legal';
+export * from './marketing';
