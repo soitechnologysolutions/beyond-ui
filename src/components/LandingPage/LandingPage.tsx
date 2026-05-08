@@ -546,7 +546,7 @@ export const LandingPage: React.FC = () => {
               <h4 className="font-semibold text-white mb-4">Product</h4>
               <ul className="space-y-3 text-gray-300">
                 <li><Link to="/showcase" className="hover:text-white transition-colors">Components</Link></li>
-                <li><a href="https://storybook.ui.beyondsoftwares.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Documentation</a></li>
+                <li><a href="https://storybook.beyondsoftwares.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Documentation</a></li>
                 <li><a href="#showcase" className="hover:text-white transition-colors">Examples</a></li>
                 <li><a href="#templates" className="hover:text-white transition-colors">Templates</a></li>
               </ul>

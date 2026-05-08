@@ -335,7 +335,7 @@ export default function Demo() {
 
 ## 📖 Documentation & Storybook
 
-- [Public Storybook](https://storybook.ui.beyondsoftwares.com) — hosted component gallery and prop reference
+- [Public Storybook](https://storybook.beyondsoftwares.com) — hosted component gallery and prop reference
 - [Library landing page](https://ui.beyondsoftwares.com)
 - [Getting Started guide](./docs/getting-started.md)
 - [Theming & customization](./docs/theming.md)

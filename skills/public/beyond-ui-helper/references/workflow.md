@@ -34,7 +34,7 @@ Run lint, test, and build before packaging or publishing the skill to Clawhub.
 ## Storybook & docs
 
 - Storybook stories live in `/stories`. Keep them updated as components change.
-- Public Storybook: https://storybook.ui.beyondsoftwares.com
+- Public Storybook: https://storybook.beyondsoftwares.com
 - Library landing page: https://ui.beyondsoftwares.com
 
 ## Packaging this skill
