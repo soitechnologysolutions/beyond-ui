@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { PasswordResetForm } from "../src/components/Auth/PasswordResetForm";
+import { ForgotPasswordForm } from "../src/components/Auth/ForgotPasswordForm";
 
-const meta: Meta<typeof PasswordResetForm> = {
-  title: "Auth/PasswordResetForm",
-  component: PasswordResetForm,
+const meta: Meta<typeof ForgotPasswordForm> = {
+  title: "Auth/ForgotPasswordForm",
+  component: ForgotPasswordForm,
   tags: ["autodocs"],
   parameters: {
     layout: "centered"
@@ -12,7 +12,7 @@ const meta: Meta<typeof PasswordResetForm> = {
 
 export default meta;
 
-type Story = StoryObj<typeof PasswordResetForm>;
+type Story = StoryObj<typeof ForgotPasswordForm>;
 
 export const Default: Story = {
   args: {
