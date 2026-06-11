@@ -65,7 +65,8 @@ const externals = [
 ];
 
 const externalFunc = (id) =>
-  externals.some((pkg) => id === pkg || id.startsWith(pkg + "/"));
+  externals.some((pkg) => id === pkg || id.startsWith(pkg + "/")) ||
+  id.startsWith("@react-email/");
 
 export default {
   input: barrelInputs,

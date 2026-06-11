@@ -72,13 +72,13 @@ export const SignupForm: React.FC<SignupFormProps> = ({
 
   return (
     <div className={cn('w-full max-w-md mx-auto', className)}>
-      <div className="bg-white rounded-lg shadow-lg p-8">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
             Create Account
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-400">
             Join us today and get started
           </p>
         </div>
@@ -97,7 +97,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
           <div>
             <label
               htmlFor="name"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
             >
               Full Name
             </label>
@@ -108,7 +108,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
                 type="text"
                 placeholder="Enter your full name"
                 className={cn(
-                  'pl-10',
+                  'pl-10 text-gray-900 dark:text-white bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-500',
                   errors.name && 'border-danger-500 focus:ring-danger-500'
                 )}
                 aria-invalid={errors.name ? 'true' : 'false'}
@@ -131,7 +131,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
             >
               Email Address
             </label>
@@ -142,7 +142,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
                 type="email"
                 placeholder="Enter your email"
                 className={cn(
-                  'pl-10',
+                  'pl-10 text-gray-900 dark:text-white bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-500',
                   errors.email && 'border-danger-500 focus:ring-danger-500'
                 )}
                 aria-invalid={errors.email ? 'true' : 'false'}
@@ -165,7 +165,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
             >
               Password
             </label>
@@ -176,7 +176,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Create a strong password"
                 className={cn(
-                  'pl-10 pr-10',
+                  'pl-10 pr-10 text-gray-900 dark:text-white bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-500',
                   errors.password && 'border-danger-500 focus:ring-danger-500'
                 )}
                 aria-invalid={errors.password ? 'true' : 'false'}
@@ -201,7 +201,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
             {password && passwordStrength && (
               <div id="password-strength" className="mt-2">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-gray-600">Password strength:</span>
+                  <span className="text-xs text-gray-600 dark:text-gray-400">Password strength:</span>
                   <Badge
                     variant={
                       passwordStrength.color === 'success' ? 'success' :
@@ -241,7 +241,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
           <div>
             <label
               htmlFor="confirmPassword"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
             >
               Confirm Password
             </label>
@@ -252,7 +252,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
                 type={showConfirmPassword ? 'text' : 'password'}
                 placeholder="Confirm your password"
                 className={cn(
-                  'pl-10 pr-10',
+                  'pl-10 pr-10 text-gray-900 dark:text-white bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-500',
                   errors.confirmPassword && 'border-danger-500 focus:ring-danger-500'
                 )}
                 aria-invalid={errors.confirmPassword ? 'true' : 'false'}
@@ -292,7 +292,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
                 aria-invalid={errors.acceptTerms ? 'true' : 'false'}
                 aria-describedby={errors.acceptTerms ? 'terms-error' : undefined}
               />
-              <span className="ml-2 text-sm text-gray-600">
+              <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
                 I agree to the{' '}
                 <a
                   href="#"
@@ -340,7 +340,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
 
         {/* Login Link */}
         <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             Already have an account?{' '}
             <button
               type="button"

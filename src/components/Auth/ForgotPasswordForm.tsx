@@ -53,7 +53,7 @@ export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
       noValidate
     >
       <div>
-        <label className="block text-sm font-medium mb-1" htmlFor="reset-email">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" htmlFor="reset-email">
           Email Address
         </label>
         <Input
@@ -61,6 +61,7 @@ export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
           type="email"
           autoComplete="email"
           placeholder="you@email.com"
+            className="text-gray-900 dark:text-white bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-500"
           {...register("email")}
           disabled={isSubmitting || isLoading}
           variant={errors.email ? "error" : "default"}

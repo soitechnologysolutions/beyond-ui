@@ -61,13 +61,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
   return (
     <div className={cn('w-full max-w-md mx-auto', className)}>
-      <div className="bg-white rounded-lg shadow-lg p-8">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
             Welcome Back
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-400">
             Sign in to your account to continue
           </p>
         </div>
@@ -86,7 +86,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
             >
               Email Address
             </label>
@@ -97,7 +97,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 type="email"
                 placeholder="Enter your email"
                 className={cn(
-                  'pl-10',
+                  'pl-10 text-gray-900 dark:text-white bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-500',
                   errors.email && 'border-danger-500 focus:ring-danger-500'
                 )}
                 aria-invalid={errors.email ? 'true' : 'false'}
@@ -120,7 +120,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
             >
               Password
             </label>
@@ -131,7 +131,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Enter your password"
                 className={cn(
-                  'pl-10 pr-10',
+                  'pl-10 pr-10 text-gray-900 dark:text-white bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-500',
                   errors.password && 'border-danger-500 focus:ring-danger-500'
                 )}
                 aria-invalid={errors.password ? 'true' : 'false'}
@@ -166,7 +166,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           <div className="flex items-center justify-between">
             <label className="flex items-center">
               <Checkbox {...register('rememberMe')} />
-              <span className="ml-2 text-sm text-gray-600">Remember me</span>
+              <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">Remember me</span>
             </label>
             <button
               type="button"
@@ -196,9 +196,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         </form>
 
         {/* Demo Credentials */}
-        <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-          <p className="text-sm text-gray-600 mb-2 font-medium">Demo Credentials:</p>
-          <p className="text-xs text-gray-500">
+        <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 font-medium">Demo Credentials:</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
             Email: admin@example.com<br />
             Password: Password123!
           </p>
@@ -206,7 +206,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
         {/* Sign Up Link */}
         <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             Don't have an account?{' '}
             <button
               type="button"

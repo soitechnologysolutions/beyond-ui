@@ -70,7 +70,7 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
     >
       {/* Password Field */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="password">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" htmlFor="password">
           New Password
         </label>
         <div className="relative">
@@ -79,7 +79,10 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
             id="password"
             type={showPassword ? "text" : "password"}
             placeholder="Enter new password"
-            className={cn("pl-10 pr-10", errors.password && "border-danger-500 focus:ring-danger-500")}
+              className={cn(
+                "pl-10 pr-10 text-gray-900 dark:text-white bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-500",
+                errors.password && "border-danger-500 focus:ring-danger-500"
+              )}
             {...register("password")}
             disabled={isSubmitting || isLoading}
           />
@@ -98,7 +101,7 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
 
       {/* Confirm Password Field */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="confirmPassword">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" htmlFor="confirmPassword">
           Confirm Password
         </label>
         <div className="relative">
@@ -107,7 +110,10 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
             id="confirmPassword"
             type={showConfirmPassword ? "text" : "password"}
             placeholder="Confirm new password"
-            className={cn("pl-10 pr-10", errors.confirmPassword && "border-danger-500 focus:ring-danger-500")}
+              className={cn(
+                "pl-10 pr-10 text-gray-900 dark:text-white bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-500",
+                errors.confirmPassword && "border-danger-500 focus:ring-danger-500"
+              )}
             {...register("confirmPassword")}
             disabled={isSubmitting || isLoading}
           />
