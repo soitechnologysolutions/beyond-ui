@@ -96,9 +96,9 @@ export const EditModal: React.FC<EditModalProps> = ({
   className,
 }) => (
   <Modal open={open} onOpenChange={() => onClose()}>
-    <div className={cn("max-w-2xl rounded-2xl p-0 p-8 mx-auto bg-white", className)}>
-      {title && <h2 className="text-2xl font-bold mb-1 text-gray-900">{title}</h2>}
-      {description && <p className="text-gray-500 mb-6">{description}</p>}
+    <div className={cn("max-w-2xl rounded-2xl p-0 p-8 mx-auto bg-white dark:bg-gray-900", className)}>
+      {title && <h2 className="text-2xl font-bold mb-1 text-gray-900 dark:text-white">{title}</h2>}
+      {description && <p className="text-gray-500 dark:text-gray-400 mb-6">{description}</p>}
       <form
         className="space-y-6"
         onSubmit={e => {
@@ -113,7 +113,7 @@ export const EditModal: React.FC<EditModalProps> = ({
             }
             // Title above every input/textarea/select/etc.
             const title = (
-              <div key={field.name + "-title"} className="mb-1 font-medium text-gray-700">
+              <div key={field.name + "-title"} className="mb-1 font-medium text-gray-700 dark:text-gray-300">
                 {field.label}
               </div>
             );
