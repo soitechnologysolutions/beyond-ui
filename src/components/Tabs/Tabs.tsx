@@ -12,8 +12,8 @@ const tabsListVariants = cva(
         underline: "bg-transparent border-b border-gray-200 dark:border-gray-800", // Default for horizontal
       },
       orientation: {
-        horizontal: "inline-flex h-10 items-center justify-start p-1",
-        vertical: "flex flex-col h-auto items-stretch justify-start p-0", // Stretches to fill container
+        horizontal: "inline-flex h-10 items-center justify-start p-1 w-full gap-2",
+        vertical: "flex flex-col h-auto items-start justify-start p-0 w-full gap-1",
       },
     },
     defaultVariants: {
@@ -47,6 +47,7 @@ interface TabsContextValue {
   onValueChange: (value: string) => void;
   variant?: VariantProps<typeof tabsListVariants>["variant"];
   orientation?: "horizontal" | "vertical"; // Add orientation to context
+  responsive?: boolean;
 }
 
 const TabsContext = React.createContext<TabsContextValue | undefined>(undefined);
@@ -57,12 +58,20 @@ interface TabsProps extends VariantProps<typeof tabsListVariants> {
   children: React.ReactNode;
   className?: string;
   orientation?: "horizontal" | "vertical"; // Add orientation to TabsProps
+  responsive?: boolean;
 }
 
-const Tabs: React.FC<TabsProps> = ({ value, onValueChange, variant, orientation = "horizontal", children, className }) => {
+const Tabs: React.FC<TabsProps> = ({ value, onValueChange, variant, orientation = "horizontal", responsive = false, children, className }) => {
   return (
-    <TabsContext.Provider value={{ value, onValueChange, variant, orientation }}>
-      <div className={cn("w-full", className)}>{children}</div>
+    <TabsContext.Provider value={{ value, onValueChange, variant, orientation, responsive }}>
+      <div className={cn(
+        "w-full",
+        responsive && "relative w-full before:absolute before:right-0 before:top-0 before:bottom-0 before:w-12 before:bg-gradient-to-l before:from-white dark:before:from-gray-950 before:to-transparent before:pointer-events-none before:z-10",
+        responsive && orientation === "vertical" && "lg:before:hidden",
+        className
+      )}>
+        {children}
+      </div>
     </TabsContext.Provider>
   );
 };
@@ -74,10 +83,37 @@ const TabsList = React.forwardRef<
   const context = React.useContext(TabsContext);
   if (!context) throw new Error("TabsList must be used within Tabs");
 
+  const internalRef = React.useRef<HTMLDivElement>(null);
+  const combinedRef = (ref as React.RefCallback<HTMLDivElement>) || internalRef;
+
+  // Handle inner auto-scrolling when responsive is active
+  React.useEffect(() => {
+    if (context.responsive) {
+      const targetRef = (ref && 'current' in ref ? ref : internalRef) as React.RefObject<HTMLDivElement>;
+      if (targetRef.current) {
+        const activeTabElement = targetRef.current.querySelector(
+          '[data-state="active"]'
+        );
+        if (activeTabElement) {
+          activeTabElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+      }
+    }
+  }, [context.value, context.responsive, ref]);
+
   return (
     <div
-      ref={ref}
-      className={cn(tabsListVariants({ variant: context.variant, orientation: context.orientation }), className)}
+      ref={ref || internalRef}
+      className={cn(
+        tabsListVariants({ 
+          variant: context.variant, 
+          orientation: context.orientation 
+        }),
+        context.responsive && "flex flex-row overflow-x-auto justify-start items-center w-full gap-4 pb-px border-b border-gray-200 dark:border-gray-800 bg-transparent scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+        context.responsive && context.orientation === "vertical" && "lg:border-b-0 lg:flex-col lg:items-start lg:overflow-x-visible lg:overflow-y-auto lg:max-h-[calc(100vh-180px)] lg:pr-2",
+        className
+      )}
+      style={context.responsive ? { WebkitOverflowScrolling: 'touch', ...props.style } : props.style}
       {...props}
     />
   );
@@ -99,7 +135,12 @@ const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(
       <button
         ref={ref}
         className={cn(
-          tabsTriggerVariants({ variant: context.variant, orientation: context.orientation }),
+          tabsTriggerVariants({ 
+            variant: context.variant, 
+            orientation: context.orientation 
+          }),
+          context.responsive && "flex-shrink-0 justify-start gap-2",
+          context.responsive && context.orientation === "vertical" && "lg:self-start",
           className
         )}
         data-state={isActive ? "active" : "inactive"}
