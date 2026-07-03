@@ -1,18 +1,18 @@
 import * as React from "react";
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  ChevronDown, 
-  Home, 
-  BarChart3, 
-  Users, 
-  Settings, 
-  FileText, 
-  Calendar, 
-  Mail, 
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  Home,
+  BarChart3,
+  Users,
+  Settings,
+  FileText,
+  Calendar,
+  Mail,
   Bell,
   LogOut,
-  User
+  User,
 } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../utils/cn";
@@ -33,7 +33,7 @@ const sidebarVariants = cva(
     defaultVariants: {
       collapsed: false,
     },
-  }
+  },
 );
 
 const menuItemVariants = cva(
@@ -42,7 +42,8 @@ const menuItemVariants = cva(
     variants: {
       active: {
         true: "bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 border-r-2 border-primary-600",
-        false: "text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-white",
+        false:
+          "text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-white",
       },
       collapsed: {
         true: "lg:justify-center lg:px-2 max-lg:justify-start",
@@ -53,7 +54,7 @@ const menuItemVariants = cva(
       active: false,
       collapsed: false,
     },
-  }
+  },
 );
 
 interface MenuItem {
@@ -117,8 +118,16 @@ const defaultMenuItems: MenuItem[] = [
     label: "Users",
     icon: <Users className="h-5 w-5" />,
     children: [
-      { id: "all-users", label: "All Users", icon: <Users className="h-4 w-4" /> },
-      { id: "user-roles", label: "User Roles", icon: <Settings className="h-4 w-4" /> },
+      {
+        id: "all-users",
+        label: "All Users",
+        icon: <Users className="h-4 w-4" />,
+      },
+      {
+        id: "user-roles",
+        label: "User Roles",
+        icon: <Settings className="h-4 w-4" />,
+      },
     ],
   },
   {
@@ -155,28 +164,31 @@ const defaultMenuItems: MenuItem[] = [
 ];
 
 const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
-  ({
-    className,
-    collapsed = false,
-    onToggle,
-    menuItems = defaultMenuItems,
-    activeItem = "dashboard",
-    onItemClick,
-    title = "Beyond",
-    titleLetter = "B",
-    headerClassName,
-    profileButtonProps,
-    logoutButtonProps,
-    profileSectionProps,
-    ...props
-  }, ref) => {
+  (
+    {
+      className,
+      collapsed = false,
+      onToggle,
+      menuItems = defaultMenuItems,
+      activeItem = "dashboard",
+      onItemClick,
+      title = "Beyond",
+      titleLetter = "B",
+      headerClassName,
+      profileButtonProps,
+      logoutButtonProps,
+      profileSectionProps,
+      ...props
+    },
+    ref,
+  ) => {
     const [expandedItems, setExpandedItems] = React.useState<string[]>([]);
 
     const toggleExpanded = (itemId: string) => {
-      setExpandedItems(prev => 
-        prev.includes(itemId) 
-          ? prev.filter(id => id !== itemId)
-          : [...prev, itemId]
+      setExpandedItems((prev) =>
+        prev.includes(itemId)
+          ? prev.filter((id) => id !== itemId)
+          : [...prev, itemId],
       );
     };
 
@@ -200,14 +212,17 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             className={cn(
               menuItemVariants({ active: isActive, collapsed }),
               level > 0 && "ml-4 pl-8",
-              "relative"
+              "relative",
             )}
           >
             <div className="flex items-center min-w-0 flex-1">
-              <div className="flex-shrink-0">
-                {item.icon}
-              </div>
-              <div className={cn("flex flex-1 items-center min-w-0", collapsed ? "lg:hidden" : "")}>
+              <div className="flex-shrink-0">{item.icon}</div>
+              <div
+                className={cn(
+                  "flex flex-1 items-center min-w-0",
+                  collapsed ? "lg:hidden" : "",
+                )}
+              >
                 <span className="ml-3 truncate">{item.label}</span>
                 {item.badge && (
                   <Badge variant="danger" className="ml-auto text-xs">
@@ -215,20 +230,20 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                   </Badge>
                 )}
                 {hasChildren && (
-                  <ChevronDown 
+                  <ChevronDown
                     className={cn(
                       "ml-auto h-4 w-4 transition-transform duration-200",
-                      isExpanded && "rotate-180"
+                      isExpanded && "rotate-180",
                     )}
                   />
                 )}
               </div>
             </div>
           </button>
-          
+
           {hasChildren && isExpanded && (
             <div className={cn("mt-1 space-y-1", collapsed ? "lg:hidden" : "")}>
-              {item.children?.map(child => renderMenuItem(child, level + 1))}
+              {item.children?.map((child) => renderMenuItem(child, level + 1))}
             </div>
           )}
         </div>
@@ -243,7 +258,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       avatarFallback = "JD",
       collapsedAvatarSize = "sm",
       expandedAvatarSize = "sm",
-      onClick
+      onClick,
     } = profileSectionProps || {};
 
     return (
@@ -252,13 +267,13 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         className={cn(
           "flex flex-col h-screen",
           sidebarVariants({ collapsed }),
-          className
+          className,
         )}
         style={props.style}
         {...props}
       >
         {/* Sidebar Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
           <div className={cn(collapsed ? "lg:hidden" : "")}>
             <SidebarHeader
               title={title}
@@ -271,70 +286,94 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
             aria-label={collapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
-            <ChevronLeft className={cn("h-4 w-4 text-gray-600 dark:text-gray-400 transition-transform duration-200", collapsed ? "lg:rotate-180 max-lg:rotate-0" : "")} />
+            <ChevronLeft
+              className={cn(
+                "h-4 w-4 text-gray-600 dark:text-gray-400 transition-transform duration-200",
+                collapsed ? "lg:rotate-180 max-lg:rotate-0" : "",
+              )}
+            />
           </button>
         </div>
 
         {/* Navigation Menu */}
         <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-          {menuItems.map(item => renderMenuItem(item))}
+          {menuItems.map((item) => renderMenuItem(item))}
         </nav>
 
         {/* User Profile Section */}
-      <div className="border-t border-gray-200 dark:border-gray-800 p-4">
-          <div className={cn("flex justify-center", collapsed ? "max-lg:hidden" : "hidden")}>
-              <div
-                className={cn(
-                  "rounded-lg transition-colors",
-                  onClick && "cursor-pointer hover:bg-primary-50 focus:bg-primary-100 outline-none ring-2 ring-transparent focus:ring-primary-300"
-                )}
-                tabIndex={onClick ? 0 : undefined}
-                role={onClick ? "button" : undefined}
-                aria-label={onClick ? "View profile" : undefined}
-                onClick={onClick}
-                onKeyDown={onClick ? (e) => { if (e.key === "Enter" || e.key === " ") onClick(e as any); } : undefined}
-              >
-                <Avatar size={collapsedAvatarSize}>
-                  <AvatarImage src={avatarUrl} />
-                  <AvatarFallback>{avatarFallback}</AvatarFallback>
-                </Avatar>
-              </div>
+        <div className="border-t border-gray-200 dark:border-gray-800 p-4">
+          <div
+            className={cn(
+              "flex justify-center",
+              collapsed ? "max-lg:hidden" : "hidden",
+            )}
+          >
+            <div
+              className={cn(
+                "rounded-lg transition-colors",
+                onClick &&
+                  "cursor-pointer hover:bg-primary-50 dark:hover:bg-gray-800/50 focus:bg-primary-100 dark:focus:bg-gray-800 outline-none ring-2 ring-transparent focus:ring-primary-300",
+              )}
+              tabIndex={onClick ? 0 : undefined}
+              role={onClick ? "button" : undefined}
+              aria-label={onClick ? "View profile" : undefined}
+              onClick={onClick}
+              onKeyDown={
+                onClick
+                  ? (e) => {
+                      if (e.key === "Enter" || e.key === " ") onClick(e as any);
+                    }
+                  : undefined
+              }
+            >
+              <Avatar size={collapsedAvatarSize}>
+                <AvatarImage src={avatarUrl} />
+                <AvatarFallback>{avatarFallback}</AvatarFallback>
+              </Avatar>
             </div>
+          </div>
           <div className={cn("space-y-3", collapsed ? "lg:hidden" : "")}>
-              <div
-                className={cn(
-                  "flex items-center space-x-3 rounded-lg transition-colors",
-                  onClick && "cursor-pointer hover:bg-primary-50 focus:bg-primary-100 outline-none ring-2 ring-transparent focus:ring-primary-300"
-                )}
-                tabIndex={onClick ? 0 : undefined}
-                role={onClick ? "button" : undefined}
-                aria-label={onClick ? "View profile" : undefined}
-                onClick={onClick}
-                onKeyDown={onClick ? (e) => { if (e.key === "Enter" || e.key === " ") onClick(e as any); } : undefined}
-              >
-                <Avatar size={expandedAvatarSize}>
-                  <AvatarImage src={avatarUrl} />
-                  <AvatarFallback>{avatarFallback}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                    {name}
-                  </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                    {email}
-                  </p>
-                </div>
-              </div>
-              <div className="flex space-x-2">
-                {/* Reusable, theme-agnostic profile/logout buttons */}
-                <ProfileButton className="flex-1" {...profileButtonProps} />
-                <LogoutButton className="flex-1" {...logoutButtonProps} />
+            <div
+              className={cn(
+                "flex items-center space-x-3 rounded-lg transition-colors",
+                onClick &&
+                  "cursor-pointer hover:bg-primary-50 dark:hover:bg-gray-800/50 focus:bg-primary-100 dark:focus:bg-gray-800 outline-none ring-2 ring-transparent focus:ring-primary-300",
+              )}
+              tabIndex={onClick ? 0 : undefined}
+              role={onClick ? "button" : undefined}
+              aria-label={onClick ? "View profile" : undefined}
+              onClick={onClick}
+              onKeyDown={
+                onClick
+                  ? (e) => {
+                      if (e.key === "Enter" || e.key === " ") onClick(e as any);
+                    }
+                  : undefined
+              }
+            >
+              <Avatar size={expandedAvatarSize}>
+                <AvatarImage src={avatarUrl} />
+                <AvatarFallback>{avatarFallback}</AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                  {name}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                  {email}
+                </p>
               </div>
             </div>
+            <div className="flex space-x-2">
+              {/* Reusable, theme-agnostic profile/logout buttons */}
+              <ProfileButton className="flex-1" {...profileButtonProps} />
+              <LogoutButton className="flex-1" {...logoutButtonProps} />
+            </div>
+          </div>
         </div>
       </div>
     );
-  }
+  },
 );
 
 Sidebar.displayName = "Sidebar";
