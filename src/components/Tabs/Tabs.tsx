@@ -9,17 +9,20 @@ const tabsListVariants = cva(
       variant: {
         default: "bg-gray-100 dark:bg-gray-800",
         pills: "bg-transparent gap-2",
-        underline: "bg-transparent border-b border-gray-200 dark:border-gray-800", // Default for horizontal
+        underline:
+          "bg-transparent border-b border-gray-200 dark:border-gray-800", // Default for horizontal
       },
       orientation: {
-        horizontal: "inline-flex h-10 items-center justify-start p-1 w-full gap-2",
-        vertical: "flex flex-col h-auto items-start justify-start p-0 w-full gap-1",
+        horizontal:
+          "inline-flex h-10 items-center justify-start p-1 w-full gap-2",
+        vertical:
+          "flex flex-col h-auto items-start justify-start p-0 w-full gap-1",
       },
     },
     defaultVariants: {
       variant: "default",
     },
-  }
+  },
 );
 
 const tabsTriggerVariants = cva(
@@ -27,9 +30,12 @@ const tabsTriggerVariants = cva(
   {
     variants: {
       variant: {
-        default: "data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:text-gray-950 dark:data-[state=active]:text-white data-[state=active]:shadow-sm",
-        pills: "data-[state=active]:bg-primary-100 dark:data-[state=active]:bg-primary-900/30 data-[state=active]:text-primary-700 dark:data-[state=active]:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800",
-        underline: "data-[state=active]:border-b-2 data-[state=active]:border-primary-600 dark:data-[state=active]:border-primary-500 data-[state=active]:text-primary-600 dark:data-[state=active]:text-primary-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-none border-b-2 border-transparent", // Default for horizontal
+        default:
+          "data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:text-gray-950 dark:data-[state=active]:text-white data-[state=active]:shadow-sm",
+        pills:
+          "data-[state=active]:bg-primary-100 dark:data-[state=active]:bg-primary-900/30 data-[state=active]:text-primary-700 dark:data-[state=active]:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800",
+        underline:
+          "data-[state=active]:border-b-2 data-[state=active]:border-primary-600 dark:data-[state=active]:border-primary-500 data-[state=active]:text-primary-600 dark:data-[state=active]:text-primary-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-none border-b-2 border-transparent", // Default for horizontal
       },
       orientation: {
         horizontal: "rounded-sm px-3 py-1.5 text-xs md:text-sm",
@@ -39,7 +45,7 @@ const tabsTriggerVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  }
+  },
 );
 
 interface TabsContextValue {
@@ -50,7 +56,9 @@ interface TabsContextValue {
   responsive?: boolean;
 }
 
-const TabsContext = React.createContext<TabsContextValue | undefined>(undefined);
+const TabsContext = React.createContext<TabsContextValue | undefined>(
+  undefined,
+);
 
 interface TabsProps extends VariantProps<typeof tabsListVariants> {
   value: string;
@@ -61,17 +69,20 @@ interface TabsProps extends VariantProps<typeof tabsListVariants> {
   responsive?: boolean;
 }
 
-const Tabs: React.FC<TabsProps> = ({ value, onValueChange, variant, orientation = "horizontal", responsive = false, children, className }) => {
+const Tabs: React.FC<TabsProps> = ({
+  value,
+  onValueChange,
+  variant,
+  orientation = "horizontal",
+  responsive = false,
+  children,
+  className,
+}) => {
   return (
-    <TabsContext.Provider value={{ value, onValueChange, variant, orientation, responsive }}>
-      <div className={cn(
-        "w-full",
-        responsive && "relative w-full before:absolute before:right-0 before:top-0 before:bottom-0 before:w-12 before:bg-gradient-to-l before:from-white dark:before:from-gray-950 before:to-transparent before:pointer-events-none before:z-10",
-        responsive && orientation === "vertical" && "lg:before:hidden",
-        className
-      )}>
-        {children}
-      </div>
+    <TabsContext.Provider
+      value={{ value, onValueChange, variant, orientation, responsive }}
+    >
+      <div className={cn("w-full", className)}>{children}</div>
     </TabsContext.Provider>
   );
 };
@@ -89,13 +100,19 @@ const TabsList = React.forwardRef<
   // Handle inner auto-scrolling when responsive is active
   React.useEffect(() => {
     if (context.responsive) {
-      const targetRef = (ref && 'current' in ref ? ref : internalRef) as React.RefObject<HTMLDivElement>;
+      const targetRef = (
+        ref && "current" in ref ? ref : internalRef
+      ) as React.RefObject<HTMLDivElement>;
       if (targetRef.current) {
         const activeTabElement = targetRef.current.querySelector(
-          '[data-state="active"]'
+          '[data-state="active"]',
         );
         if (activeTabElement) {
-          activeTabElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          activeTabElement.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+            inline: "center",
+          });
         }
       }
     }
@@ -103,24 +120,43 @@ const TabsList = React.forwardRef<
 
   return (
     <div
-      ref={ref || internalRef}
       className={cn(
-        tabsListVariants({ 
-          variant: context.variant, 
-          orientation: context.orientation 
-        }),
-        context.responsive && "flex flex-row overflow-x-auto justify-start items-center w-full gap-4 pb-px border-b border-gray-200 dark:border-gray-800 bg-transparent scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
-        context.responsive && context.orientation === "vertical" && "lg:border-b-0 lg:flex-col lg:items-start lg:overflow-x-visible lg:overflow-y-auto lg:max-h-[calc(100vh-180px)] lg:pr-2",
-        className
+        "w-full",
+        context.responsive &&
+          "relative before:absolute before:right-0 before:top-0 before:bottom-0 before:w-12 before:bg-gradient-to-l before:from-white dark:before:from-gray-950 before:to-transparent before:pointer-events-none before:z-10",
+        context.responsive &&
+          context.orientation === "vertical" &&
+          "lg:before:hidden",
       )}
-      style={context.responsive ? { WebkitOverflowScrolling: 'touch', ...props.style } : props.style}
-      {...props}
-    />
+    >
+      <div
+        ref={ref || internalRef}
+        className={cn(
+          tabsListVariants({
+            variant: context.variant,
+            orientation: context.orientation,
+          }),
+          context.responsive &&
+            "flex flex-row overflow-x-auto justify-start items-center w-full gap-4 pb-px border-b border-gray-200 dark:border-gray-800 bg-transparent scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+          context.responsive &&
+            context.orientation === "vertical" &&
+            "lg:border-b-0 lg:flex-col lg:items-start lg:overflow-x-visible lg:overflow-y-auto lg:max-h-[calc(100vh-180px)] lg:pr-2",
+          className,
+        )}
+        style={
+          context.responsive
+            ? { WebkitOverflowScrolling: "touch", ...props.style }
+            : props.style
+        }
+        {...props}
+      />
+    </div>
   );
 });
 TabsList.displayName = "TabsList";
 
-interface TabsTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface TabsTriggerProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   value: string;
 }
 
@@ -135,20 +171,22 @@ const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(
       <button
         ref={ref}
         className={cn(
-          tabsTriggerVariants({ 
-            variant: context.variant, 
-            orientation: context.orientation 
+          tabsTriggerVariants({
+            variant: context.variant,
+            orientation: context.orientation,
           }),
           context.responsive && "flex-shrink-0 justify-start gap-2",
-          context.responsive && context.orientation === "vertical" && "lg:self-start",
-          className
+          context.responsive &&
+            context.orientation === "vertical" &&
+            "lg:self-start",
+          className,
         )}
         data-state={isActive ? "active" : "inactive"}
         onClick={() => context.onValueChange(value)}
         {...props}
       />
     );
-  }
+  },
 );
 TabsTrigger.displayName = "TabsTrigger";
 
@@ -168,13 +206,20 @@ const TabsContent = React.forwardRef<HTMLDivElement, TabsContentProps>(
         ref={ref}
         className={cn(
           "mt-2 ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2",
-          className
+          className,
         )}
         {...props}
       />
     );
-  }
+  },
 );
 TabsContent.displayName = "TabsContent";
 
-export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants, tabsTriggerVariants };
+export {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+  tabsListVariants,
+  tabsTriggerVariants,
+};
