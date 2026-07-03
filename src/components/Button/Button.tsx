@@ -8,13 +8,20 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: "bg-primary-600 dark:bg-primary-500 text-white hover:bg-primary-700 dark:hover:bg-primary-600",
-        secondary: "bg-secondary-600 dark:bg-secondary-500 text-white hover:bg-secondary-700 dark:hover:bg-secondary-600",
-        danger: "bg-danger-600 dark:bg-danger-500 text-white hover:bg-danger-700 dark:hover:bg-danger-600",
-        success: "bg-success-600 dark:bg-success-500 text-white hover:bg-success-700 dark:hover:bg-success-600",
-        warning: "bg-warning-600 dark:bg-warning-500 text-white hover:bg-warning-700 dark:hover:bg-warning-600",
-        outline: "border border-primary-300 dark:border-primary-700 bg-white dark:bg-transparent dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/30",
-        ghost: "bg-transparent hover:bg-primary-50 dark:hover:bg-primary-900/30 dark:text-gray-300 dark:hover:text-primary-400",
+        primary:
+          "bg-primary-600 dark:bg-primary-600 text-white hover:bg-primary-700 dark:hover:bg-primary-700",
+        secondary:
+          "bg-secondary-600 dark:bg-secondary-500 text-white hover:bg-secondary-700 dark:hover:bg-secondary-600",
+        danger:
+          "bg-danger-600 dark:bg-danger-500 text-white hover:bg-danger-700 dark:hover:bg-danger-600",
+        success:
+          "bg-success-600 dark:bg-success-500 text-white hover:bg-success-700 dark:hover:bg-success-600",
+        warning:
+          "bg-warning-600 dark:bg-warning-500 text-white hover:bg-warning-700 dark:hover:bg-warning-600",
+        outline:
+          "border border-primary-300 dark:border-primary-700 bg-white dark:bg-transparent dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/30",
+        ghost:
+          "bg-transparent hover:bg-primary-50 dark:hover:bg-primary-900/30 dark:text-gray-300 dark:hover:text-primary-400",
         link: "text-primary-600 dark:text-primary-400 underline-offset-4 hover:underline",
       },
       size: {
@@ -28,7 +35,7 @@ const buttonVariants = cva(
       variant: "primary",
       size: "md",
     },
-  }
+  },
 );
 
 export interface ButtonProps
@@ -47,7 +54,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       />
     );
-  }
+  },
 );
 Button.displayName = "Button";
 
