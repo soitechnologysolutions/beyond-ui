@@ -9,7 +9,11 @@ const tabsListVariants = cva(
       variant: {
         default: "bg-gray-100 dark:bg-gray-800",
         pills: "bg-transparent gap-2",
-        underline: "bg-transparent border-b border-gray-200 dark:border-gray-800",
+        underline: "bg-transparent border-b border-gray-200 dark:border-gray-800", // Default for horizontal
+      },
+      orientation: {
+        horizontal: "inline-flex h-10 items-center justify-start p-1",
+        vertical: "flex flex-col h-auto items-stretch justify-start p-0", // Stretches to fill container
       },
     },
     defaultVariants: {
@@ -25,7 +29,11 @@ const tabsTriggerVariants = cva(
       variant: {
         default: "data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:text-gray-950 dark:data-[state=active]:text-white data-[state=active]:shadow-sm",
         pills: "data-[state=active]:bg-primary-100 dark:data-[state=active]:bg-primary-900/30 data-[state=active]:text-primary-700 dark:data-[state=active]:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800",
-        underline: "data-[state=active]:border-b-2 data-[state=active]:border-primary-600 dark:data-[state=active]:border-primary-500 data-[state=active]:text-primary-600 dark:data-[state=active]:text-primary-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-none border-b-2 border-transparent",
+        underline: "data-[state=active]:border-b-2 data-[state=active]:border-primary-600 dark:data-[state=active]:border-primary-500 data-[state=active]:text-primary-600 dark:data-[state=active]:text-primary-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-none border-b-2 border-transparent", // Default for horizontal
+      },
+      orientation: {
+        horizontal: "rounded-sm px-3 py-1.5 text-xs md:text-sm",
+        vertical: "rounded-md px-4 py-2 text-sm", // Adjust padding for vertical items
       },
     },
     defaultVariants: {
@@ -38,6 +46,7 @@ interface TabsContextValue {
   value: string;
   onValueChange: (value: string) => void;
   variant?: VariantProps<typeof tabsListVariants>["variant"];
+  orientation?: "horizontal" | "vertical"; // Add orientation to context
 }
 
 const TabsContext = React.createContext<TabsContextValue | undefined>(undefined);
@@ -47,11 +56,12 @@ interface TabsProps extends VariantProps<typeof tabsListVariants> {
   onValueChange: (value: string) => void;
   children: React.ReactNode;
   className?: string;
+  orientation?: "horizontal" | "vertical"; // Add orientation to TabsProps
 }
 
-const Tabs: React.FC<TabsProps> = ({ value, onValueChange, variant, children, className }) => {
+const Tabs: React.FC<TabsProps> = ({ value, onValueChange, variant, orientation = "horizontal", children, className }) => {
   return (
-    <TabsContext.Provider value={{ value, onValueChange, variant }}>
+    <TabsContext.Provider value={{ value, onValueChange, variant, orientation }}>
       <div className={cn("w-full", className)}>{children}</div>
     </TabsContext.Provider>
   );
@@ -67,7 +77,7 @@ const TabsList = React.forwardRef<
   return (
     <div
       ref={ref}
-      className={cn(tabsListVariants({ variant: context.variant }), className)}
+      className={cn(tabsListVariants({ variant: context.variant, orientation: context.orientation }), className)}
       {...props}
     />
   );
@@ -89,7 +99,7 @@ const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(
       <button
         ref={ref}
         className={cn(
-          tabsTriggerVariants({ variant: context.variant }),
+          tabsTriggerVariants({ variant: context.variant, orientation: context.orientation }),
           className
         )}
         data-state={isActive ? "active" : "inactive"}
