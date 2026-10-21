@@ -97,6 +97,8 @@ interface SidebarProps extends VariantProps<typeof sidebarVariants> {
   logoutButtonProps?: import("./LogoutButton").LogoutButtonProps;
   /** Dynamic profile section props */
   profileSectionProps?: SidebarProfileSectionProps;
+  /** Whether to display the sidebar profile section (default: true) */
+  showProfileSection?: boolean;
 }
 
 const defaultMenuItems: MenuItem[] = [
@@ -178,6 +180,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       profileButtonProps,
       logoutButtonProps,
       profileSectionProps,
+      showProfileSection = true,
       ...props
     },
     ref,
@@ -301,76 +304,78 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         </nav>
 
         {/* User Profile Section */}
-        <div className="border-t border-gray-200 dark:border-gray-800 p-4">
-          <div
-            className={cn(
-              "flex justify-center",
-              collapsed ? "max-lg:hidden" : "hidden",
-            )}
-          >
+        {showProfileSection && (
+          <div className="border-t border-gray-200 dark:border-gray-800 p-4">
             <div
               className={cn(
-                "rounded-lg transition-colors",
-                onClick &&
-                  "cursor-pointer hover:bg-primary-50 dark:hover:bg-gray-800/50 focus:bg-primary-100 dark:focus:bg-gray-800 outline-none ring-2 ring-transparent focus:ring-primary-300",
+                "flex justify-center",
+                collapsed ? "max-lg:hidden" : "hidden",
               )}
-              tabIndex={onClick ? 0 : undefined}
-              role={onClick ? "button" : undefined}
-              aria-label={onClick ? "View profile" : undefined}
-              onClick={onClick}
-              onKeyDown={
-                onClick
-                  ? (e) => {
-                      if (e.key === "Enter" || e.key === " ") onClick(e as any);
-                    }
-                  : undefined
-              }
             >
-              <Avatar size={collapsedAvatarSize}>
-                <AvatarImage src={avatarUrl} />
-                <AvatarFallback>{avatarFallback}</AvatarFallback>
-              </Avatar>
-            </div>
-          </div>
-          <div className={cn("space-y-3", collapsed ? "lg:hidden" : "")}>
-            <div
-              className={cn(
-                "flex items-center space-x-3 rounded-lg transition-colors",
-                onClick &&
-                  "cursor-pointer hover:bg-primary-50 dark:hover:bg-gray-800/50 focus:bg-primary-100 dark:focus:bg-gray-800 outline-none ring-2 ring-transparent focus:ring-primary-300",
-              )}
-              tabIndex={onClick ? 0 : undefined}
-              role={onClick ? "button" : undefined}
-              aria-label={onClick ? "View profile" : undefined}
-              onClick={onClick}
-              onKeyDown={
-                onClick
-                  ? (e) => {
-                      if (e.key === "Enter" || e.key === " ") onClick(e as any);
-                    }
-                  : undefined
-              }
-            >
-              <Avatar size={expandedAvatarSize}>
-                <AvatarImage src={avatarUrl} />
-                <AvatarFallback>{avatarFallback}</AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                  {name}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                  {email}
-                </p>
+              <div
+                className={cn(
+                  "rounded-lg transition-colors",
+                  onClick &&
+                    "cursor-pointer hover:bg-primary-50 dark:hover:bg-gray-800/50 focus:bg-primary-100 dark:focus:bg-gray-800 outline-none ring-2 ring-transparent focus:ring-primary-300",
+                )}
+                tabIndex={onClick ? 0 : undefined}
+                role={onClick ? "button" : undefined}
+                aria-label={onClick ? "View profile" : undefined}
+                onClick={onClick}
+                onKeyDown={
+                  onClick
+                    ? (e) => {
+                        if (e.key === "Enter" || e.key === " ") onClick(e as any);
+                      }
+                    : undefined
+                }
+              >
+                <Avatar size={collapsedAvatarSize}>
+                  <AvatarImage src={avatarUrl} />
+                  <AvatarFallback>{avatarFallback}</AvatarFallback>
+                </Avatar>
               </div>
             </div>
-            <div className="flex space-x-2">
-              {/* Reusable, theme-agnostic profile/logout buttons */}
-              <ProfileButton className="flex-1" {...profileButtonProps} />
-              <LogoutButton className="flex-1" {...logoutButtonProps} />
+            <div className={cn("space-y-3", collapsed ? "lg:hidden" : "")}>
+              <div
+                className={cn(
+                  "flex items-center space-x-3 rounded-lg transition-colors",
+                  onClick &&
+                    "cursor-pointer hover:bg-primary-50 dark:hover:bg-gray-800/50 focus:bg-primary-100 dark:focus:bg-gray-800 outline-none ring-2 ring-transparent focus:ring-primary-300",
+                )}
+                tabIndex={onClick ? 0 : undefined}
+                role={onClick ? "button" : undefined}
+                aria-label={onClick ? "View profile" : undefined}
+                onClick={onClick}
+                onKeyDown={
+                  onClick
+                    ? (e) => {
+                        if (e.key === "Enter" || e.key === " ") onClick(e as any);
+                      }
+                    : undefined
+                }
+              >
+                <Avatar size={expandedAvatarSize}>
+                  <AvatarImage src={avatarUrl} />
+                  <AvatarFallback>{avatarFallback}</AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                    {name}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                    {email}
+                  </p>
+                </div>
+              </div>
+              <div className="flex space-x-2">
+                {/* Reusable, theme-agnostic profile/logout buttons */}
+                <ProfileButton className="flex-1" {...profileButtonProps} />
+                <LogoutButton className="flex-1" {...logoutButtonProps} />
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     );
   },

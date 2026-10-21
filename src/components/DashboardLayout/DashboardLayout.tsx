@@ -38,6 +38,8 @@ interface DashboardLayoutProps {
   logoutButtonProps?: import("../Sidebar/LogoutButton").LogoutButtonProps;
   /** Props for Sidebar profile section (avatar, name, email, etc.) */
   profileSectionProps?: SidebarProfileSectionProps;
+  /** Whether to display the sidebar profile section (default: true) */
+  showProfileSection?: boolean;
 
   /** Props to customize DashboardHeader */
   dashboardHeaderProps?: DashboardHeaderProps;
@@ -60,6 +62,7 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
     profileButtonProps,
     logoutButtonProps,
     profileSectionProps,
+    showProfileSection = true,
     dashboardHeaderProps,
     ...props
   }, ref) => {
@@ -109,6 +112,7 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
           profileButtonProps={profileButtonProps}
           logoutButtonProps={logoutButtonProps}
           profileSectionProps={profileSectionProps}
+          showProfileSection={showProfileSection}
         />
 
         {/* Fixed Header */}
