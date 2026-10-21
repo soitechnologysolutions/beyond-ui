@@ -1,19 +1,15 @@
 import * as React from "react";
 import { cn } from "../../utils/cn";
 import { Sidebar, type MenuItem, type SidebarProfileSectionProps } from "../Sidebar";
-import { DashboardHeader, type BreadcrumbItem } from "../DashboardHeader";
+import {
+  DashboardHeader,
+  type BreadcrumbItem,
+  type ResponsiveShow,
+  type DashboardHeaderProps,
+} from "../DashboardHeader";
 import { useBreakpoint } from "../../hooks/useBreakpoint";
 import type { DropdownItem, DropdownProps } from "../Dropdown";
-
-/**
- * DashboardLayoutProps
- * - sidebarTitle: Title text for Sidebar header (default: "Beyond")
- * - sidebarTitleLetter: Letter/initial for Sidebar header (default: "B")
- * - sidebarHeaderClassName: Optional className for SidebarHeader
- *
- * These props are forwarded to Sidebar for dynamic header branding.
- */
-import type { DashboardHeaderProps } from "../DashboardHeader";
+import type { NightModeSwitchProps } from "../NightModeSwitch";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -58,6 +54,13 @@ interface DashboardLayoutProps {
   /** Whether to show dropdown arrow beside avatar/profile (forwarded to DashboardHeader and Sidebar) */
   showProfileDropdownArrow?: boolean;
 
+  /** Whether to show dark mode switch in DashboardHeader (default: false) */
+  showDarkMode?: ResponsiveShow;
+  /** Callback when dark mode toggle is clicked */
+  onDarkModeToggle?: () => void;
+  /** Optional props to pass to NightModeSwitch */
+  darkModeSwitchProps?: Partial<NightModeSwitchProps>;
+
   /** Props to customize DashboardHeader */
   dashboardHeaderProps?: DashboardHeaderProps;
 }
@@ -88,6 +91,9 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
     profileDropdownProps,
     showProfileDropdown,
     showProfileDropdownArrow,
+    showDarkMode,
+    onDarkModeToggle,
+    darkModeSwitchProps,
     dashboardHeaderProps,
     ...props
   }, ref) => {
@@ -184,6 +190,9 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
           showProfileDropdown={showProfileDropdown}
           showProfileDropdownArrow={showProfileDropdownArrow}
           {...dashboardHeaderProps}
+          {...(showDarkMode !== undefined ? { showDarkMode } : {})}
+          {...(onDarkModeToggle !== undefined ? { onDarkModeToggle } : {})}
+          {...(darkModeSwitchProps !== undefined ? { darkModeSwitchProps } : {})}
           className={cn(
             "transition-all duration-300 ease-in-out",
             "max-lg:left-0 max-lg:w-full",

@@ -45,6 +45,7 @@ export const NightModeSwitch = React.forwardRef<HTMLButtonElement, NightModeSwit
       size,
       iconStyle,
       ariaLabel = "Toggle dark mode",
+      onClick,
       ...props
     },
     ref
@@ -58,7 +59,10 @@ export const NightModeSwitch = React.forwardRef<HTMLButtonElement, NightModeSwit
         aria-label={ariaLabel}
         aria-pressed={isDarkMode}
         className={cn(switchVariants({ variant, size, iconStyle, className }))}
-        onClick={toggle}
+        onClick={(e) => {
+          toggle();
+          onClick?.(e);
+        }}
         {...props}
       >
         <span className="sr-only">{ariaLabel}</span>

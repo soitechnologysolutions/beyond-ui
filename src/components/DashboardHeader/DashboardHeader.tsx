@@ -11,6 +11,10 @@ import {
   type DropdownItem,
   type DropdownProps,
 } from "../Dropdown";
+import {
+  NightModeSwitch,
+  type NightModeSwitchProps,
+} from "../NightModeSwitch";
 
 interface BreadcrumbItem {
   label: string;
@@ -42,6 +46,12 @@ interface DashboardHeaderProps {
   showSettings?: ResponsiveShow; // default true
   showProfile?: ResponsiveShow; // default true
   showMenuButton?: ResponsiveShow; // default true
+  /** Whether to show the dark mode toggle switch (default: false) */
+  showDarkMode?: ResponsiveShow;
+  /** Callback invoked when the dark mode switch is clicked */
+  onDarkModeToggle?: () => void;
+  /** Optional props to pass to NightModeSwitch */
+  darkModeSwitchProps?: Partial<NightModeSwitchProps>;
 
   // OnClick handlers for standard components
   onMenuButtonClick?: () => void;
@@ -92,6 +102,9 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
     showSettings = true,
     showProfile = true,
     showMenuButton = true,
+    showDarkMode = false,
+    onDarkModeToggle,
+    darkModeSwitchProps,
     leftSlot,
     centerSlot,
     rightSlot,
@@ -285,6 +298,22 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
                 ))
               : rightSlot}
 
+            {/* Dark Mode Switch */}
+            <div className={getVisibilityClasses(showDarkMode, "flex")}>
+              <NightModeSwitch
+                size="sm"
+                className={cn(
+                  "text-gray-700 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-800",
+                  darkModeSwitchProps?.className
+                )}
+                onClick={(e) => {
+                  onDarkModeToggle?.();
+                  darkModeSwitchProps?.onClick?.(e);
+                }}
+                {...darkModeSwitchProps}
+              />
+            </div>
+
             {/* Notifications */}
               <div className={cn(getVisibilityClasses(showNotifications, "block"), "relative")}>
                 <Button
@@ -425,4 +454,9 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
 
 DashboardHeader.displayName = "DashboardHeader";
 
-export { DashboardHeader, type BreadcrumbItem, type DashboardHeaderProps };
+export {
+  DashboardHeader,
+  type BreadcrumbItem,
+  type DashboardHeaderProps,
+  type ResponsiveShow,
+};
