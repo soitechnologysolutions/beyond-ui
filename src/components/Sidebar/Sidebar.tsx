@@ -26,6 +26,14 @@ import {
   type DropdownItem,
   type DropdownProps,
 } from "../Dropdown";
+import {
+  NightModeSwitch,
+  type NightModeSwitchProps,
+} from "../NightModeSwitch";
+import {
+  getVisibilityClasses,
+  type ResponsiveShow,
+} from "../DashboardHeader";
 
 const sidebarVariants = cva(
   "fixed left-0 top-0 z-40 h-screen bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300 ease-in-out",
@@ -91,6 +99,10 @@ export interface SidebarProfileSectionProps {
   showProfileDropdown?: boolean;
   /** Whether to show a dropdown arrow beside profile (default: false when showProfileDropdown is false) */
   showProfileDropdownArrow?: boolean;
+  /** Whether to show dark mode switch in sidebar profile section */
+  showDarkMode?: ResponsiveShow;
+  /** Extra content to render in sidebar profile section */
+  extraContent?: React.ReactNode;
 }
 
 interface SidebarProps extends VariantProps<typeof sidebarVariants> {
@@ -112,8 +124,8 @@ interface SidebarProps extends VariantProps<typeof sidebarVariants> {
   logoutButtonProps?: import("./LogoutButton").LogoutButtonProps;
   /** Dynamic profile section props */
   profileSectionProps?: SidebarProfileSectionProps;
-  /** Whether to display the sidebar profile section (default: true) */
-  showProfileSection?: boolean;
+  /** Whether to display the sidebar profile section (supports boolean or { mobile, desktop }, default: true) */
+  showProfileSection?: ResponsiveShow;
   /** Custom dropdown items for sidebar profile dropdown */
   profileDropdownItems?: DropdownItem[];
   /** Additional props for sidebar profile Dropdown */
@@ -122,6 +134,14 @@ interface SidebarProps extends VariantProps<typeof sidebarVariants> {
   showProfileDropdown?: boolean;
   /** Whether to show a dropdown arrow beside profile in sidebar */
   showProfileDropdownArrow?: boolean;
+  /** Whether to show dark mode switch in sidebar profile section */
+  showDarkMode?: ResponsiveShow;
+  /** Callback when dark mode toggle is clicked */
+  onDarkModeToggle?: () => void;
+  /** Optional props to pass to NightModeSwitch */
+  darkModeSwitchProps?: Partial<NightModeSwitchProps>;
+  /** Extra content to render in sidebar profile section */
+  profileSectionExtra?: React.ReactNode;
 }
 
 const defaultMenuItems: MenuItem[] = [
@@ -208,6 +228,10 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       profileDropdownProps,
       showProfileDropdown,
       showProfileDropdownArrow,
+      showDarkMode,
+      onDarkModeToggle,
+      darkModeSwitchProps,
+      profileSectionExtra,
       ...props
     },
     ref,
@@ -294,6 +318,8 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       profileDropdownProps: sectionDropdownProps,
       showProfileDropdown: sectionShowProfileDropdown,
       showProfileDropdownArrow: sectionShowProfileDropdownArrow,
+      showDarkMode: sectionShowDarkMode,
+      extraContent: sectionExtraContent,
     } = profileSectionProps || {};
     const avatarUrl = rawAvatarUrl || rawAvatar || "";
     const avatarFallback =
@@ -307,6 +333,15 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             .toUpperCase()
             .slice(0, 2)
         : "JD");
+
+    const resolvedShowDarkMode = showDarkMode ?? sectionShowDarkMode;
+    const isProfileSectionVisible =
+      showProfileSection !== false &&
+      !(
+        typeof showProfileSection === "object" &&
+        !showProfileSection.mobile &&
+        !showProfileSection.desktop
+      );
 
     const resolvedShowDropdown =
       showProfileDropdown ?? sectionShowProfileDropdown ?? false;
@@ -390,8 +425,13 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         </nav>
 
         {/* User Profile Section */}
-        {showProfileSection && (
-          <div className="border-t border-gray-200 dark:border-gray-800 p-4">
+        {isProfileSectionVisible && (
+          <div
+            className={cn(
+              "border-t border-gray-200 dark:border-gray-800 p-4",
+              getVisibilityClasses(showProfileSection, "block"),
+            )}
+          >
             <div
               className={cn(
                 "flex justify-center",
@@ -421,17 +461,23 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                 <div
                   className={cn(
                     "rounded-lg transition-colors",
-                    onClick &&
+                    (onClick || profileButtonProps?.onClick) &&
                       "cursor-pointer hover:bg-primary-50 dark:hover:bg-gray-800/50 focus:bg-primary-100 dark:focus:bg-gray-800 outline-none ring-2 ring-transparent focus:ring-primary-300",
                   )}
-                  tabIndex={onClick ? 0 : undefined}
-                  role={onClick ? "button" : undefined}
-                  aria-label={onClick ? "View profile" : undefined}
-                  onClick={onClick}
+                  tabIndex={(onClick || profileButtonProps?.onClick) ? 0 : undefined}
+                  role={(onClick || profileButtonProps?.onClick) ? "button" : undefined}
+                  aria-label={(onClick || profileButtonProps?.onClick) ? "View profile" : undefined}
+                  onClick={(e) => {
+                    onClick?.(e);
+                    profileButtonProps?.onClick?.(e as any);
+                  }}
                   onKeyDown={
-                    onClick
+                    (onClick || profileButtonProps?.onClick)
                       ? (e) => {
-                          if (e.key === "Enter" || e.key === " ") onClick(e as any);
+                          if (e.key === "Enter" || e.key === " ") {
+                            onClick?.(e as any);
+                            profileButtonProps?.onClick?.(e as any);
+                          }
                         }
                       : undefined
                   }
@@ -476,17 +522,23 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                 <div
                   className={cn(
                     "flex items-center space-x-3 rounded-lg transition-colors p-2",
-                    onClick &&
+                    (onClick || profileButtonProps?.onClick) &&
                       "cursor-pointer hover:bg-primary-50 dark:hover:bg-gray-800/50 focus:bg-primary-100 dark:focus:bg-gray-800 outline-none ring-2 ring-transparent focus:ring-primary-300",
                   )}
-                  tabIndex={onClick ? 0 : undefined}
-                  role={onClick ? "button" : undefined}
-                  aria-label={onClick ? "View profile" : undefined}
-                  onClick={onClick}
+                  tabIndex={(onClick || profileButtonProps?.onClick) ? 0 : undefined}
+                  role={(onClick || profileButtonProps?.onClick) ? "button" : undefined}
+                  aria-label={(onClick || profileButtonProps?.onClick) ? "View profile" : undefined}
+                  onClick={(e) => {
+                    onClick?.(e);
+                    profileButtonProps?.onClick?.(e as any);
+                  }}
                   onKeyDown={
-                    onClick
+                    (onClick || profileButtonProps?.onClick)
                       ? (e) => {
-                          if (e.key === "Enter" || e.key === " ") onClick(e as any);
+                          if (e.key === "Enter" || e.key === " ") {
+                            onClick?.(e as any);
+                            profileButtonProps?.onClick?.(e as any);
+                          }
                         }
                       : undefined
                   }
@@ -506,11 +558,38 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                   {resolvedShowDropdownArrow && <DropdownArrow size="sm" />}
                 </div>
               )}
+              {resolvedShowDarkMode && (
+                <div
+                  className={cn(
+                    "flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-gray-50 dark:bg-gray-800/60 border border-gray-100 dark:border-gray-800",
+                    getVisibilityClasses(resolvedShowDarkMode, "flex"),
+                  )}
+                >
+                  <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                    Theme
+                  </span>
+                  <NightModeSwitch
+                    size="sm"
+                    className="text-gray-700 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-800"
+                    onClick={(e) => {
+                      onDarkModeToggle?.();
+                      darkModeSwitchProps?.onClick?.(e);
+                    }}
+                    {...darkModeSwitchProps}
+                  />
+                </div>
+              )}
               {(!resolvedShowDropdown || (profileButtonProps || logoutButtonProps)) && (
                 <div className="flex space-x-2">
                   {/* Reusable, theme-agnostic profile/logout buttons */}
                   <ProfileButton className="flex-1" {...profileButtonProps} />
                   <LogoutButton className="flex-1" {...logoutButtonProps} />
+                </div>
+              )}
+              {(profileSectionExtra || sectionExtraContent) && (
+                <div>
+                  {profileSectionExtra}
+                  {sectionExtraContent}
                 </div>
               )}
             </div>

@@ -23,6 +23,24 @@ interface BreadcrumbItem {
 
 type ResponsiveShow = boolean | { mobile?: boolean; desktop?: boolean };
 
+// Helper to resolve ResponsiveShow prop directly to Tailwind display classes
+const getVisibilityClasses = (
+  prop: ResponsiveShow | undefined,
+  baseDisplayClass: string = "flex"
+): string => {
+  if (typeof prop === "boolean") return prop ? baseDisplayClass : "hidden";
+  if (prop === undefined) return baseDisplayClass;
+
+  const showMobile = prop.mobile ?? false;
+  const showDesktop = prop.desktop ?? false;
+
+  if (showMobile && showDesktop) return baseDisplayClass;
+  if (!showMobile && !showDesktop) return "hidden";
+  if (showMobile && !showDesktop) return `${baseDisplayClass} lg:hidden`;
+  if (!showMobile && showDesktop) return `hidden lg:${baseDisplayClass}`;
+  return baseDisplayClass;
+};
+
 type DashboardHeaderSlotItem = {
   element: React.ReactNode;
   onClick?: () => void;
@@ -147,24 +165,6 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
             .slice(0, 2)
         : "JD");
 
-    // Helper to resolve ResponsiveShow prop directly to Tailwind display classes
-    const getVisibilityClasses = (
-      prop: ResponsiveShow | undefined,
-      baseDisplayClass: string = "flex"
-    ): string => {
-      if (typeof prop === "boolean") return prop ? baseDisplayClass : "hidden";
-      if (prop === undefined) return baseDisplayClass;
-      
-      const showMobile = prop.mobile ?? false;
-      const showDesktop = prop.desktop ?? false;
-      
-      if (showMobile && showDesktop) return baseDisplayClass;
-      if (!showMobile && !showDesktop) return "hidden";
-      if (showMobile && !showDesktop) return `${baseDisplayClass} lg:hidden`;
-      if (!showMobile && showDesktop) return `hidden lg:${baseDisplayClass}`;
-      return baseDisplayClass;
-    };
-
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
       setSearchValue(value);
@@ -181,9 +181,9 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
         style={props.style}
         {...props}
       >
-        <div className="flex w-full items-center justify-between px-6 py-4">
+        <div className="flex w-full items-center justify-between px-4 sm:px-6 py-3 sm:py-4">
           {/* Left Section */}
-          <div className="flex items-center space-x-4 flex-shrink-0 flex-grow-0 min-w-0">
+          <div className="flex items-center space-x-2 sm:space-x-4 min-w-0 flex-1 max-w-[calc(100%-3.5rem)] sm:max-w-none sm:flex-initial">
             {/* Custom left slot */}
             {Array.isArray(leftSlot)
               ? leftSlot.map((item, idx) => (
@@ -203,7 +203,7 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
               size="sm"
               className={cn(
                 getVisibilityClasses(showMenuButton, "flex lg:hidden"),
-                "p-2 -ml-2 shrink-0 mr-2"
+                "p-2 -ml-2 shrink-0 mr-1 sm:mr-2"
               )}
               aria-label="Open mobile menu"
               onClick={e => {
@@ -215,13 +215,13 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
             </Button>
 
             {/* Breadcrumbs */}
-              <nav
-                className={cn(
-                  getVisibilityClasses(showBreadcrumbs, "flex"),
-                  "items-center space-x-2 text-sm",
-                  "min-w-0 max-w-full overflow-x-auto whitespace-nowrap py-1 lg:w-auto lg:overflow-visible lg:whitespace-normal lg:py-0"
-                )}
-              >
+            <nav
+              className={cn(
+                getVisibilityClasses(showBreadcrumbs, "flex"),
+                "items-center space-x-1.5 sm:space-x-2 text-sm",
+                "min-w-0 max-w-full overflow-x-auto whitespace-nowrap py-1 scrollbar-none lg:w-auto lg:overflow-visible lg:whitespace-normal lg:py-0"
+              )}
+            >
                 {breadcrumbs.map((item, index) => (
                   <React.Fragment key={index}>
                     {index > 0 && (
@@ -284,7 +284,7 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
           )}
 
           {/* Right Section */}
-          <div className="flex items-center space-x-3 flex-shrink-0 flex-grow-0 min-w-0">
+          <div className="flex items-center space-x-2 sm:space-x-3 shrink-0 ml-2">
             {/* Custom right slot */}
             {Array.isArray(rightSlot)
               ? rightSlot.map((item, idx) => (
@@ -459,4 +459,5 @@ export {
   type BreadcrumbItem,
   type DashboardHeaderProps,
   type ResponsiveShow,
+  getVisibilityClasses,
 };

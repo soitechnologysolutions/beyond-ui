@@ -18,7 +18,7 @@ interface DashboardLayoutProps {
   activeSidebarItem?: string;
   breadcrumbs?: BreadcrumbItem[];
   onSidebarItemClick?: (itemId: string) => void;
-  showSearch?: boolean;
+  showSearch?: ResponsiveShow;
   searchPlaceholder?: string;
   onSearchChange?: (value: string) => void;
   sidebarClassName?: string;
@@ -43,8 +43,8 @@ interface DashboardLayoutProps {
   avatarUrl?: string;
   /** Optional direct profile avatar fallback initials (forwarded to Sidebar and DashboardHeader) */
   avatarFallback?: string;
-  /** Whether to display the sidebar profile section (default: true) */
-  showProfileSection?: boolean;
+  /** Whether to display the sidebar profile section (supports boolean or { mobile, desktop }, default: true) */
+  showProfileSection?: ResponsiveShow;
   /** Custom dropdown items for profile dropdown (forwarded to DashboardHeader and Sidebar) */
   profileDropdownItems?: DropdownItem[];
   /** Additional props for profile dropdown (forwarded to DashboardHeader and Sidebar) */
@@ -54,8 +54,21 @@ interface DashboardLayoutProps {
   /** Whether to show dropdown arrow beside avatar/profile (forwarded to DashboardHeader and Sidebar) */
   showProfileDropdownArrow?: boolean;
 
+  /** Whether to show breadcrumbs in DashboardHeader (supports boolean or { mobile, desktop }) */
+  showBreadcrumbs?: ResponsiveShow;
+  /** Whether to show notifications in DashboardHeader (supports boolean or { mobile, desktop }) */
+  showNotifications?: ResponsiveShow;
+  /** Whether to show settings in DashboardHeader (supports boolean or { mobile, desktop }) */
+  showSettings?: ResponsiveShow;
+  /** Whether to show profile in DashboardHeader (supports boolean or { mobile, desktop }) */
+  showProfile?: ResponsiveShow;
+  /** Whether to show menu button in DashboardHeader (supports boolean or { mobile, desktop }) */
+  showMenuButton?: ResponsiveShow;
+
   /** Whether to show dark mode switch in DashboardHeader (default: false) */
   showDarkMode?: ResponsiveShow;
+  /** Whether to show dark mode switch in Sidebar profile section */
+  sidebarShowDarkMode?: ResponsiveShow;
   /** Callback when dark mode toggle is clicked */
   onDarkModeToggle?: () => void;
   /** Optional props to pass to NightModeSwitch */
@@ -91,7 +104,13 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
     profileDropdownProps,
     showProfileDropdown,
     showProfileDropdownArrow,
+    showBreadcrumbs,
+    showNotifications,
+    showSettings,
+    showProfile,
+    showMenuButton,
     showDarkMode,
+    sidebarShowDarkMode,
     onDarkModeToggle,
     darkModeSwitchProps,
     dashboardHeaderProps,
@@ -107,6 +126,17 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
             ...(avatarFallback !== undefined ? { avatarFallback } : {}),
           }
         : undefined;
+
+    const resolvedShowProfile =
+      dashboardHeaderProps?.showProfile ??
+      (showProfile !== undefined
+        ? showProfile
+        : typeof showProfileSection === "object" &&
+          showProfileSection?.mobile === true &&
+          showProfileSection?.desktop === false
+        ? { mobile: false, desktop: true }
+        : true);
+
     const { currentBreakpoint } = useBreakpoint();
 
     const [sidebarCollapsed, setSidebarCollapsed] = React.useState(() => {
@@ -154,6 +184,9 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
           logoutButtonProps={logoutButtonProps}
           profileSectionProps={mergedProfileSectionProps}
           showProfileSection={showProfileSection}
+          showDarkMode={sidebarShowDarkMode}
+          onDarkModeToggle={onDarkModeToggle}
+          darkModeSwitchProps={darkModeSwitchProps}
           profileDropdownItems={profileDropdownItems}
           profileDropdownProps={profileDropdownProps}
           showProfileDropdown={showProfileDropdown}
@@ -168,6 +201,11 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
           showSearch={showSearch}
           searchPlaceholder={searchPlaceholder}
           onSearchChange={onSearchChange}
+          showBreadcrumbs={showBreadcrumbs}
+          showNotifications={showNotifications}
+          showSettings={showSettings}
+          showProfile={resolvedShowProfile}
+          showMenuButton={showMenuButton}
           profileSectionProps={mergedProfileSectionProps}
           name={mergedProfileSectionProps?.name}
           email={mergedProfileSectionProps?.email}
@@ -189,10 +227,10 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
           profileDropdownProps={profileDropdownProps}
           showProfileDropdown={showProfileDropdown}
           showProfileDropdownArrow={showProfileDropdownArrow}
-          {...dashboardHeaderProps}
           {...(showDarkMode !== undefined ? { showDarkMode } : {})}
           {...(onDarkModeToggle !== undefined ? { onDarkModeToggle } : {})}
           {...(darkModeSwitchProps !== undefined ? { darkModeSwitchProps } : {})}
+          {...dashboardHeaderProps}
           className={cn(
             "transition-all duration-300 ease-in-out",
             "max-lg:left-0 max-lg:w-full",
