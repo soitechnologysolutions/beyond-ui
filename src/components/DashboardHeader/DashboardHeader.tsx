@@ -100,13 +100,14 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
       avatarUrl ||
       profileSectionProps?.avatarUrl ||
       profileSectionProps?.avatar ||
-      "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=64";
+      "";
     const resolvedAvatarFallback =
       avatarFallback ||
       profileSectionProps?.avatarFallback ||
       (resolvedName
         ? resolvedName
-            .split(" ")
+            .trim()
+            .split(/\s+/)
             .map((part) => part[0])
             .join("")
             .toUpperCase()

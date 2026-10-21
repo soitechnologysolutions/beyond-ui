@@ -19,43 +19,89 @@ const avatarVariants = cva(
   }
 );
 
+const AvatarContext = React.createContext<{
+  showFallback: boolean;
+  setShowFallback: React.Dispatch<React.SetStateAction<boolean>>;
+} | null>(null);
+
 const Avatar = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof avatarVariants>
->(({ className, size, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(avatarVariants({ size }), className)}
-    {...props}
-  />
-));
+>(({ className, size, children, ...props }, ref) => {
+  const [showFallback, setShowFallback] = React.useState(true);
+
+  return (
+    <AvatarContext.Provider value={{ showFallback, setShowFallback }}>
+      <div
+        ref={ref}
+        className={cn(avatarVariants({ size }), className)}
+        {...props}
+      >
+        {children}
+      </div>
+    </AvatarContext.Provider>
+  );
+});
 Avatar.displayName = "Avatar";
 
 const AvatarImage = React.forwardRef<
   HTMLImageElement,
   React.ImgHTMLAttributes<HTMLImageElement>
->(({ className, ...props }, ref) => (
-  <img
-    ref={ref}
-    className={cn("aspect-square h-full w-full object-cover", className)}
-    {...props}
-  />
-));
+>(({ className, src, onError, onLoad, ...props }, ref) => {
+  const context = React.useContext(AvatarContext);
+  const [hasError, setHasError] = React.useState(false);
+
+  React.useEffect(() => {
+    const validSrc = typeof src === "string" && src.trim().length > 0;
+    setHasError(false);
+    context?.setShowFallback(!validSrc);
+  }, [src, context]);
+
+  const validSrc = typeof src === "string" && src.trim().length > 0;
+  if (!validSrc || hasError) {
+    return null;
+  }
+
+  return (
+    <img
+      ref={ref}
+      src={src}
+      className={cn("aspect-square h-full w-full object-cover", className)}
+      onLoad={(e) => {
+        context?.setShowFallback(false);
+        onLoad?.(e);
+      }}
+      onError={(e) => {
+        setHasError(true);
+        context?.setShowFallback(true);
+        onError?.(e);
+      }}
+      {...props}
+    />
+  );
+});
 AvatarImage.displayName = "AvatarImage";
 
 const AvatarFallback = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      "flex h-full w-full items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 font-medium",
-      className
-    )}
-    {...props}
-  />
-));
+>(({ className, ...props }, ref) => {
+  const context = React.useContext(AvatarContext);
+  if (context && !context.showFallback) {
+    return null;
+  }
+
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        "flex h-full w-full items-center justify-center rounded-full bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 font-semibold select-none",
+        className
+      )}
+      {...props}
+    />
+  );
+});
 AvatarFallback.displayName = "AvatarFallback";
 
 export { Avatar, AvatarImage, AvatarFallback, avatarVariants };

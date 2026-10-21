@@ -265,15 +265,13 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       expandedAvatarSize = "sm",
       onClick,
     } = profileSectionProps || {};
-    const avatarUrl =
-      rawAvatarUrl ||
-      rawAvatar ||
-      "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=64";
+    const avatarUrl = rawAvatarUrl || rawAvatar || "";
     const avatarFallback =
       rawAvatarFallback ||
       (name
         ? name
-            .split(" ")
+            .trim()
+            .split(/\s+/)
             .map((part) => part[0])
             .join("")
             .toUpperCase()
