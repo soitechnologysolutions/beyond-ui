@@ -20,6 +20,12 @@ import { Avatar, AvatarImage, AvatarFallback } from "../Avatar";
 import { Badge } from "../Badge";
 import { ProfileButton } from "./ProfileButton";
 import { LogoutButton } from "./LogoutButton";
+import {
+  Dropdown,
+  DropdownArrow,
+  type DropdownItem,
+  type DropdownProps,
+} from "../Dropdown";
 
 const sidebarVariants = cva(
   "fixed left-0 top-0 z-40 h-screen bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300 ease-in-out",
@@ -77,6 +83,14 @@ export interface SidebarProfileSectionProps {
   collapsedAvatarSize?: "sm" | "md" | "lg";
   expandedAvatarSize?: "sm" | "md" | "lg";
   onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
+  /** Custom dropdown items for sidebar profile dropdown */
+  profileDropdownItems?: DropdownItem[];
+  /** Additional props for sidebar profile Dropdown */
+  profileDropdownProps?: Partial<DropdownProps>;
+  /** Whether clicking profile in sidebar opens a dropdown (default: false when Profile/Logout buttons exist) */
+  showProfileDropdown?: boolean;
+  /** Whether to show a dropdown arrow beside profile (default: false when showProfileDropdown is false) */
+  showProfileDropdownArrow?: boolean;
 }
 
 interface SidebarProps extends VariantProps<typeof sidebarVariants> {
@@ -100,6 +114,14 @@ interface SidebarProps extends VariantProps<typeof sidebarVariants> {
   profileSectionProps?: SidebarProfileSectionProps;
   /** Whether to display the sidebar profile section (default: true) */
   showProfileSection?: boolean;
+  /** Custom dropdown items for sidebar profile dropdown */
+  profileDropdownItems?: DropdownItem[];
+  /** Additional props for sidebar profile Dropdown */
+  profileDropdownProps?: Partial<DropdownProps>;
+  /** Whether clicking profile in sidebar opens a dropdown */
+  showProfileDropdown?: boolean;
+  /** Whether to show a dropdown arrow beside profile in sidebar */
+  showProfileDropdownArrow?: boolean;
 }
 
 const defaultMenuItems: MenuItem[] = [
@@ -182,6 +204,10 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       logoutButtonProps,
       profileSectionProps,
       showProfileSection = true,
+      profileDropdownItems,
+      profileDropdownProps,
+      showProfileDropdown,
+      showProfileDropdownArrow,
       ...props
     },
     ref,
@@ -264,6 +290,10 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       collapsedAvatarSize = "sm",
       expandedAvatarSize = "sm",
       onClick,
+      profileDropdownItems: sectionDropdownItems,
+      profileDropdownProps: sectionDropdownProps,
+      showProfileDropdown: sectionShowProfileDropdown,
+      showProfileDropdownArrow: sectionShowProfileDropdownArrow,
     } = profileSectionProps || {};
     const avatarUrl = rawAvatarUrl || rawAvatar || "";
     const avatarFallback =
@@ -277,6 +307,48 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             .toUpperCase()
             .slice(0, 2)
         : "JD");
+
+    const resolvedShowDropdown =
+      showProfileDropdown ?? sectionShowProfileDropdown ?? false;
+
+    const resolvedShowDropdownArrow =
+      showProfileDropdownArrow ??
+      sectionShowProfileDropdownArrow ??
+      (resolvedShowDropdown ? true : false);
+
+    const resolvedDropdownProps = {
+      ...sectionDropdownProps,
+      ...profileDropdownProps,
+    };
+
+    const resolvedProfileDropdownItems: DropdownItem[] =
+      profileDropdownItems ??
+      sectionDropdownItems ?? [
+        {
+          id: "profile",
+          label: "Profile",
+          icon: <User className="h-4 w-4" />,
+          onClick: (e: any) => {
+            onClick?.(e);
+            profileButtonProps?.onClick?.(e);
+          },
+        },
+        ...(logoutButtonProps?.onClick || logoutButtonProps?.onLogout
+          ? [
+              {
+                id: "logout",
+                label: "Logout",
+                icon: <LogOut className="h-4 w-4" />,
+                variant: "danger" as const,
+                divider: true,
+                onClick: (e: any) => {
+                  logoutButtonProps?.onClick?.(e);
+                  logoutButtonProps?.onLogout?.();
+                },
+              },
+            ]
+          : []),
+      ];
 
     return (
       <div
@@ -326,67 +398,121 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                 collapsed ? "max-lg:hidden" : "hidden",
               )}
             >
-              <div
-                className={cn(
-                  "rounded-lg transition-colors",
-                  onClick &&
-                    "cursor-pointer hover:bg-primary-50 dark:hover:bg-gray-800/50 focus:bg-primary-100 dark:focus:bg-gray-800 outline-none ring-2 ring-transparent focus:ring-primary-300",
-                )}
-                tabIndex={onClick ? 0 : undefined}
-                role={onClick ? "button" : undefined}
-                aria-label={onClick ? "View profile" : undefined}
-                onClick={onClick}
-                onKeyDown={
-                  onClick
-                    ? (e) => {
-                        if (e.key === "Enter" || e.key === " ") onClick(e as any);
-                      }
-                    : undefined
-                }
-              >
-                <Avatar size={collapsedAvatarSize}>
-                  <AvatarImage src={avatarUrl} />
-                  <AvatarFallback>{avatarFallback}</AvatarFallback>
-                </Avatar>
-              </div>
+              {resolvedShowDropdown ? (
+                <Dropdown
+                  placement="top"
+                  align="left"
+                  showArrow={false}
+                  items={resolvedProfileDropdownItems}
+                  trigger={
+                    <div
+                      className="cursor-pointer hover:bg-primary-50 dark:hover:bg-gray-800/50 rounded-lg p-1 transition-colors"
+                      aria-label="View profile menu"
+                    >
+                      <Avatar size={collapsedAvatarSize}>
+                        <AvatarImage src={avatarUrl} />
+                        <AvatarFallback>{avatarFallback}</AvatarFallback>
+                      </Avatar>
+                    </div>
+                  }
+                  {...resolvedDropdownProps}
+                />
+              ) : (
+                <div
+                  className={cn(
+                    "rounded-lg transition-colors",
+                    onClick &&
+                      "cursor-pointer hover:bg-primary-50 dark:hover:bg-gray-800/50 focus:bg-primary-100 dark:focus:bg-gray-800 outline-none ring-2 ring-transparent focus:ring-primary-300",
+                  )}
+                  tabIndex={onClick ? 0 : undefined}
+                  role={onClick ? "button" : undefined}
+                  aria-label={onClick ? "View profile" : undefined}
+                  onClick={onClick}
+                  onKeyDown={
+                    onClick
+                      ? (e) => {
+                          if (e.key === "Enter" || e.key === " ") onClick(e as any);
+                        }
+                      : undefined
+                  }
+                >
+                  <Avatar size={collapsedAvatarSize}>
+                    <AvatarImage src={avatarUrl} />
+                    <AvatarFallback>{avatarFallback}</AvatarFallback>
+                  </Avatar>
+                </div>
+              )}
             </div>
             <div className={cn("space-y-3", collapsed ? "lg:hidden" : "")}>
-              <div
-                className={cn(
-                  "flex items-center space-x-3 rounded-lg transition-colors",
-                  onClick &&
-                    "cursor-pointer hover:bg-primary-50 dark:hover:bg-gray-800/50 focus:bg-primary-100 dark:focus:bg-gray-800 outline-none ring-2 ring-transparent focus:ring-primary-300",
-                )}
-                tabIndex={onClick ? 0 : undefined}
-                role={onClick ? "button" : undefined}
-                aria-label={onClick ? "View profile" : undefined}
-                onClick={onClick}
-                onKeyDown={
-                  onClick
-                    ? (e) => {
-                        if (e.key === "Enter" || e.key === " ") onClick(e as any);
-                      }
-                    : undefined
-                }
-              >
-                <Avatar size={expandedAvatarSize}>
-                  <AvatarImage src={avatarUrl} />
-                  <AvatarFallback>{avatarFallback}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                    {name}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                    {email}
-                  </p>
+              {resolvedShowDropdown ? (
+                <Dropdown
+                  placement="top"
+                  align="left"
+                  fullWidth
+                  showArrow={resolvedShowDropdownArrow}
+                  items={resolvedProfileDropdownItems}
+                  trigger={
+                    <div
+                      className="flex items-center space-x-3 w-full p-2 rounded-lg cursor-pointer hover:bg-primary-50 dark:hover:bg-gray-800/50 focus:bg-primary-100 dark:focus:bg-gray-800 transition-colors"
+                      aria-label="User menu"
+                    >
+                      <Avatar size={expandedAvatarSize}>
+                        <AvatarImage src={avatarUrl} />
+                        <AvatarFallback>{avatarFallback}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0 text-left">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                          {name}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                          {email}
+                        </p>
+                      </div>
+                    </div>
+                  }
+                  {...resolvedDropdownProps}
+                />
+              ) : (
+                <div
+                  className={cn(
+                    "flex items-center space-x-3 rounded-lg transition-colors p-2",
+                    onClick &&
+                      "cursor-pointer hover:bg-primary-50 dark:hover:bg-gray-800/50 focus:bg-primary-100 dark:focus:bg-gray-800 outline-none ring-2 ring-transparent focus:ring-primary-300",
+                  )}
+                  tabIndex={onClick ? 0 : undefined}
+                  role={onClick ? "button" : undefined}
+                  aria-label={onClick ? "View profile" : undefined}
+                  onClick={onClick}
+                  onKeyDown={
+                    onClick
+                      ? (e) => {
+                          if (e.key === "Enter" || e.key === " ") onClick(e as any);
+                        }
+                      : undefined
+                  }
+                >
+                  <Avatar size={expandedAvatarSize}>
+                    <AvatarImage src={avatarUrl} />
+                    <AvatarFallback>{avatarFallback}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                      {name}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                      {email}
+                    </p>
+                  </div>
+                  {resolvedShowDropdownArrow && <DropdownArrow size="sm" />}
                 </div>
-              </div>
-              <div className="flex space-x-2">
-                {/* Reusable, theme-agnostic profile/logout buttons */}
-                <ProfileButton className="flex-1" {...profileButtonProps} />
-                <LogoutButton className="flex-1" {...logoutButtonProps} />
-              </div>
+              )}
+              {(!resolvedShowDropdown || (profileButtonProps || logoutButtonProps)) && (
+                <div className="flex space-x-2">
+                  {/* Reusable, theme-agnostic profile/logout buttons */}
+                  <ProfileButton className="flex-1" {...profileButtonProps} />
+                  <LogoutButton className="flex-1" {...logoutButtonProps} />
+                </div>
+              )}
             </div>
           </div>
         )}

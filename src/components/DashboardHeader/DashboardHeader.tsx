@@ -1,10 +1,16 @@
 import * as React from "react";
-import { Search, Bell, Settings, Menu } from "lucide-react";
+import { Search, Bell, Settings, Menu, User, LogOut } from "lucide-react";
 import { cn } from "../../utils/cn";
 import { Input } from "../Input";
 import { Button } from "../Button";
 import { Avatar, AvatarImage, AvatarFallback } from "../Avatar";
 import { Badge } from "../Badge";
+import {
+  Dropdown,
+  DropdownArrow,
+  type DropdownItem,
+  type DropdownProps,
+} from "../Dropdown";
 
 interface BreadcrumbItem {
   label: string;
@@ -42,6 +48,7 @@ interface DashboardHeaderProps {
   onNotificationClick?: () => void;
   onSettingsClick?: () => void;
   onProfileClick?: () => void;
+  onLogoutClick?: () => void;
   onBreadcrumbClick?: (item: BreadcrumbItem, index: number) => void;
 
   // Custom slots
@@ -61,6 +68,14 @@ interface DashboardHeaderProps {
     email?: string;
     avatarFallback?: string;
   };
+  /** Custom dropdown items for the header profile dropdown */
+  profileDropdownItems?: DropdownItem[];
+  /** Additional props passed to the profile Dropdown component */
+  profileDropdownProps?: Partial<DropdownProps>;
+  /** Whether clicking the profile opens the dropdown menu (default: true) */
+  showProfileDropdown?: boolean;
+  /** Whether to display the dropdown arrow beside the avatar (default: true) */
+  showProfileDropdownArrow?: boolean;
 }
 
 const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
@@ -84,12 +99,17 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
     onNotificationClick,
     onSettingsClick,
     onProfileClick,
+    onLogoutClick,
     onBreadcrumbClick,
     name,
     email,
     avatarUrl,
     avatarFallback,
     profileSectionProps,
+    profileDropdownItems,
+    profileDropdownProps,
+    showProfileDropdown = true,
+    showProfileDropdownArrow = true,
     ...props
   }, ref) => {
     const [searchValue, setSearchValue] = React.useState("");
@@ -295,32 +315,107 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
             </div>
 
             {/* User Profile */}
-              <div
-                className={cn(
-                  getVisibilityClasses(showProfile, "flex"),
-                  "items-center space-x-3 pl-3 border-l border-gray-200",
-                  onProfileClick ? "cursor-pointer hover:bg-gray-100 transition" : ""
-                )}
-                onClick={onProfileClick}
-                tabIndex={onProfileClick ? 0 : undefined}
-                role={onProfileClick ? "button" : undefined}
-                onKeyDown={onProfileClick ? (e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    onProfileClick();
+            <div
+              className={cn(
+                getVisibilityClasses(showProfile, "flex"),
+                "items-center pl-3 border-l border-gray-200 dark:border-gray-800"
+              )}
+            >
+              {showProfileDropdown ? (
+                <Dropdown
+                  align="right"
+                  placement="bottom"
+                  showArrow={showProfileDropdownArrow}
+                  triggerClassName="px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  header={
+                    <div>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                        {resolvedName}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                        {resolvedEmail}
+                      </p>
+                    </div>
                   }
-                } : undefined}
-                aria-label={onProfileClick ? "Profile section" : undefined}
-              >
-                <div className="hidden sm:block text-right">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">{resolvedName}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{resolvedEmail}</p>
+                  items={
+                    profileDropdownItems ?? [
+                      {
+                        id: "profile",
+                        label: "Profile",
+                        icon: <User className="h-4 w-4" />,
+                        onClick: () => onProfileClick?.(),
+                      },
+                      ...(onLogoutClick
+                        ? [
+                            {
+                              id: "logout",
+                              label: "Logout",
+                              icon: <LogOut className="h-4 w-4" />,
+                              variant: "danger" as const,
+                              divider: true,
+                              onClick: () => onLogoutClick(),
+                            },
+                          ]
+                        : []),
+                    ]
+                  }
+                  trigger={
+                    <div className="flex items-center space-x-3">
+                      <div className="hidden sm:block text-right">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          {resolvedName}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {resolvedEmail}
+                        </p>
+                      </div>
+                      <Avatar size="sm">
+                        <AvatarImage src={resolvedAvatarUrl} />
+                        <AvatarFallback>{resolvedAvatarFallback}</AvatarFallback>
+                      </Avatar>
+                    </div>
+                  }
+                  {...profileDropdownProps}
+                />
+              ) : (
+                <div
+                  className={cn(
+                    "flex items-center space-x-3 px-2 py-1 rounded-lg",
+                    onProfileClick
+                      ? "cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+                      : ""
+                  )}
+                  onClick={onProfileClick}
+                  tabIndex={onProfileClick ? 0 : undefined}
+                  role={onProfileClick ? "button" : undefined}
+                  onKeyDown={
+                    onProfileClick
+                      ? (e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            onProfileClick();
+                          }
+                        }
+                      : undefined
+                  }
+                  aria-label={onProfileClick ? "Profile section" : undefined}
+                >
+                  <div className="hidden sm:block text-right">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                      {resolvedName}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {resolvedEmail}
+                    </p>
+                  </div>
+                  <Avatar size="sm">
+                    <AvatarImage src={resolvedAvatarUrl} />
+                    <AvatarFallback>{resolvedAvatarFallback}</AvatarFallback>
+                  </Avatar>
+                  {showProfileDropdownArrow && <DropdownArrow size="md" />}
                 </div>
-                <Avatar size="sm">
-                  <AvatarImage src={resolvedAvatarUrl} />
-                  <AvatarFallback>{resolvedAvatarFallback}</AvatarFallback>
-                </Avatar>
-              </div>
+              )}
+            </div>
           </div>
         </div>
       </header>

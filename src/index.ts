@@ -5,6 +5,7 @@ export * from './components/Card';
 export * from './components/Badge';
 export * from './components/Alert';
 export * from './components/Avatar';
+export * from './components/Dropdown';
 export * from './components/Spinner';
 export * from './components/Skeleton';
 export * from './components/Textarea';

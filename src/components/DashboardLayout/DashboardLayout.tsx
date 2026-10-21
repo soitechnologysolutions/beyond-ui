@@ -3,6 +3,7 @@ import { cn } from "../../utils/cn";
 import { Sidebar, type MenuItem, type SidebarProfileSectionProps } from "../Sidebar";
 import { DashboardHeader, type BreadcrumbItem } from "../DashboardHeader";
 import { useBreakpoint } from "../../hooks/useBreakpoint";
+import type { DropdownItem, DropdownProps } from "../Dropdown";
 
 /**
  * DashboardLayoutProps
@@ -48,6 +49,14 @@ interface DashboardLayoutProps {
   avatarFallback?: string;
   /** Whether to display the sidebar profile section (default: true) */
   showProfileSection?: boolean;
+  /** Custom dropdown items for profile dropdown (forwarded to DashboardHeader and Sidebar) */
+  profileDropdownItems?: DropdownItem[];
+  /** Additional props for profile dropdown (forwarded to DashboardHeader and Sidebar) */
+  profileDropdownProps?: Partial<DropdownProps>;
+  /** Whether clicking profile opens dropdown menu (forwarded to DashboardHeader and Sidebar) */
+  showProfileDropdown?: boolean;
+  /** Whether to show dropdown arrow beside avatar/profile (forwarded to DashboardHeader and Sidebar) */
+  showProfileDropdownArrow?: boolean;
 
   /** Props to customize DashboardHeader */
   dashboardHeaderProps?: DashboardHeaderProps;
@@ -75,6 +84,10 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
     avatarUrl,
     avatarFallback,
     showProfileSection = true,
+    profileDropdownItems,
+    profileDropdownProps,
+    showProfileDropdown,
+    showProfileDropdownArrow,
     dashboardHeaderProps,
     ...props
   }, ref) => {
@@ -135,6 +148,10 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
           logoutButtonProps={logoutButtonProps}
           profileSectionProps={mergedProfileSectionProps}
           showProfileSection={showProfileSection}
+          profileDropdownItems={profileDropdownItems}
+          profileDropdownProps={profileDropdownProps}
+          showProfileDropdown={showProfileDropdown}
+          showProfileDropdownArrow={showProfileDropdownArrow}
         />
 
         {/* Fixed Header */}
@@ -150,6 +167,22 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
           email={mergedProfileSectionProps?.email}
           avatarUrl={mergedProfileSectionProps?.avatarUrl || mergedProfileSectionProps?.avatar}
           avatarFallback={mergedProfileSectionProps?.avatarFallback}
+          onProfileClick={
+            profileButtonProps?.onClick
+              ? () => profileButtonProps.onClick?.({} as any)
+              : undefined
+          }
+          onLogoutClick={
+            logoutButtonProps?.onLogout
+              ? logoutButtonProps.onLogout
+              : logoutButtonProps?.onClick
+                ? () => logoutButtonProps.onClick?.({} as any)
+                : undefined
+          }
+          profileDropdownItems={profileDropdownItems}
+          profileDropdownProps={profileDropdownProps}
+          showProfileDropdown={showProfileDropdown}
+          showProfileDropdownArrow={showProfileDropdownArrow}
           {...dashboardHeaderProps}
           className={cn(
             "transition-all duration-300 ease-in-out",
@@ -200,4 +233,4 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
 
 DashboardLayout.displayName = "DashboardLayout";
 
-export { DashboardLayout };
+export { DashboardLayout, type DashboardLayoutProps };

@@ -16,6 +16,7 @@ const barrelInputs = [
   "src/components/DashboardHeader/index.ts",
   "src/components/DashboardLayout/index.ts",
   "src/components/DataTable/index.ts",
+  "src/components/Dropdown/index.ts",
   "src/components/Input/index.ts",
   "src/components/Modal/index.ts",
   "src/components/Navbar/index.ts",
