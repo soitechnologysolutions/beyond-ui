@@ -53,13 +53,38 @@ interface DashboardLayoutProps {
   showProfileDropdown?: boolean;
   /** Whether to show dropdown arrow beside avatar/profile (forwarded to DashboardHeader and Sidebar) */
   showProfileDropdownArrow?: boolean;
+  /** Whether to reverse profile dropdown arrow in sidebar (default: true) */
+  sidebarProfileDropdownArrowReverse?: boolean;
+  /** Explicit direction for sidebar dropdown arrow ("down" | "up") */
+  sidebarProfileDropdownArrowDirection?: "down" | "up";
+  /** Whether to reverse profile dropdown arrow in header (default: false) */
+  profileDropdownArrowReverse?: boolean;
+  /** Explicit direction for header dropdown arrow ("down" | "up") */
+  profileDropdownArrowDirection?: "down" | "up";
 
   /** Whether to show breadcrumbs in DashboardHeader (supports boolean or { mobile, desktop }) */
   showBreadcrumbs?: ResponsiveShow;
   /** Whether to show notifications in DashboardHeader (supports boolean or { mobile, desktop }) */
   showNotifications?: ResponsiveShow;
+  /** Whether to show notifications in Sidebar (supports boolean or { mobile, desktop }) */
+  sidebarShowNotifications?: ResponsiveShow;
+  /** Unread notification badge count (forwarded to Sidebar and DashboardHeader) */
+  notificationCount?: number;
+  /** Callback when notification icon is clicked (forwarded to Sidebar and DashboardHeader) */
+  onNotificationClick?: () => void;
+
   /** Whether to show settings in DashboardHeader (supports boolean or { mobile, desktop }) */
   showSettings?: ResponsiveShow;
+  /** Whether to show settings in Sidebar (supports boolean or { mobile, desktop }) */
+  sidebarShowSettings?: ResponsiveShow;
+  /** Callback when settings icon is clicked (forwarded to Sidebar and DashboardHeader) */
+  onSettingsClick?: () => void;
+
+  /** Placement of quick action icons in sidebar ("above-profile" | "in-profile", default: "in-profile") */
+  sidebarIconsPlacement?: "above-profile" | "in-profile";
+  /** Custom action icons or buttons to display in sidebar */
+  sidebarActions?: React.ReactNode;
+
   /** Whether to show profile in DashboardHeader (supports boolean or { mobile, desktop }) */
   showProfile?: ResponsiveShow;
   /** Whether to show menu button in DashboardHeader (supports boolean or { mobile, desktop }) */
@@ -104,9 +129,20 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
     profileDropdownProps,
     showProfileDropdown,
     showProfileDropdownArrow,
+    sidebarProfileDropdownArrowReverse,
+    sidebarProfileDropdownArrowDirection,
+    profileDropdownArrowReverse,
+    profileDropdownArrowDirection,
     showBreadcrumbs,
     showNotifications,
+    sidebarShowNotifications,
+    notificationCount,
+    onNotificationClick,
     showSettings,
+    sidebarShowSettings,
+    onSettingsClick,
+    sidebarIconsPlacement,
+    sidebarActions,
     showProfile,
     showMenuButton,
     showDarkMode,
@@ -136,6 +172,33 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
           showProfileSection?.desktop === false
         ? { mobile: false, desktop: true }
         : true);
+
+    const resolvedSidebarShowNotifications =
+      sidebarShowNotifications !== undefined
+        ? sidebarShowNotifications
+        : typeof showNotifications === "object" &&
+          showNotifications?.mobile === false &&
+          showNotifications?.desktop === true
+        ? { mobile: true, desktop: false }
+        : undefined;
+
+    const resolvedSidebarShowSettings =
+      sidebarShowSettings !== undefined
+        ? sidebarShowSettings
+        : typeof showSettings === "object" &&
+          showSettings?.mobile === false &&
+          showSettings?.desktop === true
+        ? { mobile: true, desktop: false }
+        : undefined;
+
+    const resolvedSidebarShowDarkMode =
+      sidebarShowDarkMode !== undefined
+        ? sidebarShowDarkMode
+        : typeof showDarkMode === "object" &&
+          showDarkMode?.mobile === false &&
+          showDarkMode?.desktop === true
+        ? { mobile: true, desktop: false }
+        : undefined;
 
     const { currentBreakpoint } = useBreakpoint();
 
@@ -184,13 +247,26 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
           logoutButtonProps={logoutButtonProps}
           profileSectionProps={mergedProfileSectionProps}
           showProfileSection={showProfileSection}
-          showDarkMode={sidebarShowDarkMode}
+          showDarkMode={resolvedSidebarShowDarkMode}
+          showNotifications={resolvedSidebarShowNotifications}
+          notificationCount={notificationCount}
+          onNotificationClick={onNotificationClick}
+          showSettings={resolvedSidebarShowSettings}
+          onSettingsClick={onSettingsClick}
+          sidebarIconsPlacement={sidebarIconsPlacement}
+          sidebarActions={sidebarActions}
           onDarkModeToggle={onDarkModeToggle}
           darkModeSwitchProps={darkModeSwitchProps}
           profileDropdownItems={profileDropdownItems}
           profileDropdownProps={profileDropdownProps}
           showProfileDropdown={showProfileDropdown}
           showProfileDropdownArrow={showProfileDropdownArrow}
+          profileDropdownArrowReverse={
+            sidebarProfileDropdownArrowReverse ?? profileDropdownArrowReverse
+          }
+          profileDropdownArrowDirection={
+            sidebarProfileDropdownArrowDirection ?? profileDropdownArrowDirection
+          }
         />
 
         {/* Fixed Header */}
@@ -203,7 +279,10 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
           onSearchChange={onSearchChange}
           showBreadcrumbs={showBreadcrumbs}
           showNotifications={showNotifications}
+          notificationCount={notificationCount}
+          onNotificationClick={onNotificationClick}
           showSettings={showSettings}
+          onSettingsClick={onSettingsClick}
           showProfile={resolvedShowProfile}
           showMenuButton={showMenuButton}
           profileSectionProps={mergedProfileSectionProps}
@@ -227,6 +306,8 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
           profileDropdownProps={profileDropdownProps}
           showProfileDropdown={showProfileDropdown}
           showProfileDropdownArrow={showProfileDropdownArrow}
+          profileDropdownArrowReverse={profileDropdownArrowReverse}
+          profileDropdownArrowDirection={profileDropdownArrowDirection}
           {...(showDarkMode !== undefined ? { showDarkMode } : {})}
           {...(onDarkModeToggle !== undefined ? { onDarkModeToggle } : {})}
           {...(darkModeSwitchProps !== undefined ? { darkModeSwitchProps } : {})}

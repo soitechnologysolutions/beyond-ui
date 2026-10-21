@@ -23,22 +23,56 @@ interface BreadcrumbItem {
 
 type ResponsiveShow = boolean | { mobile?: boolean; desktop?: boolean };
 
-// Helper to resolve ResponsiveShow prop directly to Tailwind display classes
+// Helper to resolve ResponsiveShow prop directly to Tailwind display classes.
+// Note: We return exact static string literals so Tailwind CSS scanner can reliably extract them.
 const getVisibilityClasses = (
   prop: ResponsiveShow | undefined,
-  baseDisplayClass: string = "flex"
+  baseDisplayClass: "flex" | "block" | "inline-flex" | "inline-block" | "flex lg:hidden" = "flex"
 ): string => {
-  if (typeof prop === "boolean") return prop ? baseDisplayClass : "hidden";
-  if (prop === undefined) return baseDisplayClass;
+  if (baseDisplayClass === "flex lg:hidden") {
+    if (prop === false) return "hidden";
+    if (typeof prop === "object") {
+      const showMobile = prop.mobile ?? false;
+      const showDesktop = prop.desktop ?? false;
+      if (!showMobile && !showDesktop) return "hidden";
+      if (showMobile && showDesktop) return "flex";
+      if (!showMobile && showDesktop) return "hidden lg:flex";
+      return "flex lg:hidden";
+    }
+    return "flex lg:hidden";
+  }
+
+  if (prop === true || prop === undefined) {
+    if (baseDisplayClass === "block") return "block";
+    if (baseDisplayClass === "inline-flex") return "inline-flex";
+    if (baseDisplayClass === "inline-block") return "inline-block";
+    return "flex";
+  }
+  if (prop === false) return "hidden";
 
   const showMobile = prop.mobile ?? false;
   const showDesktop = prop.desktop ?? false;
 
-  if (showMobile && showDesktop) return baseDisplayClass;
+  if (showMobile && showDesktop) {
+    if (baseDisplayClass === "block") return "block";
+    if (baseDisplayClass === "inline-flex") return "inline-flex";
+    if (baseDisplayClass === "inline-block") return "inline-block";
+    return "flex";
+  }
   if (!showMobile && !showDesktop) return "hidden";
-  if (showMobile && !showDesktop) return `${baseDisplayClass} lg:hidden`;
-  if (!showMobile && showDesktop) return `hidden lg:${baseDisplayClass}`;
-  return baseDisplayClass;
+
+  if (showMobile && !showDesktop) {
+    if (baseDisplayClass === "block") return "block lg:hidden";
+    if (baseDisplayClass === "inline-flex") return "inline-flex lg:hidden";
+    if (baseDisplayClass === "inline-block") return "inline-block lg:hidden";
+    return "flex lg:hidden";
+  }
+
+  // !showMobile && showDesktop
+  if (baseDisplayClass === "block") return "hidden lg:block";
+  if (baseDisplayClass === "inline-flex") return "hidden lg:inline-flex";
+  if (baseDisplayClass === "inline-block") return "hidden lg:inline-block";
+  return "hidden lg:flex";
 };
 
 type DashboardHeaderSlotItem = {
@@ -104,6 +138,12 @@ interface DashboardHeaderProps {
   showProfileDropdown?: boolean;
   /** Whether to display the dropdown arrow beside the avatar (default: true) */
   showProfileDropdownArrow?: boolean;
+  /** Unread notification badge count (default: 3) */
+  notificationCount?: number;
+  /** Whether to reverse the dropdown arrow direction (pointing up when closed) */
+  profileDropdownArrowReverse?: boolean;
+  /** Explicit direction for the dropdown arrow ("down" | "up") */
+  profileDropdownArrowDirection?: "down" | "up";
 }
 
 const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
@@ -117,6 +157,7 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
     onSearchChange,
     showBreadcrumbs = true,
     showNotifications = true,
+    notificationCount = 3,
     showSettings = true,
     showProfile = true,
     showMenuButton = true,
@@ -141,6 +182,8 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
     profileDropdownProps,
     showProfileDropdown = true,
     showProfileDropdownArrow = true,
+    profileDropdownArrowReverse = false,
+    profileDropdownArrowDirection,
     ...props
   }, ref) => {
     const [searchValue, setSearchValue] = React.useState("");
@@ -323,12 +366,14 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
                   onClick={onNotificationClick}
                 >
                   <Bell className="h-5 w-5" />
-                  <Badge
-                    variant="danger"
-                    className="absolute -top-1 -right-1 h-5 w-5 text-xs p-0 flex items-center justify-center"
-                  >
-                    3
-                  </Badge>
+                  {notificationCount > 0 && (
+                    <Badge
+                      variant="danger"
+                      className="absolute -top-1 -right-1 h-5 w-5 text-xs p-0 flex items-center justify-center pointer-events-none"
+                    >
+                      {notificationCount}
+                    </Badge>
+                  )}
                 </Button>
               </div>
 
@@ -355,6 +400,8 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
                   align="right"
                   placement="bottom"
                   showArrow={showProfileDropdownArrow}
+                  arrowReverse={profileDropdownArrowReverse}
+                  arrowDirection={profileDropdownArrowDirection}
                   triggerClassName="px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-800"
                   header={
                     <div>
@@ -441,7 +488,13 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
                     <AvatarImage src={resolvedAvatarUrl} />
                     <AvatarFallback>{resolvedAvatarFallback}</AvatarFallback>
                   </Avatar>
-                  {showProfileDropdownArrow && <DropdownArrow size="md" />}
+                  {showProfileDropdownArrow && (
+                    <DropdownArrow
+                      size="md"
+                      reverse={profileDropdownArrowReverse}
+                      direction={profileDropdownArrowDirection}
+                    />
+                  )}
                 </div>
               )}
             </div>

@@ -97,10 +97,28 @@ export interface SidebarProfileSectionProps {
   profileDropdownProps?: Partial<DropdownProps>;
   /** Whether clicking profile in sidebar opens a dropdown (default: false when Profile/Logout buttons exist) */
   showProfileDropdown?: boolean;
-  /** Whether to show a dropdown arrow beside profile (default: false when showProfileDropdown is false) */
+  /** Whether to show a dropdown arrow beside profile (default: true) */
   showProfileDropdownArrow?: boolean;
+  /** Whether to reverse the dropdown arrow in sidebar profile (default: true, pointing up) */
+  profileDropdownArrowReverse?: boolean;
+  /** Explicit direction for the dropdown arrow ("down" | "up") */
+  profileDropdownArrowDirection?: "down" | "up";
   /** Whether to show dark mode switch in sidebar profile section */
   showDarkMode?: ResponsiveShow;
+  /** Whether to show notifications icon in sidebar */
+  showNotifications?: ResponsiveShow;
+  /** Unread notification badge count (default: 3) */
+  notificationCount?: number;
+  /** Callback when notification icon is clicked */
+  onNotificationClick?: () => void;
+  /** Whether to show settings icon in sidebar */
+  showSettings?: ResponsiveShow;
+  /** Callback when settings icon is clicked */
+  onSettingsClick?: () => void;
+  /** Placement of quick action icons in sidebar ("above-profile" | "in-profile", default: "in-profile") */
+  sidebarIconsPlacement?: "above-profile" | "in-profile";
+  /** Custom action icons or buttons to display alongside notifications/settings */
+  sidebarActions?: React.ReactNode;
   /** Extra content to render in sidebar profile section */
   extraContent?: React.ReactNode;
 }
@@ -132,10 +150,28 @@ interface SidebarProps extends VariantProps<typeof sidebarVariants> {
   profileDropdownProps?: Partial<DropdownProps>;
   /** Whether clicking profile in sidebar opens a dropdown */
   showProfileDropdown?: boolean;
-  /** Whether to show a dropdown arrow beside profile in sidebar */
+  /** Whether to show a dropdown arrow beside profile in sidebar (default: true) */
   showProfileDropdownArrow?: boolean;
+  /** Whether to reverse the dropdown arrow in sidebar profile (default: true, pointing up) */
+  profileDropdownArrowReverse?: boolean;
+  /** Explicit direction for the dropdown arrow in sidebar profile ("down" | "up") */
+  profileDropdownArrowDirection?: "down" | "up";
   /** Whether to show dark mode switch in sidebar profile section */
   showDarkMode?: ResponsiveShow;
+  /** Whether to show notifications icon in sidebar */
+  showNotifications?: ResponsiveShow;
+  /** Unread notification badge count (default: 3) */
+  notificationCount?: number;
+  /** Callback when notification icon is clicked */
+  onNotificationClick?: () => void;
+  /** Whether to show settings icon in sidebar */
+  showSettings?: ResponsiveShow;
+  /** Callback when settings icon is clicked */
+  onSettingsClick?: () => void;
+  /** Placement of quick action icons in sidebar ("above-profile" | "in-profile", default: "in-profile") */
+  sidebarIconsPlacement?: "above-profile" | "in-profile";
+  /** Custom action icons or buttons to display alongside notifications/settings */
+  sidebarActions?: React.ReactNode;
   /** Callback when dark mode toggle is clicked */
   onDarkModeToggle?: () => void;
   /** Optional props to pass to NightModeSwitch */
@@ -228,7 +264,16 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       profileDropdownProps,
       showProfileDropdown,
       showProfileDropdownArrow,
+      profileDropdownArrowReverse,
+      profileDropdownArrowDirection,
       showDarkMode,
+      showNotifications,
+      notificationCount,
+      onNotificationClick,
+      showSettings,
+      onSettingsClick,
+      sidebarIconsPlacement,
+      sidebarActions,
       onDarkModeToggle,
       darkModeSwitchProps,
       profileSectionExtra,
@@ -318,7 +363,16 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       profileDropdownProps: sectionDropdownProps,
       showProfileDropdown: sectionShowProfileDropdown,
       showProfileDropdownArrow: sectionShowProfileDropdownArrow,
+      profileDropdownArrowReverse: sectionProfileDropdownArrowReverse,
+      profileDropdownArrowDirection: sectionProfileDropdownArrowDirection,
       showDarkMode: sectionShowDarkMode,
+      showNotifications: sectionShowNotifications,
+      notificationCount: sectionNotificationCount,
+      onNotificationClick: sectionOnNotificationClick,
+      showSettings: sectionShowSettings,
+      onSettingsClick: sectionOnSettingsClick,
+      sidebarIconsPlacement: sectionSidebarIconsPlacement,
+      sidebarActions: sectionSidebarActions,
       extraContent: sectionExtraContent,
     } = profileSectionProps || {};
     const avatarUrl = rawAvatarUrl || rawAvatar || "";
@@ -335,6 +389,22 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         : "JD");
 
     const resolvedShowDarkMode = showDarkMode ?? sectionShowDarkMode;
+    const resolvedShowNotifications = showNotifications ?? sectionShowNotifications;
+    const resolvedNotificationCount = notificationCount ?? sectionNotificationCount ?? 3;
+    const resolvedOnNotificationClick = onNotificationClick ?? sectionOnNotificationClick;
+    const resolvedShowSettings = showSettings ?? sectionShowSettings;
+    const resolvedOnSettingsClick = onSettingsClick ?? sectionOnSettingsClick;
+    const resolvedIconsPlacement =
+      sidebarIconsPlacement ?? sectionSidebarIconsPlacement ?? "in-profile";
+    const resolvedSidebarActions = sidebarActions ?? sectionSidebarActions;
+
+    const hasSidebarIcons = Boolean(
+      resolvedShowNotifications ||
+      resolvedShowSettings ||
+      resolvedShowDarkMode ||
+      resolvedSidebarActions
+    );
+
     const isProfileSectionVisible =
       showProfileSection !== false &&
       !(
@@ -349,7 +419,15 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
     const resolvedShowDropdownArrow =
       showProfileDropdownArrow ??
       sectionShowProfileDropdownArrow ??
-      (resolvedShowDropdown ? true : false);
+      true;
+
+    const resolvedProfileDropdownArrowReverse =
+      profileDropdownArrowReverse ??
+      sectionProfileDropdownArrowReverse ??
+      (profileDropdownArrowDirection === "down" ||
+      sectionProfileDropdownArrowDirection === "down"
+        ? false
+        : true);
 
     const resolvedDropdownProps = {
       ...sectionDropdownProps,
@@ -384,6 +462,69 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             ]
           : []),
       ];
+
+    const renderSidebarIconsBar = () => {
+      if (!hasSidebarIcons) return null;
+      return (
+        <div
+          className={cn(
+            "flex items-center justify-between px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-800/60 border border-gray-100 dark:border-gray-800",
+            collapsed ? "lg:hidden" : ""
+          )}
+        >
+          <div className="flex items-center space-x-1 sm:space-x-2">
+            {resolvedShowNotifications && (
+              <button
+                type="button"
+                onClick={resolvedOnNotificationClick}
+                className={cn(
+                  "relative p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-700/60 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500",
+                  getVisibilityClasses(resolvedShowNotifications, "flex")
+                )}
+                aria-label="Notifications"
+              >
+                <Bell className="h-4 w-4" />
+                {resolvedNotificationCount > 0 && (
+                  <Badge
+                    variant="danger"
+                    className="absolute -top-1 -right-1 h-4 w-4 text-[10px] p-0 flex items-center justify-center pointer-events-none"
+                  >
+                    {resolvedNotificationCount}
+                  </Badge>
+                )}
+              </button>
+            )}
+            {resolvedShowSettings && (
+              <button
+                type="button"
+                onClick={resolvedOnSettingsClick}
+                className={cn(
+                  "p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-700/60 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500",
+                  getVisibilityClasses(resolvedShowSettings, "flex")
+                )}
+                aria-label="Settings"
+              >
+                <Settings className="h-4 w-4" />
+              </button>
+            )}
+            {resolvedSidebarActions}
+          </div>
+          {resolvedShowDarkMode && (
+            <div className={cn(getVisibilityClasses(resolvedShowDarkMode, "flex"), "items-center")}>
+              <NightModeSwitch
+                size="sm"
+                className="text-gray-700 hover:text-gray-900 hover:bg-gray-200/60 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700/60"
+                onClick={(e) => {
+                  onDarkModeToggle?.();
+                  darkModeSwitchProps?.onClick?.(e);
+                }}
+                {...darkModeSwitchProps}
+              />
+            </div>
+          )}
+        </div>
+      );
+    };
 
     return (
       <div
@@ -423,6 +564,13 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
           {menuItems.map((item) => renderMenuItem(item))}
         </nav>
+
+        {/* Action icons above profile section */}
+        {resolvedIconsPlacement === "above-profile" && hasSidebarIcons && (
+          <div className={cn("px-4 pb-2", getVisibilityClasses(showProfileSection, "block"))}>
+            {renderSidebarIconsBar()}
+          </div>
+        )}
 
         {/* User Profile Section */}
         {isProfileSectionVisible && (
@@ -490,12 +638,17 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
               )}
             </div>
             <div className={cn("space-y-3", collapsed ? "lg:hidden" : "")}>
+              {resolvedIconsPlacement === "in-profile" && hasSidebarIcons && (
+                renderSidebarIconsBar()
+              )}
               {resolvedShowDropdown ? (
                 <Dropdown
                   placement="top"
                   align="left"
                   fullWidth
                   showArrow={resolvedShowDropdownArrow}
+                  arrowReverse={resolvedProfileDropdownArrowReverse}
+                  arrowDirection={profileDropdownArrowDirection}
                   items={resolvedProfileDropdownItems}
                   trigger={
                     <div
@@ -555,10 +708,16 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                       {email}
                     </p>
                   </div>
-                  {resolvedShowDropdownArrow && <DropdownArrow size="sm" />}
+                  {resolvedShowDropdownArrow && (
+                    <DropdownArrow
+                      size="sm"
+                      reverse={resolvedProfileDropdownArrowReverse}
+                      direction={profileDropdownArrowDirection}
+                    />
+                  )}
                 </div>
               )}
-              {resolvedShowDarkMode && (
+              {resolvedShowDarkMode && !hasSidebarIcons && (
                 <div
                   className={cn(
                     "flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-gray-50 dark:bg-gray-800/60 border border-gray-100 dark:border-gray-800",

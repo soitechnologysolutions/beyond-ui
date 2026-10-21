@@ -16,10 +16,37 @@ const dropdownArrowVariants = cva(
         true: "rotate-180",
         false: "rotate-0",
       },
+      reverse: {
+        true: "",
+        false: "",
+      },
     },
+    compoundVariants: [
+      {
+        reverse: true,
+        open: false,
+        className: "rotate-180",
+      },
+      {
+        reverse: true,
+        open: true,
+        className: "rotate-0",
+      },
+      {
+        reverse: false,
+        open: false,
+        className: "rotate-0",
+      },
+      {
+        reverse: false,
+        open: true,
+        className: "rotate-180",
+      },
+    ],
     defaultVariants: {
       size: "md",
       open: false,
+      reverse: false,
     },
   }
 );
@@ -29,17 +56,24 @@ export interface DropdownArrowProps
     VariantProps<typeof dropdownArrowVariants> {
   /** Whether the parent dropdown is open (rotates arrow 180deg) */
   open?: boolean;
+  /** Whether the arrow is reversed (pointing up when closed, pointing down when open) */
+  reverse?: boolean;
+  /** Explicit direction for the arrow (shorthand: "up" sets reverse={true}, "down" sets reverse={false}) */
+  direction?: "down" | "up";
 }
 
 const DropdownArrow = React.forwardRef<SVGSVGElement, DropdownArrowProps>(
-  ({ className, size, open = false, ...props }, ref) => (
-    <ChevronDown
-      ref={ref}
-      className={cn(dropdownArrowVariants({ size, open }), className)}
-      aria-hidden="true"
-      {...props}
-    />
-  )
+  ({ className, size, open = false, reverse = false, direction, ...props }, ref) => {
+    const isReversed = direction ? direction === "up" : reverse;
+    return (
+      <ChevronDown
+        ref={ref}
+        className={cn(dropdownArrowVariants({ size, open, reverse: isReversed }), className)}
+        aria-hidden="true"
+        {...props}
+      />
+    );
+  }
 );
 DropdownArrow.displayName = "DropdownArrow";
 
@@ -173,6 +207,10 @@ export interface DropdownProps
   showArrow?: boolean;
   /** Size of the DropdownArrow (default: "md") */
   arrowSize?: VariantProps<typeof dropdownArrowVariants>["size"];
+  /** Whether to reverse the arrow direction (pointing up when closed, pointing down when open) */
+  arrowReverse?: boolean;
+  /** Explicit direction for the arrow (shorthand: "up" | "down") */
+  arrowDirection?: "down" | "up";
   /** Optional className for the DropdownArrow */
   arrowClassName?: string;
   /** Optional className for the trigger button/wrapper */
@@ -204,6 +242,8 @@ const Dropdown = React.forwardRef<HTMLDivElement, DropdownProps>(
       placement = "bottom",
       showArrow = true,
       arrowSize = "md",
+      arrowReverse = false,
+      arrowDirection,
       arrowClassName,
       triggerClassName,
       menuClassName,
@@ -317,6 +357,8 @@ const Dropdown = React.forwardRef<HTMLDivElement, DropdownProps>(
             <DropdownArrow
               size={arrowSize}
               open={isOpen}
+              reverse={arrowReverse}
+              direction={arrowDirection}
               className={arrowClassName}
             />
           )}
