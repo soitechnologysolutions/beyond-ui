@@ -38,6 +38,14 @@ interface DashboardLayoutProps {
   logoutButtonProps?: import("../Sidebar/LogoutButton").LogoutButtonProps;
   /** Props for Sidebar profile section (avatar, name, email, etc.) */
   profileSectionProps?: SidebarProfileSectionProps;
+  /** Optional direct profile name (forwarded to Sidebar and DashboardHeader) */
+  name?: string;
+  /** Optional direct profile email (forwarded to Sidebar and DashboardHeader) */
+  email?: string;
+  /** Optional direct profile avatar URL (forwarded to Sidebar and DashboardHeader) */
+  avatarUrl?: string;
+  /** Optional direct profile avatar fallback initials (forwarded to Sidebar and DashboardHeader) */
+  avatarFallback?: string;
   /** Whether to display the sidebar profile section (default: true) */
   showProfileSection?: boolean;
 
@@ -62,10 +70,24 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
     profileButtonProps,
     logoutButtonProps,
     profileSectionProps,
+    name,
+    email,
+    avatarUrl,
+    avatarFallback,
     showProfileSection = true,
     dashboardHeaderProps,
     ...props
   }, ref) => {
+    const mergedProfileSectionProps: SidebarProfileSectionProps | undefined =
+      profileSectionProps || name || email || avatarUrl || avatarFallback
+        ? {
+            ...profileSectionProps,
+            ...(name !== undefined ? { name } : {}),
+            ...(email !== undefined ? { email } : {}),
+            ...(avatarUrl !== undefined ? { avatarUrl } : {}),
+            ...(avatarFallback !== undefined ? { avatarFallback } : {}),
+          }
+        : undefined;
     const { currentBreakpoint } = useBreakpoint();
 
     const [sidebarCollapsed, setSidebarCollapsed] = React.useState(() => {
@@ -111,7 +133,7 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
           }}
           profileButtonProps={profileButtonProps}
           logoutButtonProps={logoutButtonProps}
-          profileSectionProps={profileSectionProps}
+          profileSectionProps={mergedProfileSectionProps}
           showProfileSection={showProfileSection}
         />
 
@@ -123,6 +145,11 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
           showSearch={showSearch}
           searchPlaceholder={searchPlaceholder}
           onSearchChange={onSearchChange}
+          profileSectionProps={mergedProfileSectionProps}
+          name={mergedProfileSectionProps?.name}
+          email={mergedProfileSectionProps?.email}
+          avatarUrl={mergedProfileSectionProps?.avatarUrl || mergedProfileSectionProps?.avatar}
+          avatarFallback={mergedProfileSectionProps?.avatarFallback}
           {...dashboardHeaderProps}
           className={cn(
             "transition-all duration-300 ease-in-out",

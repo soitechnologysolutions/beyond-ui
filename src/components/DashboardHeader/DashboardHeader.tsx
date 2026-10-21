@@ -48,6 +48,19 @@ interface DashboardHeaderProps {
   leftSlot?: DashboardHeaderSlot;
   centerSlot?: DashboardHeaderSlot;
   rightSlot?: DashboardHeaderSlot;
+
+  // Profile details
+  name?: string;
+  email?: string;
+  avatarUrl?: string;
+  avatarFallback?: string;
+  profileSectionProps?: {
+    avatarUrl?: string;
+    avatar?: string;
+    name?: string;
+    email?: string;
+    avatarFallback?: string;
+  };
 }
 
 const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
@@ -72,9 +85,33 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
     onSettingsClick,
     onProfileClick,
     onBreadcrumbClick,
+    name,
+    email,
+    avatarUrl,
+    avatarFallback,
+    profileSectionProps,
     ...props
   }, ref) => {
     const [searchValue, setSearchValue] = React.useState("");
+
+    const resolvedName = name || profileSectionProps?.name || "John Doe";
+    const resolvedEmail = email || profileSectionProps?.email || "Administrator";
+    const resolvedAvatarUrl =
+      avatarUrl ||
+      profileSectionProps?.avatarUrl ||
+      profileSectionProps?.avatar ||
+      "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=64";
+    const resolvedAvatarFallback =
+      avatarFallback ||
+      profileSectionProps?.avatarFallback ||
+      (resolvedName
+        ? resolvedName
+            .split(" ")
+            .map((part) => part[0])
+            .join("")
+            .toUpperCase()
+            .slice(0, 2)
+        : "JD");
 
     // Helper to resolve ResponsiveShow prop directly to Tailwind display classes
     const getVisibilityClasses = (
@@ -275,12 +312,12 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
                 aria-label={onProfileClick ? "Profile section" : undefined}
               >
                 <div className="hidden sm:block text-right">
-              <p className="text-sm font-medium text-gray-900 dark:text-white">John Doe</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Administrator</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">{resolvedName}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{resolvedEmail}</p>
                 </div>
                 <Avatar size="sm">
-                  <AvatarImage src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=64" />
-                  <AvatarFallback>JD</AvatarFallback>
+                  <AvatarImage src={resolvedAvatarUrl} />
+                  <AvatarFallback>{resolvedAvatarFallback}</AvatarFallback>
                 </Avatar>
               </div>
           </div>

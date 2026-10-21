@@ -70,6 +70,7 @@ import { SidebarHeader } from "./SidebarHeader";
 
 export interface SidebarProfileSectionProps {
   avatarUrl?: string;
+  avatar?: string;
   name?: string;
   email?: string;
   avatarFallback?: string;
@@ -255,14 +256,29 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
 
     // Profile section props with fallbacks
     const {
-      avatarUrl = "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=64",
+      avatarUrl: rawAvatarUrl,
+      avatar: rawAvatar,
       name = "John Doe",
       email = "john@company.com",
-      avatarFallback = "JD",
+      avatarFallback: rawAvatarFallback,
       collapsedAvatarSize = "sm",
       expandedAvatarSize = "sm",
       onClick,
     } = profileSectionProps || {};
+    const avatarUrl =
+      rawAvatarUrl ||
+      rawAvatar ||
+      "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=64";
+    const avatarFallback =
+      rawAvatarFallback ||
+      (name
+        ? name
+            .split(" ")
+            .map((part) => part[0])
+            .join("")
+            .toUpperCase()
+            .slice(0, 2)
+        : "JD");
 
     return (
       <div
