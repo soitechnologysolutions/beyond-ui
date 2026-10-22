@@ -13,8 +13,8 @@ const dropdownArrowVariants = cva(
         lg: "h-5 w-5",
       },
       open: {
-        true: "rotate-180",
-        false: "rotate-0",
+        true: "",
+        false: "",
       },
       reverse: {
         true: "",
@@ -64,7 +64,7 @@ export interface DropdownArrowProps
 
 const DropdownArrow = React.forwardRef<SVGSVGElement, DropdownArrowProps>(
   ({ className, size, open = false, reverse = false, direction, ...props }, ref) => {
-    const isReversed = direction ? direction === "up" : reverse;
+    const isReversed = direction ? direction === "up" : Boolean(reverse);
     return (
       <ChevronDown
         ref={ref}

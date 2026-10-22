@@ -414,7 +414,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       );
 
     const resolvedShowDropdown =
-      showProfileDropdown ?? sectionShowProfileDropdown ?? false;
+      showProfileDropdown ?? sectionShowProfileDropdown ?? true;
 
     const resolvedShowDropdownArrow =
       showProfileDropdownArrow ??
@@ -650,9 +650,11 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                   arrowReverse={resolvedProfileDropdownArrowReverse}
                   arrowDirection={profileDropdownArrowDirection}
                   items={resolvedProfileDropdownItems}
+                  menuClassName="w-full"
+                  triggerClassName="w-full p-2 hover:bg-primary-50 dark:hover:bg-gray-800/50 rounded-lg cursor-pointer transition-colors"
                   trigger={
                     <div
-                      className="flex items-center space-x-3 w-full p-2 rounded-lg cursor-pointer hover:bg-primary-50 dark:hover:bg-gray-800/50 focus:bg-primary-100 dark:focus:bg-gray-800 transition-colors"
+                      className="flex items-center space-x-3 min-w-0 flex-1 text-left"
                       aria-label="User menu"
                     >
                       <Avatar size={expandedAvatarSize}>
@@ -674,7 +676,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
               ) : (
                 <div
                   className={cn(
-                    "flex items-center space-x-3 rounded-lg transition-colors p-2",
+                    "flex items-center justify-between w-full rounded-lg transition-colors p-2",
                     (onClick || profileButtonProps?.onClick) &&
                       "cursor-pointer hover:bg-primary-50 dark:hover:bg-gray-800/50 focus:bg-primary-100 dark:focus:bg-gray-800 outline-none ring-2 ring-transparent focus:ring-primary-300",
                   )}
@@ -696,17 +698,19 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                       : undefined
                   }
                 >
-                  <Avatar size={expandedAvatarSize}>
-                    <AvatarImage src={avatarUrl} />
-                    <AvatarFallback>{avatarFallback}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                      {name}
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                      {email}
-                    </p>
+                  <div className="flex items-center space-x-3 min-w-0 flex-1">
+                    <Avatar size={expandedAvatarSize}>
+                      <AvatarImage src={avatarUrl} />
+                      <AvatarFallback>{avatarFallback}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                        {name}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                        {email}
+                      </p>
+                    </div>
                   </div>
                   {resolvedShowDropdownArrow && (
                     <DropdownArrow

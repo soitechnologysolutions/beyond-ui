@@ -127,11 +127,11 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
     showProfileSection = true,
     profileDropdownItems,
     profileDropdownProps,
-    showProfileDropdown,
-    showProfileDropdownArrow,
-    sidebarProfileDropdownArrowReverse,
+    showProfileDropdown = true,
+    showProfileDropdownArrow = true,
+    sidebarProfileDropdownArrowReverse = true,
     sidebarProfileDropdownArrowDirection,
-    profileDropdownArrowReverse,
+    profileDropdownArrowReverse = false,
     profileDropdownArrowDirection,
     showBreadcrumbs,
     showNotifications,
@@ -262,10 +262,10 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
           showProfileDropdown={showProfileDropdown}
           showProfileDropdownArrow={showProfileDropdownArrow}
           profileDropdownArrowReverse={
-            sidebarProfileDropdownArrowReverse ?? profileDropdownArrowReverse
+            sidebarProfileDropdownArrowReverse ?? true
           }
           profileDropdownArrowDirection={
-            sidebarProfileDropdownArrowDirection ?? profileDropdownArrowDirection
+            sidebarProfileDropdownArrowDirection
           }
         />
 
