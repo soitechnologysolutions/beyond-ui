@@ -39,7 +39,8 @@ const barrelInputs = [
   "src/components/Auth/index.ts",
   "src/index.ts",
   "src/services/index.ts",
-  "src/components/PageLayout/index.ts"
+  "src/components/PageLayout/index.ts",
+  "src/components/Email/index.ts"
 ];
 
 const externals = [

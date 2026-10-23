@@ -20,7 +20,7 @@ const CATEGORY_MAP: Record<string, string[]> = {
   "Internal: HR": ["NewHireAnnouncement", "BirthdayAnniversary", "EmployeeFarewell", "PolicyUpdate", "ExitInterviewRequest"],
   "Internal: IT": ["ITOutageReport", "PasswordRotationReminder", "AppAccessGranted"],
   "Internal: Comms": ["LeadershipUpdate", "MeetingRecap", "CompanyEventsCalendar"],
-  "Billing": ["InvoiceEmail", "PaymentFailedEmail", "SubscriptionConfirmation", "SubscriptionCancelled", "TrialEndingEmail", "CreditCardExpiring", "PaymentReceipt", "OverduePaymentNotice"],
+  "Billing": ["BookingConfirmationEmail", "InvoiceEmail", "PaymentFailedEmail", "SubscriptionConfirmation", "SubscriptionCancelled", "TrialEndingEmail", "CreditCardExpiring", "PaymentReceipt", "OverduePaymentNotice"],
   "Authentication": ["WelcomeEmail", "ConfirmEmail", "MagicLinkEmail", "ResetPasswordEmail", "EmailChangeVerification", "TwoFactorCodeEmail"],
   "Support": ["TicketCreatedEmail", "TicketReplyEmail", "TicketResolvedEmail", "SupportFeedbackRequest"],
   "Engagement": ["WeeklyDigest", "FeatureAnnouncement", "MilestoneEmail", "InactivityWarning", "TipOfWeek", "ProductChangelog"],

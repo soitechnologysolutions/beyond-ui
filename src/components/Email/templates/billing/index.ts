@@ -1,3 +1,4 @@
+export * from './BookingConfirmationEmail';
 export * from './PaymentFailedEmail';
 export * from './InvoiceEmail';
 export * from './TrialEndingEmail';

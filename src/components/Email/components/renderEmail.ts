@@ -22,3 +22,12 @@ export const renderEmailParams = async (
 
   return { html, text };
 };
+
+/**
+ * Render a React Email component directly to an HTML string.
+ */
+export const renderEmailHtml = async (
+  component: React.ReactElement
+): Promise<string> => {
+  return render(component);
+};
