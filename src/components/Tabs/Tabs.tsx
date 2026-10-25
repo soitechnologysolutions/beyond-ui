@@ -61,8 +61,9 @@ const TabsContext = React.createContext<TabsContextValue | undefined>(
 );
 
 interface TabsProps extends VariantProps<typeof tabsListVariants> {
-  value: string;
-  onValueChange: (value: string) => void;
+  value?: string;
+  defaultValue?: string;
+  onValueChange?: (value: string) => void;
   children: React.ReactNode;
   className?: string;
   orientation?: "horizontal" | "vertical"; // Add orientation to TabsProps
@@ -70,7 +71,8 @@ interface TabsProps extends VariantProps<typeof tabsListVariants> {
 }
 
 const Tabs: React.FC<TabsProps> = ({
-  value,
+  value: controlledValue,
+  defaultValue = "",
   onValueChange,
   variant,
   orientation = "horizontal",
@@ -78,9 +80,32 @@ const Tabs: React.FC<TabsProps> = ({
   children,
   className,
 }) => {
+  const [uncontrolledValue, setUncontrolledValue] = React.useState<string>(defaultValue);
+
+  const isControlled = controlledValue !== undefined;
+  const currentValue = isControlled ? controlledValue : uncontrolledValue;
+
+  const handleValueChange = React.useCallback(
+    (newValue: string) => {
+      if (!isControlled) {
+        setUncontrolledValue(newValue);
+      }
+      if (typeof onValueChange === "function") {
+        onValueChange(newValue);
+      }
+    },
+    [isControlled, onValueChange],
+  );
+
   return (
     <TabsContext.Provider
-      value={{ value, onValueChange, variant, orientation, responsive }}
+      value={{
+        value: currentValue,
+        onValueChange: handleValueChange,
+        variant,
+        orientation,
+        responsive,
+      }}
     >
       <div className={cn("w-full", className)}>{children}</div>
     </TabsContext.Provider>
@@ -161,11 +186,18 @@ interface TabsTriggerProps
 }
 
 const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(
-  ({ className, value, ...props }, ref) => {
+  ({ className, value, onClick, ...props }, ref) => {
     const context = React.useContext(TabsContext);
     if (!context) throw new Error("TabsTrigger must be used within Tabs");
 
     const isActive = context.value === value;
+
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      onClick?.(e);
+      if (typeof context.onValueChange === "function") {
+        context.onValueChange(value);
+      }
+    };
 
     return (
       <button
@@ -182,7 +214,7 @@ const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(
           className,
         )}
         data-state={isActive ? "active" : "inactive"}
-        onClick={() => context.onValueChange(value)}
+        onClick={handleClick}
         {...props}
       />
     );
