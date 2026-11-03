@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../utils/cn";
 
 const inputVariants = cva(
-  "flex w-full rounded-md border bg-white dark:bg-gray-900 dark:text-white px-3 py-2 text-sm ring-offset-white dark:ring-offset-gray-900 file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 dark:placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 dark:focus-visible:ring-primary-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+  "flex w-full rounded-md border bg-white text-gray-900 dark:bg-gray-900 dark:text-white px-3 py-2 text-sm ring-offset-white dark:ring-offset-gray-900 file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 dark:placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 dark:focus-visible:ring-primary-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
   {
     variants: {
       variant: {
@@ -12,9 +12,9 @@ const inputVariants = cva(
         success: "border-success-500 dark:border-success-500 focus-visible:ring-success-500",
       },
       inputSize: {
-        sm: "h-8 px-2 text-xs",
-        md: "h-10 px-3",
-        lg: "h-12 px-4 text-base",
+        sm: "h-8 px-2 py-1 text-xs",
+        md: "h-10 px-3 py-2",
+        lg: "h-12 px-4 py-2.5 text-base",
       },
     },
     defaultVariants: {
