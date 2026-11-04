@@ -306,7 +306,69 @@ export const DataTable = <T extends Record<string, any>>({
   onChange,
   emptyLabel = 'No data available',
   ...props
-}: DataTableProps<T> & { emptyLabel?: React.ReactNode }) => {
+}: DataTableProps<T> & {
+  emptyLabel?: React.ReactNode;
+  emptyMessage?: React.ReactNode;
+  data?: T[];
+  enableSorting?: boolean;
+  enableFiltering?: boolean;
+  enablePagination?: boolean;
+  pageSize?: number;
+}) => {
+  const resolvedDataSource: T[] = useMemo(() => {
+    if (Array.isArray(dataSource)) return dataSource;
+    if (Array.isArray((props as any).data)) return (props as any).data;
+    return [];
+  }, [dataSource, (props as any).data]);
+
+  const resolvedEmptyLabel = (props as any).emptyMessage ?? emptyLabel;
+
+  const resolvedColumns = useMemo<Column<T>[]>(() => {
+    if (!Array.isArray(columns)) return [];
+    return columns.map((col: any, colIdx: number) => {
+      const dataIndex = col.dataIndex ?? col.accessorKey ?? col.id ?? col.key ?? '';
+      const key = String(
+        (col.key !== undefined && col.key !== '' ? col.key : null) ??
+          (col.id !== undefined && col.id !== '' ? col.id : null) ??
+          (col.accessorKey !== undefined && col.accessorKey !== '' ? col.accessorKey : null) ??
+          (col.dataIndex !== undefined && col.dataIndex !== '' ? col.dataIndex : null) ??
+          `col-${colIdx}`
+      );
+      const title =
+        col.title ??
+        (typeof col.header === 'function' ? col.header({}) : col.header) ??
+        key;
+      let render = col.render;
+      if (!render && typeof col.cell === 'function') {
+        render = (value: any, record: T, rowIdx: number) =>
+          col.cell({
+            row: {
+              original: record,
+              index: rowIdx,
+              getValue: (k?: string) => record?.[(k ?? dataIndex) as keyof T],
+            },
+            getValue: () => value,
+            value,
+            record,
+            index: rowIdx,
+          });
+      }
+      return {
+        ...col,
+        key,
+        title,
+        dataIndex,
+        sortable:
+          col.sortable ??
+          (Boolean((props as any).enableSorting) && Boolean(dataIndex)),
+        render,
+      };
+    });
+  }, [columns, (props as any).enableSorting]);
+
+  const resolvedPagination =
+    (props as any).enablePagination === false ? false : pagination;
+
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: '', direction: null });
   const [filters, setFilters] = useState<FilterValue>({});
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>(
@@ -316,23 +378,27 @@ export const DataTable = <T extends Record<string, any>>({
   const isControlled = !!onChange;
 
   const [internalPage, setInternalPage] = useState<number>(() => 
-    (pagination && typeof pagination === 'object' && pagination.current) ? Math.max(1, Number(pagination.current)) : 1
+    (resolvedPagination && typeof resolvedPagination === 'object' && resolvedPagination.current) ? Math.max(1, Number(resolvedPagination.current)) : 1
   );
   const [internalPageSize, setInternalPageSize] = useState<number>(() => 
-    (pagination && typeof pagination === 'object' && pagination.pageSize) ? Math.max(1, Number(pagination.pageSize)) : 10
+    (props as any).pageSize
+      ? Math.max(1, Number((props as any).pageSize))
+      : (resolvedPagination && typeof resolvedPagination === 'object' && resolvedPagination.pageSize)
+        ? Math.max(1, Number(resolvedPagination.pageSize))
+        : 10
   );
 
   const current = isControlled ? 
-    ((pagination && typeof pagination === 'object' && pagination.current) ? Math.max(1, Number(pagination.current)) : 1) 
+    ((resolvedPagination && typeof resolvedPagination === 'object' && resolvedPagination.current) ? Math.max(1, Number(resolvedPagination.current)) : 1) 
     : internalPage;
     
   const pageSize = isControlled ? 
-    ((pagination && typeof pagination === 'object' && pagination.pageSize) ? Math.max(1, Number(pagination.pageSize)) : 10) 
+    ((resolvedPagination && typeof resolvedPagination === 'object' && resolvedPagination.pageSize) ? Math.max(1, Number(resolvedPagination.pageSize)) : 10) 
     : internalPageSize;
 
   // Filter and sort data
   const processedData = useMemo(() => {
-    let result = [...dataSource];
+    let result = [...resolvedDataSource];
     
     // Apply filters
     Object.entries(filters).forEach(([key, value]) => {
@@ -361,25 +427,25 @@ export const DataTable = <T extends Record<string, any>>({
     }
     
     return result;
-  }, [dataSource, filters, sortConfig]);
+  }, [resolvedDataSource, filters, sortConfig]);
 
   // Pagination logic
   const paginatedData = useMemo(() => {
-    if (pagination === false) return processedData;
+    if (resolvedPagination === false) return processedData;
     const startIndex = (current - 1) * pageSize;
     return processedData.slice(startIndex, startIndex + pageSize);
-  }, [processedData, pagination, current, pageSize]);
+  }, [processedData, resolvedPagination, current, pageSize]);
 
   // Update pagination total
   const currentPagination = useMemo(() => {
-    if (pagination === false) return false;
+    if (resolvedPagination === false) return false;
     return {
-      ...(typeof pagination === 'object' ? pagination : {}),
+      ...(typeof resolvedPagination === 'object' ? resolvedPagination : {}),
       current,
       pageSize,
       total: processedData.length,
     };
-  }, [pagination, current, pageSize, processedData.length]);
+  }, [resolvedPagination, current, pageSize, processedData.length]);
 
   React.useEffect(() => {
     if (!isControlled) {
@@ -393,9 +459,11 @@ export const DataTable = <T extends Record<string, any>>({
   // Get row key function
   const getRowKey = useCallback((record: T, index: number): React.Key => {
     if (typeof rowKey === 'function') {
-      return rowKey(record);
+      const k = rowKey(record);
+      return k !== undefined && k !== null && k !== '' ? k : `row-${index}`;
     }
-    return record[rowKey] || index;
+    const val = record?.[rowKey];
+    return val !== undefined && val !== null && val !== '' ? val : `row-${index}`;
   }, [rowKey]);
 
   // Handle sorting
@@ -413,8 +481,8 @@ export const DataTable = <T extends Record<string, any>>({
     const newSortConfig: SortConfig = { key: columnKey, direction: newDirection };
     setSortConfig(newSortConfig);
     onSort?.(newSortConfig);
-    onChange?.((currentPagination || pagination) as PaginationConfig, filters, newSortConfig);
-  }, [sortConfig, pagination, currentPagination, filters, onSort, onChange]);
+    onChange?.((currentPagination || resolvedPagination) as PaginationConfig, filters, newSortConfig);
+  }, [sortConfig, resolvedPagination, currentPagination, filters, onSort, onChange]);
 
   // Handle filtering
   const handleFilter = useCallback((columnKey: string, value: any) => {
@@ -427,8 +495,8 @@ export const DataTable = <T extends Record<string, any>>({
     
     setFilters(newFilters);
     onFilter?.(newFilters);
-    onChange?.((currentPagination || pagination) as PaginationConfig, newFilters, sortConfig);
-  }, [filters, pagination, currentPagination, sortConfig, onFilter, onChange]);
+    onChange?.((currentPagination || resolvedPagination) as PaginationConfig, newFilters, sortConfig);
+  }, [filters, resolvedPagination, currentPagination, sortConfig, onFilter, onChange]);
 
   // Handle row selection
   const handleRowSelect = useCallback((record: T, selected: boolean) => {
@@ -444,30 +512,30 @@ export const DataTable = <T extends Record<string, any>>({
     }
     
     setSelectedRowKeys(newSelectedKeys);
-    const selectedRows = dataSource.filter(item => 
-      newSelectedKeys.includes(getRowKey(item, 0))
+    const selectedRows = resolvedDataSource.filter((item, idx) => 
+      newSelectedKeys.includes(getRowKey(item, idx))
     );
     
     rowSelection?.onChange?.(newSelectedKeys, selectedRows);
     rowSelection?.onSelect?.(record, selected, selectedRows, {} as Event);
-  }, [selectedRowKeys, rowSelection, dataSource, getRowKey]);
+  }, [selectedRowKeys, rowSelection, resolvedDataSource, getRowKey]);
 
   // Handle select all
   const handleSelectAll = useCallback((selected: boolean) => {
     const newSelectedKeys = selected 
-      ? dataSource.map((item, index) => getRowKey(item, index))
+      ? resolvedDataSource.map((item, index) => getRowKey(item, index))
       : [];
     
     setSelectedRowKeys(newSelectedKeys);
-    const selectedRows = selected ? dataSource : [];
+    const selectedRows = selected ? resolvedDataSource : [];
     
     rowSelection?.onChange?.(newSelectedKeys, selectedRows);
-    rowSelection?.onSelectAll?.(selected, selectedRows, dataSource);
-  }, [dataSource, rowSelection, getRowKey]);
+    rowSelection?.onSelectAll?.(selected, selectedRows, resolvedDataSource);
+  }, [resolvedDataSource, rowSelection, getRowKey]);
 
   // Selection state
-  const isAllSelected = selectedRowKeys.length === dataSource.length && dataSource.length > 0;
-  const isIndeterminate = selectedRowKeys.length > 0 && selectedRowKeys.length < dataSource.length;
+  const isAllSelected = selectedRowKeys.length === resolvedDataSource.length && resolvedDataSource.length > 0;
+  const isIndeterminate = selectedRowKeys.length > 0 && selectedRowKeys.length < resolvedDataSource.length;
 
   // Mobile-first responsive: useBreakpoint to switch between table and card layouts
   const { isBelow } = useBreakpoint();
@@ -503,7 +571,7 @@ export const DataTable = <T extends Record<string, any>>({
             {paginatedData.length === 0 ? (
               <div className="text-gray-500 dark:text-gray-400 text-center py-8">
                 <div className="text-4xl mb-2">📋</div>
-                <div>{emptyLabel}</div>
+                <div>{resolvedEmptyLabel}</div>
               </div>
             ) : (
               paginatedData.map((record, index) => {
@@ -531,13 +599,13 @@ export const DataTable = <T extends Record<string, any>>({
                           <span className="ml-2 text-xs text-gray-500">Select</span>
                         </div>
                       )}
-                      {columns.map((column) => (
-                        <div key={column.key} className="flex justify-between items-center py-1 border-b border-gray-200 dark:border-gray-800 last:border-b-0">
+                      {resolvedColumns.map((column, colIdx) => (
+                        <div key={column.key || `col-${colIdx}`} className="flex justify-between items-center py-1 border-b border-gray-200 dark:border-gray-800 last:border-b-0">
                           <span className="font-medium text-gray-700 dark:text-gray-300">{column.title}</span>
                           <span className="text-gray-900 dark:text-gray-100">
                             {column.render
                               ? column.render(record[column.dataIndex], record, index)
-                              : String(record[column.dataIndex] || '')
+                              : String(record[column.dataIndex] ?? '')
                             }
                           </span>
                         </div>
@@ -567,9 +635,9 @@ export const DataTable = <T extends Record<string, any>>({
                       </th>
                     )}
                     
-                    {columns.map((column) => (
+                    {resolvedColumns.map((column, colIdx) => (
                       <th
-                        key={column.key}
+                        key={column.key || `col-${colIdx}`}
                         className={cn(
                           cellVariants({
                             size,
@@ -584,13 +652,13 @@ export const DataTable = <T extends Record<string, any>>({
                             <span>{column.title}</span>
                             {column.sortable && (
                               <button
-                                onClick={() => handleSort(column.key)}
+                                onClick={() => handleSort(String(column.dataIndex || column.key))}
                                 className="flex flex-col items-center hover:text-primary-600"
                               >
                                 <ChevronUp
                                   className={cn(
                                     "h-3 w-3",
-                                    sortConfig.key === column.key && sortConfig.direction === 'asc'
+                                    sortConfig.key === String(column.dataIndex || column.key) && sortConfig.direction === 'asc'
                                       ? "text-primary-600"
                                       : "text-gray-400 dark:text-gray-500"
                                   )}
@@ -598,7 +666,7 @@ export const DataTable = <T extends Record<string, any>>({
                                 <ChevronDown
                                   className={cn(
                                     "h-3 w-3 -mt-1",
-                                    sortConfig.key === column.key && sortConfig.direction === 'desc'
+                                    sortConfig.key === String(column.dataIndex || column.key) && sortConfig.direction === 'desc'
                                       ? "text-primary-600"
                                       : "text-gray-400 dark:text-gray-500"
                                   )}
@@ -623,12 +691,12 @@ export const DataTable = <T extends Record<string, any>>({
                 {paginatedData.length === 0 ? (
                   <tr>
                     <td
-                      colSpan={columns.length + (rowSelection ? 1 : 0)}
+                      colSpan={resolvedColumns.length + (rowSelection ? 1 : 0)}
                       className={cn(cellVariants({ size, align: "center" }), "py-8")}
                     >
                       <div className="text-gray-500">
                         <div className="text-4xl mb-2">📋</div>
-                        <div>{emptyLabel}</div>
+                        <div>{resolvedEmptyLabel}</div>
                       </div>
                     </td>
                   </tr>
@@ -656,9 +724,9 @@ export const DataTable = <T extends Record<string, any>>({
                           </td>
                         )}
                         
-                        {columns.map((column) => (
+                        {resolvedColumns.map((column, colIdx) => (
                           <td
-                            key={column.key}
+                            key={column.key || `col-${colIdx}`}
                             className={cn(cellVariants({
                               size,
                               align: column.align
@@ -666,7 +734,7 @@ export const DataTable = <T extends Record<string, any>>({
                           >
                             {column.render
                               ? column.render(record[column.dataIndex], record, index)
-                              : String(record[column.dataIndex] || '')
+                              : String(record[column.dataIndex] ?? '')
                             }
                           </td>
                         ))}
