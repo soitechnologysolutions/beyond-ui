@@ -166,33 +166,39 @@ const ColumnFilter = <T extends Record<string, any>>({
   );
 };
 
-// Pagination component
+// Pagination component (mobile-first responsive)
 const TablePagination: React.FC<{
   pagination: PaginationConfig;
   onChange: (page: number, pageSize: number) => void;
 }> = ({ pagination, onChange }) => {
   const { current, pageSize, total, showSizeChanger = true, pageSizeOptions = [10, 20, 50, 100] } = pagination;
+  const { isBelow } = useBreakpoint();
+  const isSmallScreen = isBelow('sm');
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const startRecord = total === 0 ? 0 : (current - 1) * pageSize + 1;
   const endRecord = Math.min(current * pageSize, total);
 
   const getPageNumbers = () => {
     const pages = [];
-    const maxVisible = 5;
-    
+    const maxVisible = isSmallScreen ? 3 : 5;
+    const halfWindow = Math.floor(maxVisible / 2);
+
     if (totalPages <= maxVisible) {
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
       }
     } else {
-      const start = Math.max(1, current - 2);
-      const end = Math.min(totalPages, start + maxVisible - 1);
-      
+      let start = Math.max(1, current - halfWindow);
+      let end = Math.min(totalPages, start + maxVisible - 1);
+      if (end - start + 1 < maxVisible) {
+        start = Math.max(1, end - maxVisible + 1);
+      }
+
       for (let i = start; i <= end; i++) {
         pages.push(i);
       }
     }
-    
+
     return pages;
   };
 
@@ -208,77 +214,82 @@ const TablePagination: React.FC<{
   }));
 
   return (
-    <div className="flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
-      <div className="flex items-center space-x-4">
-        <span className="text-sm text-gray-700 dark:text-gray-300">
+    <div className="w-full max-w-full overflow-hidden flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between px-3 py-3 sm:px-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
+      <div className="flex flex-wrap items-center justify-between sm:justify-start gap-2 sm:gap-4 w-full sm:w-auto min-w-0">
+        <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 truncate">
           Showing {startRecord} to {endRecord} of {total} results
         </span>
-        
+
         {showSizeChanger && (
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-700 dark:text-gray-300">Show</span>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">Show</span>
             <Select
               options={selectOptions}
               value={String(pageSize)}
               onChange={e => onChange(1, Number(e.target.value))}
               variant="default"
               selectSize="sm"
+              className="w-16 sm:w-20 min-w-[4rem]"
               aria-label="Select number of items per page"
             />
-            <span className="text-sm text-gray-700 dark:text-gray-300">per page</span>
+            <span className="hidden sm:inline text-xs sm:text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">per page</span>
           </div>
         )}
       </div>
-      
-      <div className="flex items-center space-x-1">
+
+      <div className="flex flex-wrap items-center justify-center sm:justify-end gap-1 w-full sm:w-auto max-w-full">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => onChange(1, pageSize)}
           disabled={current === 1}
+          className="h-8 w-8 p-0 shrink-0"
           aria-label="First page"
         >
           <ChevronsLeft className="h-4 w-4" />
         </Button>
-        
+
         <Button
           variant="ghost"
           size="sm"
           onClick={() => onChange(current - 1, pageSize)}
           disabled={current === 1}
+          className="h-8 w-8 p-0 shrink-0"
           aria-label="Previous page"
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
-        
+
         {getPageNumbers().map(page => (
           <Button
             key={page}
             variant={current === page ? "primary" : "ghost"}
             size="sm"
             onClick={() => onChange(page, pageSize)}
-            className="min-w-[32px]"
+            className="h-8 min-w-[2rem] px-2 text-xs sm:text-sm shrink-0"
             aria-label={`Go to page ${page}`}
           >
             {page}
           </Button>
         ))}
-        
+
         <Button
           variant="ghost"
           size="sm"
           onClick={() => onChange(current + 1, pageSize)}
           disabled={current === totalPages}
+          className="h-8 w-8 p-0 shrink-0"
           aria-label="Next page"
         >
           <ChevronRight className="h-4 w-4" />
         </Button>
-        
+
         <Button
           variant="ghost"
           size="sm"
           onClick={() => onChange(totalPages, pageSize)}
           disabled={current === totalPages}
+          className="h-8 w-8 p-0 shrink-0"
           aria-label="Last page"
         >
           <ChevronsRight className="h-4 w-4" />
@@ -600,9 +611,9 @@ export const DataTable = <T extends Record<string, any>>({
                         </div>
                       )}
                       {resolvedColumns.map((column, colIdx) => (
-                        <div key={column.key || `col-${colIdx}`} className="flex justify-between items-center py-1 border-b border-gray-200 dark:border-gray-800 last:border-b-0">
-                          <span className="font-medium text-gray-700 dark:text-gray-300">{column.title}</span>
-                          <span className="text-gray-900 dark:text-gray-100">
+                        <div key={column.key || `col-${colIdx}`} className="flex flex-wrap justify-between items-start gap-2 py-1.5 border-b border-gray-200 dark:border-gray-800 last:border-b-0 min-w-0">
+                          <span className="font-medium text-xs sm:text-sm text-gray-700 dark:text-gray-300 shrink-0">{column.title}</span>
+                          <span className="text-xs sm:text-sm text-gray-900 dark:text-gray-100 min-w-0 break-words text-right ml-auto">
                             {column.render
                               ? column.render(record[column.dataIndex], record, index)
                               : String(record[column.dataIndex] ?? '')
