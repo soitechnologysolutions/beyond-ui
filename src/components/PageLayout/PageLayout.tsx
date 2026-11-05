@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../utils/cn";
 
 const pageLayoutVariants = cva(
-  "min-h-screen flex flex-col",
+  "min-h-screen flex flex-col text-gray-900 dark:text-gray-100 transition-colors",
   {
     variants: {
       variant: {
@@ -12,7 +12,8 @@ const pageLayoutVariants = cva(
         sidebar: "bg-gray-50 dark:bg-gray-900",
         landing: "bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-950",
         product: "bg-white dark:bg-gray-950",
-        blog: "bg-gray-50 dark:bg-gray-900",
+        blog: "bg-gray-50 dark:bg-gray-950",
+        sanctuary: "bg-gray-50/60 dark:bg-gray-950",
       },
       maxWidth: {
         none: "",
@@ -26,7 +27,7 @@ const pageLayoutVariants = cva(
     },
     defaultVariants: {
       variant: "default",
-      maxWidth: "xl",
+      maxWidth: "full",
     },
   }
 );
@@ -37,15 +38,15 @@ const contentVariants = cva(
     variants: {
       layout: {
         default: "w-full",
-        centered: "max-w-4xl mx-auto px-4 sm:px-6 lg:px-8",
-        sidebar: "flex flex-col lg:flex-row gap-8 px-4 sm:px-6 lg:px-8",
+        centered: "max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8",
+        sidebar: "max-w-7xl mx-auto w-full flex flex-col lg:flex-row gap-8 px-4 sm:px-6 lg:px-8",
         fullWidth: "w-full",
       },
       spacing: {
         none: "py-0",
         sm: "py-4",
         md: "py-8",
-        lg: "py-12",
+        lg: "py-10",
         xl: "py-16",
       },
     },
@@ -57,33 +58,36 @@ const contentVariants = cva(
 );
 
 // Layout section interfaces
-interface PageSection {
+export interface PageSection extends React.HTMLAttributes<HTMLElement> {
   id?: string;
   className?: string;
   children: React.ReactNode;
 }
 
-interface HeaderProps extends PageSection {
+export interface HeaderProps extends PageSection {
   sticky?: boolean;
   transparent?: boolean;
+  glass?: boolean;
 }
 
-interface HeroProps extends PageSection {
+export interface HeroProps extends PageSection {
   fullHeight?: boolean;
+  size?: "auto" | "sm" | "md" | "lg" | "full";
   backgroundImage?: string;
   overlay?: boolean;
+  overlayClassName?: string;
 }
 
-interface ContentProps extends PageSection {
+export interface ContentProps extends PageSection {
   maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl" | "full";
 }
 
-interface SidebarProps extends PageSection {
+export interface SidebarProps extends PageSection {
   position?: "left" | "right";
   width?: "sm" | "md" | "lg";
 }
 
-interface FooterProps extends PageSection {
+export interface FooterProps extends PageSection {
   variant?: "simple" | "detailed" | "minimal";
 }
 
@@ -93,15 +97,20 @@ const PageHeader: React.FC<HeaderProps> = ({
   className, 
   sticky = false, 
   transparent = false,
+  glass = false,
   id,
   ...props 
 }) => (
   <header
     id={id}
     className={cn(
-      "w-full z-50 transition-all duration-300",
+      "w-full z-40 transition-all duration-300",
       sticky && "sticky top-0",
-      transparent ? "bg-transparent" : "bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800",
+      transparent
+        ? "bg-transparent"
+        : glass
+        ? "bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200/80 dark:border-gray-800"
+        : "bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800",
       className
     )}
     role="banner"
@@ -115,25 +124,48 @@ const PageHero: React.FC<HeroProps> = ({
   children, 
   className, 
   fullHeight = false,
+  size = "auto",
   backgroundImage,
   overlay = false,
+  overlayClassName,
   id,
+  style,
   ...props 
 }) => (
   <section
     id={id}
     className={cn(
-      "relative w-full flex items-center justify-center",
-      fullHeight ? "min-h-screen" : "min-h-[60vh]",
+      "relative w-full overflow-hidden flex items-center justify-center",
+      fullHeight
+        ? "min-h-screen"
+        : size === "full"
+        ? "min-h-screen"
+        : size === "lg"
+        ? "min-h-[70vh]"
+        : size === "md"
+        ? "min-h-[55vh]"
+        : size === "sm"
+        ? "min-h-[36vh]"
+        : "",
       backgroundImage && "bg-cover bg-center bg-no-repeat",
       className
     )}
-    style={backgroundImage ? { backgroundImage: `url(${backgroundImage})` } : undefined}
-    role="banner"
+    style={
+      backgroundImage
+        ? { backgroundImage: `url(${backgroundImage})`, ...style }
+        : style
+    }
+    role="region"
+    aria-label="Hero banner"
     {...props}
   >
-    {overlay && backgroundImage && (
-      <div className="absolute inset-0 bg-black bg-opacity-40" />
+    {overlay && (
+      <div
+        className={cn(
+          "absolute inset-0 bg-gray-950/50 pointer-events-none",
+          overlayClassName
+        )}
+      />
     )}
     <div className="relative z-10 w-full">
       {children}
@@ -152,12 +184,12 @@ const PageContent: React.FC<ContentProps> = ({
     id={id}
     className={cn(
       "flex-1 w-full",
-      maxWidth === "sm" && "max-w-2xl mx-auto px-4",
-      maxWidth === "md" && "max-w-4xl mx-auto px-4",
-      maxWidth === "lg" && "max-w-6xl mx-auto px-4",
-      maxWidth === "xl" && "max-w-7xl mx-auto px-4",
-      maxWidth === "2xl" && "max-w-screen-2xl mx-auto px-4",
-      maxWidth === "full" && "max-w-full px-4",
+      maxWidth === "sm" && "max-w-2xl mx-auto px-4 sm:px-6",
+      maxWidth === "md" && "max-w-4xl mx-auto px-4 sm:px-6",
+      maxWidth === "lg" && "max-w-6xl mx-auto px-4 sm:px-6 lg:px-8",
+      maxWidth === "xl" && "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+      maxWidth === "2xl" && "max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8",
+      maxWidth === "full" && "max-w-full",
       className
     )}
     role="main"
@@ -202,10 +234,9 @@ const PageFooter: React.FC<FooterProps> = ({
   <footer
     id={id}
     className={cn(
-      "w-full mt-auto",
-      variant === "simple" && "bg-gray-50 border-t border-gray-200 py-8",
-      variant === "simple" && "bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-8",
-      variant === "detailed" && "bg-gray-900 dark:bg-gray-950 text-white py-12",
+      "w-full mt-auto transition-colors",
+      variant === "simple" && "bg-white dark:bg-gray-900 border-t border-gray-200/80 dark:border-gray-800 py-8",
+      variant === "detailed" && "bg-gray-900 dark:bg-gray-950 text-white border-t border-gray-800 py-12",
       variant === "minimal" && "bg-white dark:bg-gray-950 border-t border-gray-100 dark:border-gray-800 py-6",
       className
     )}
@@ -238,6 +269,8 @@ const PageLayout = React.forwardRef<HTMLDivElement, PageLayoutProps>(
     return (
       <div
         ref={ref}
+        data-content-layout={contentLayout}
+        data-content-spacing={contentSpacing}
         className={cn(pageLayoutVariants({ variant, maxWidth }), className)}
         {...props}
       >
@@ -255,8 +288,9 @@ const PageLayoutContent: React.FC<{
   layout?: VariantProps<typeof contentVariants>["layout"];
   spacing?: VariantProps<typeof contentVariants>["spacing"];
   className?: string;
-}> = ({ children, layout = "default", spacing = "md", className }) => (
-  <div className={cn(contentVariants({ layout, spacing }), className)}>
+  id?: string;
+}> = ({ children, layout = "default", spacing = "md", className, id }) => (
+  <div id={id} className={cn(contentVariants({ layout, spacing }), className)}>
     {children}
   </div>
 );
@@ -272,9 +306,4 @@ export {
   PageFooter,
   pageLayoutVariants,
   contentVariants,
-  type HeaderProps,
-  type HeroProps,
-  type ContentProps,
-  type SidebarProps,
-  type FooterProps,
 };

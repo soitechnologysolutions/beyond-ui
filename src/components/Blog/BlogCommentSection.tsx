@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MessageCircle, ThumbsUp, ThumbsDown, Flag, Reply, Send, MoreHorizontal } from 'lucide-react';
+import { MessageCircle, ThumbsUp, ThumbsDown, Flag, Reply, Send } from 'lucide-react';
 import { Button } from '../Button';
 import { Card, CardHeader, CardTitle, CardContent } from '../Card';
 import { Textarea } from '../Textarea';
@@ -10,8 +10,13 @@ import { useBreakpoint } from '../../hooks/useBreakpoint';
 import { useComments } from './hooks/useComments';
 import type { BlogComment } from './types';
 
-interface BlogCommentSectionProps {
+export interface BlogCommentSectionProps {
   postId: string;
+  initialComments?: BlogComment[];
+  onAddComment?: (content: string, parentId?: string) => Promise<void>;
+  onLikeComment?: (commentId: string) => void;
+  onDislikeComment?: (commentId: string) => void;
+  onReportComment?: (commentId: string) => void;
   className?: string;
 }
 
@@ -20,7 +25,7 @@ interface CommentItemProps {
   onLike: (commentId: string) => void;
   onDislike: (commentId: string) => void;
   onReport: (commentId: string) => void;
-  onReply: (content: string, parentId: string) => void;
+  onReply: (content: string, parentId: string) => Promise<void> | void;
   level?: number;
 }
 
@@ -39,7 +44,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
 
   const handleReplySubmit = async () => {
     if (!replyContent.trim()) return;
-    
+
     setIsSubmitting(true);
     try {
       await onReply(replyContent, comment.id);
@@ -61,74 +66,88 @@ const CommentItem: React.FC<CommentItemProps> = ({
   };
 
   return (
-    <div className={`${level > 0 ? 'ml-4 sm:ml-6 lg:ml-8 pl-3 sm:pl-4 border-l-2 border-gray-100' : ''}`}>
+    <div
+      className={`${
+        level > 0
+          ? 'ml-4 sm:ml-6 lg:ml-8 pl-3 sm:pl-4 border-l-2 border-gray-200 dark:border-gray-800'
+          : ''
+      }`}
+    >
       <div className="flex items-start space-x-3 mb-4">
         <Avatar size={isBelow('sm') ? 'sm' : 'md'}>
-          <AvatarImage src={comment.author.avatar} />
-          <AvatarFallback>{comment.author.name[0]}</AvatarFallback>
+          <AvatarImage src={comment.author?.avatar} />
+          <AvatarFallback>{(comment.author?.name || 'G')[0]}</AvatarFallback>
         </Avatar>
-        
+
         <div className="flex-1 min-w-0">
           <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2 mb-2">
-            <span className="font-medium text-gray-900 text-sm sm:text-base">{comment.author.name}</span>
-            <span className="text-xs sm:text-sm text-gray-500">{formatDate(comment.createdAt)}</span>
+            <span className="font-semibold text-gray-900 dark:text-gray-100 text-sm sm:text-base">
+              {comment.author?.name || 'Guest Reader'}
+            </span>
+            <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+              {formatDate(comment.createdAt)}
+            </span>
             {comment.isReported && (
-              <Badge variant="warning" className="text-xs">Reported</Badge>
+              <Badge variant="warning" className="text-xs">
+                Reported
+              </Badge>
             )}
           </div>
-          
-          <p className="text-gray-700 mb-3 leading-relaxed text-sm sm:text-base">{comment.content}</p>
-          
-          {/* Comment Actions - Responsive layout */}
+
+          <p className="text-gray-700 dark:text-gray-300 mb-3 leading-relaxed text-sm sm:text-base">
+            {comment.content}
+          </p>
+
+          {/* Comment Actions */}
           <div className="flex flex-wrap items-center gap-2 sm:gap-4">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => onLike(comment.id)}
-              className="text-gray-500 hover:text-green-600 p-1 sm:p-2"
+              className="text-gray-500 dark:text-gray-400 hover:text-success-600 dark:hover:text-success-400 p-1 sm:p-2"
             >
               <ThumbsUp className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-              <span className="text-xs sm:text-sm">{comment.likes}</span>
+              <span className="text-xs sm:text-sm">{comment.likes || 0}</span>
             </Button>
-            
+
             <Button
               variant="ghost"
               size="sm"
               onClick={() => onDislike(comment.id)}
-              className="text-gray-500 hover:text-red-600 p-1 sm:p-2"
+              className="text-gray-500 dark:text-gray-400 hover:text-danger-600 dark:hover:text-danger-400 p-1 sm:p-2"
             >
               <ThumbsDown className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-              <span className="text-xs sm:text-sm">{comment.dislikes}</span>
+              <span className="text-xs sm:text-sm">{comment.dislikes || 0}</span>
             </Button>
-            
+
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setShowReplyForm(!showReplyForm)}
-              className="text-gray-500 hover:text-primary-600 p-1 sm:p-2"
+              className="text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 p-1 sm:p-2"
             >
               <Reply className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
               <span className="text-xs sm:text-sm">Reply</span>
             </Button>
-            
+
             <Button
               variant="ghost"
               size="sm"
               onClick={() => onReport(comment.id)}
-              className="text-gray-500 hover:text-orange-600 p-1 sm:p-2"
+              className="text-gray-500 dark:text-gray-400 hover:text-warning-600 dark:hover:text-warning-400 p-1 sm:p-2"
             >
               <Flag className="h-3 w-3 sm:h-4 sm:w-4" />
               <span className="sr-only">Report</span>
             </Button>
           </div>
 
-          {/* Reply Form - Responsive design */}
+          {/* Reply Form */}
           {showReplyForm && (
-            <div className="mt-4 p-3 sm:p-4 bg-gray-50 rounded-lg">
+            <div className="mt-4 p-3 sm:p-4 bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700 rounded-xl">
               <Textarea
                 placeholder="Write a reply..."
                 value={replyContent}
-                onChange={(e) => setReplyContent(e.target.value)}
+                onChange={e => setReplyContent(e.target.value)}
                 className="mb-3 text-sm sm:text-base"
                 rows={3}
               />
@@ -179,12 +198,17 @@ const CommentItem: React.FC<CommentItemProps> = ({
 
 export const BlogCommentSection: React.FC<BlogCommentSectionProps> = ({
   postId,
+  initialComments,
+  onAddComment,
+  onLikeComment,
+  onDislikeComment,
+  onReportComment,
   className = '',
 }) => {
   const [newComment, setNewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isBelow } = useBreakpoint();
-  
+
   const {
     comments,
     loading,
@@ -194,14 +218,18 @@ export const BlogCommentSection: React.FC<BlogCommentSectionProps> = ({
     dislikeComment,
     reportComment,
     getCommentCount,
-  } = useComments({ postId });
+  } = useComments({ postId, initialComments });
 
   const handleSubmitComment = async () => {
     if (!newComment.trim()) return;
-    
+
     setIsSubmitting(true);
     try {
-      await addComment(newComment);
+      if (onAddComment) {
+        await onAddComment(newComment);
+      } else {
+        await addComment(newComment);
+      }
       setNewComment('');
     } finally {
       setIsSubmitting(false);
@@ -209,36 +237,54 @@ export const BlogCommentSection: React.FC<BlogCommentSectionProps> = ({
   };
 
   const handleReply = async (content: string, parentId: string) => {
-    await addComment(content, parentId);
+    if (onAddComment) {
+      await onAddComment(content, parentId);
+    } else {
+      await addComment(content, parentId);
+    }
+  };
+
+  const handleLike = (commentId: string) => {
+    likeComment(commentId);
+    onLikeComment?.(commentId);
+  };
+
+  const handleDislike = (commentId: string) => {
+    dislikeComment(commentId);
+    onDislikeComment?.(commentId);
+  };
+
+  const handleReport = (commentId: string) => {
+    reportComment(commentId);
+    onReportComment?.(commentId);
   };
 
   return (
     <div className={`mt-8 sm:mt-12 ${className}`}>
-      <Card>
+      <Card className="border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
         <CardHeader>
-          <CardTitle className="flex items-center text-lg sm:text-xl">
-            <MessageCircle className="h-5 w-5 mr-2" />
+          <CardTitle className="flex items-center text-lg sm:text-xl text-gray-900 dark:text-gray-100">
+            <MessageCircle className="h-5 w-5 mr-2 text-primary-600 dark:text-primary-400" />
             Comments ({getCommentCount()})
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {/* Comment Form - Responsive design */}
+          {/* Comment Form */}
           <div className="mb-6 sm:mb-8">
             <div className="flex items-start space-x-3">
               <Avatar size={isBelow('sm') ? 'sm' : 'md'}>
-                <AvatarImage src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=64" />
-                <AvatarFallback>YU</AvatarFallback>
+                <AvatarFallback>G</AvatarFallback>
               </Avatar>
               <div className="flex-1">
                 <Textarea
-                  placeholder="Share your thoughts..."
+                  placeholder="Share your thoughts or questions..."
                   value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
+                  onChange={e => setNewComment(e.target.value)}
                   className="mb-3 text-sm sm:text-base"
                   rows={isBelow('sm') ? 3 : 4}
                 />
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
-                  <p className="text-xs sm:text-sm text-gray-500">
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                     Be respectful and constructive in your comments.
                   </p>
                   <Button
@@ -268,22 +314,28 @@ export const BlogCommentSection: React.FC<BlogCommentSectionProps> = ({
             {loading ? (
               <div className="text-center py-8">
                 <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-primary-600 mx-auto"></div>
-                <p className="text-gray-600 mt-2 text-sm sm:text-base">Loading comments...</p>
+                <p className="text-gray-600 dark:text-gray-400 mt-2 text-sm sm:text-base">
+                  Loading comments...
+                </p>
               </div>
             ) : comments.length === 0 ? (
               <div className="text-center py-8">
-                <MessageCircle className="h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">No comments yet</h3>
-                <p className="text-gray-600 text-sm sm:text-base">Be the first to share your thoughts!</p>
+                <MessageCircle className="h-10 w-10 sm:h-12 sm:w-12 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
+                <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+                  No comments yet
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+                  Be the first to share your thoughts!
+                </p>
               </div>
             ) : (
               comments.map(comment => (
                 <CommentItem
                   key={comment.id}
                   comment={comment}
-                  onLike={likeComment}
-                  onDislike={dislikeComment}
-                  onReport={reportComment}
+                  onLike={handleLike}
+                  onDislike={handleDislike}
+                  onReport={handleReport}
                   onReply={handleReply}
                 />
               ))

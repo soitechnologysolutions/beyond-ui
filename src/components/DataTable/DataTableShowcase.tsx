@@ -599,8 +599,8 @@ export const DataTableShowcase: React.FC = () => {
               onChange={(newPagination, filters, sorter) => {
                 setPagination(p => ({
                   ...p,
-                  current: newPagination.current,
-                  pageSize: newPagination.pageSize,
+                  current: newPagination.current ?? p.current,
+                  pageSize: newPagination.pageSize ?? p.pageSize,
                 }));
               }}
             />
@@ -642,8 +642,8 @@ export const DataTableShowcase: React.FC = () => {
               onChange={(newPagination, filters, sorter) => {
                 setPagination(p => ({
                   ...p,
-                  current: newPagination.current,
-                  pageSize: newPagination.pageSize,
+                  current: newPagination.current ?? p.current,
+                  pageSize: newPagination.pageSize ?? p.pageSize,
                 }));
               }}
             />
@@ -685,8 +685,8 @@ export const DataTableShowcase: React.FC = () => {
               onChange={(newPagination, filters, sorter) => {
                 setPagination(p => ({
                   ...p,
-                  current: newPagination.current,
-                  pageSize: newPagination.pageSize,
+                  current: newPagination.current ?? p.current,
+                  pageSize: newPagination.pageSize ?? p.pageSize,
                 }));
               }}
             />

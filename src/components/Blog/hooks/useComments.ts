@@ -1,10 +1,11 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import type { BlogComment } from '../types';
 import { sampleBlogComments } from '../data/sampleData';
 import { showToast } from '../../Toast';
 
 export interface UseCommentsProps {
   postId: string;
+  initialComments?: BlogComment[];
 }
 
 export interface UseCommentsReturn {
@@ -23,32 +24,50 @@ export interface UseCommentsReturn {
  * Custom hook for managing blog comments
  * Handles comment CRUD operations, moderation, and nested replies
  */
-export const useComments = ({ postId }: UseCommentsProps): UseCommentsReturn => {
-  const [comments, setComments] = useState<BlogComment[]>(
-    sampleBlogComments.filter(comment => comment.postId === postId)
+export const useComments = ({
+  postId,
+  initialComments,
+}: UseCommentsProps): UseCommentsReturn => {
+  const [comments, setComments] = useState<BlogComment[]>(() =>
+    Array.isArray(initialComments)
+      ? initialComments
+      : sampleBlogComments.filter(comment => comment.postId === postId)
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (Array.isArray(initialComments)) {
+      setComments(initialComments);
+    } else {
+      setComments(sampleBlogComments.filter(comment => comment.postId === postId));
+    }
+  }, [postId, initialComments]);
 
   // Organize comments into tree structure
   const organizedComments = useMemo(() => {
     const commentMap = new Map<string, BlogComment>();
     const rootComments: BlogComment[] = [];
 
-    // First pass: create map of all comments
     comments.forEach(comment => {
-      commentMap.set(comment.id, { ...comment, replies: [] });
+      commentMap.set(String(comment.id), {
+        ...comment,
+        replies: Array.isArray(comment.replies) ? [...comment.replies] : [],
+      });
     });
 
-    // Second pass: organize into tree structure
     comments.forEach(comment => {
-      const commentWithReplies = commentMap.get(comment.id)!;
-      
+      const commentWithReplies = commentMap.get(String(comment.id))!;
+
       if (comment.parentId) {
-        const parent = commentMap.get(comment.parentId);
+        const parent = commentMap.get(String(comment.parentId));
         if (parent) {
           parent.replies = parent.replies || [];
-          parent.replies.push(commentWithReplies);
+          if (!parent.replies.some(r => String(r.id) === String(commentWithReplies.id))) {
+            parent.replies.push(commentWithReplies);
+          }
+        } else {
+          rootComments.push(commentWithReplies);
         }
       } else {
         rootComments.push(commentWithReplies);
@@ -58,57 +77,57 @@ export const useComments = ({ postId }: UseCommentsProps): UseCommentsReturn => 
     return rootComments;
   }, [comments]);
 
-  const addComment = useCallback(async (content: string, parentId?: string) => {
-    setLoading(true);
-    setError(null);
+  const addComment = useCallback(
+    async (content: string, parentId?: string) => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      try {
+        await new Promise(resolve => setTimeout(resolve, 300));
 
-      const newComment: BlogComment = {
-        id: `c${Date.now()}`,
-        postId,
-        parentId,
-        author: {
-          id: 'current-user',
-          name: 'Current User',
-          avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=64',
-        },
-        content,
-        createdAt: new Date().toISOString(),
-        likes: 0,
-        dislikes: 0,
-        isModerated: false,
-        isReported: false,
-      };
+        const newComment: BlogComment = {
+          id: `c${Date.now()}`,
+          postId,
+          parentId,
+          author: {
+            id: 'current-user',
+            name: 'Guest Reader',
+          },
+          content,
+          createdAt: new Date().toISOString(),
+          likes: 0,
+          dislikes: 0,
+          isModerated: true,
+          isReported: false,
+        };
 
-      setComments(prev => [...prev, newComment]);
-      showToast.success('Comment added successfully!');
-    } catch (err) {
-      setError('Failed to add comment');
-      showToast.error('Failed to add comment');
-    } finally {
-      setLoading(false);
-    }
-  }, [postId]);
+        setComments(prev => [...prev, newComment]);
+        showToast.success('Comment added successfully!');
+      } catch {
+        setError('Failed to add comment');
+        showToast.error('Failed to add comment');
+      } finally {
+        setLoading(false);
+      }
+    },
+    [postId]
+  );
 
   const likeComment = useCallback((commentId: string) => {
     setComments(prev =>
       prev.map(comment =>
-        comment.id === commentId
-          ? { ...comment, likes: comment.likes + 1 }
+        String(comment.id) === String(commentId)
+          ? { ...comment, likes: (comment.likes || 0) + 1 }
           : comment
       )
     );
-    showToast.success('Comment liked!');
   }, []);
 
   const dislikeComment = useCallback((commentId: string) => {
     setComments(prev =>
       prev.map(comment =>
-        comment.id === commentId
-          ? { ...comment, dislikes: comment.dislikes + 1 }
+        String(comment.id) === String(commentId)
+          ? { ...comment, dislikes: (comment.dislikes || 0) + 1 }
           : comment
       )
     );
@@ -117,7 +136,7 @@ export const useComments = ({ postId }: UseCommentsProps): UseCommentsReturn => 
   const reportComment = useCallback((commentId: string) => {
     setComments(prev =>
       prev.map(comment =>
-        comment.id === commentId
+        String(comment.id) === String(commentId)
           ? { ...comment, isReported: true }
           : comment
       )
@@ -126,7 +145,7 @@ export const useComments = ({ postId }: UseCommentsProps): UseCommentsReturn => 
   }, []);
 
   const deleteComment = useCallback((commentId: string) => {
-    setComments(prev => prev.filter(comment => comment.id !== commentId));
+    setComments(prev => prev.filter(comment => String(comment.id) !== String(commentId)));
     showToast.info('Comment deleted');
   }, []);
 

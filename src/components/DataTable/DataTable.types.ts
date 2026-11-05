@@ -1,14 +1,21 @@
 export interface Column<T = any> {
-  key: string;
-  title: string;
-  dataIndex: keyof T;
+  key?: string;
+  id?: string;
+  title?: React.ReactNode;
+  header?: React.ReactNode | ((props?: any) => React.ReactNode);
+  dataIndex?: keyof T | string;
+  accessorKey?: keyof T | string;
   width?: number | string;
   sortable?: boolean;
+  enableSorting?: boolean;
   filterable?: boolean;
   filterType?: 'text' | 'select' | 'date' | 'number';
   filterOptions?: Array<{ label: string; value: any }>;
   render?: (value: any, record: T, index: number) => React.ReactNode;
-  align?: 'left' | 'center' | 'right';
+  cell?: (info: { row: { original: T; index: number }; getValue?: () => any; value?: any }) => React.ReactNode;
+  align?: 'left' | 'center' | 'right' | string;
+  className?: string;
+  [key: string]: any;
 }
 
 export interface FilterValue {
@@ -21,12 +28,13 @@ export interface SortConfig {
 }
 
 export interface PaginationConfig {
-  current: number;
-  pageSize: number;
-  total: number;
+  current?: number;
+  pageSize?: number;
+  total?: number;
   showSizeChanger?: boolean;
   pageSizeOptions?: number[];
   showQuickJumper?: boolean;
+  [key: string]: any;
 }
 
 export interface RowSelection<T = any> {
@@ -40,10 +48,11 @@ export interface RowSelection<T = any> {
 
 export interface DataTableProps<T = any> {
   columns: Column<T>[];
-  dataSource: T[];
+  dataSource?: T[];
+  data?: T[];
   loading?: boolean;
-  rowKey?: string | ((record: T) => React.Key);
-  pagination?: PaginationConfig | false;
+  rowKey?: string | ((record: T, index?: number) => React.Key);
+  pagination?: PaginationConfig | boolean;
   rowSelection?: RowSelection<T>;
   scroll?: { x?: number | string; y?: number | string };
   size?: 'small' | 'middle' | 'large';

@@ -171,7 +171,7 @@ const TablePagination: React.FC<{
   pagination: PaginationConfig;
   onChange: (page: number, pageSize: number) => void;
 }> = ({ pagination, onChange }) => {
-  const { current, pageSize, total, showSizeChanger = true, pageSizeOptions = [10, 20, 50, 100] } = pagination;
+  const { current = 1, pageSize = 10, total = 0, showSizeChanger = true, pageSizeOptions = [10, 20, 50, 100] } = pagination;
   const { isBelow } = useBreakpoint();
   const isSmallScreen = isBelow('sm');
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
@@ -615,8 +615,8 @@ export const DataTable = <T extends Record<string, any>>({
                           <span className="font-medium text-xs sm:text-sm text-gray-700 dark:text-gray-300 shrink-0">{column.title}</span>
                           <span className="text-xs sm:text-sm text-gray-900 dark:text-gray-100 min-w-0 break-words text-right ml-auto">
                             {column.render
-                              ? column.render(record[column.dataIndex], record, index)
-                              : String(record[column.dataIndex] ?? '')
+                              ? column.render(record[(column.dataIndex ?? '') as keyof T], record, index)
+                              : String(record[(column.dataIndex ?? '') as keyof T] ?? '')
                             }
                           </span>
                         </div>
@@ -652,7 +652,7 @@ export const DataTable = <T extends Record<string, any>>({
                         className={cn(
                           cellVariants({
                             size,
-                            align: column.align,
+                            align: column.align as "left" | "center" | "right" | undefined,
                             type: "header"
                           }),
                           column.width && `w-[${column.width}]`
@@ -688,8 +688,8 @@ export const DataTable = <T extends Record<string, any>>({
                           
                           <ColumnFilter
                             column={column}
-                            value={filters[column.key]}
-                            onChange={(value) => handleFilter(column.key, value)}
+                            value={filters[column.key || '']}
+                            onChange={(value) => handleFilter(column.key || '', value)}
                           />
                         </div>
                       </th>
@@ -740,12 +740,12 @@ export const DataTable = <T extends Record<string, any>>({
                             key={column.key || `col-${colIdx}`}
                             className={cn(cellVariants({
                               size,
-                              align: column.align
+                              align: column.align as "left" | "center" | "right" | undefined
                             }))}
                           >
                             {column.render
-                              ? column.render(record[column.dataIndex], record, index)
-                              : String(record[column.dataIndex] ?? '')
+                              ? column.render(record[(column.dataIndex ?? '') as keyof T], record, index)
+                              : String(record[(column.dataIndex ?? '') as keyof T] ?? '')
                             }
                           </td>
                         ))}

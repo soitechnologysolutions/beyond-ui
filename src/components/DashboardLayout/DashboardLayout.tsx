@@ -114,6 +114,8 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
     showSearch,
     searchPlaceholder,
     onSearchChange,
+    sidebarClassName,
+    disableSidebarMargin,
     sidebarTitle,
     sidebarTitleLetter,
     sidebarHeaderClassName,
@@ -234,7 +236,7 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
             }
           }}
           className={cn(
-            props.sidebarClassName,
+            sidebarClassName,
             "max-lg:z-50"
           )}
           title={sidebarTitle}
@@ -330,7 +332,7 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
         <div
           className={cn(
             "relative h-full transition-all duration-300 ease-in-out",
-            props.disableSidebarMargin ? "w-full" : cn(
+            disableSidebarMargin ? "w-full" : cn(
               "max-lg:ml-0 max-lg:w-full",
               sidebarCollapsed ? "lg:ml-16 lg:w-[calc(100%-4rem)]" : "lg:ml-72 lg:w-[calc(100%-18rem)]"
             )

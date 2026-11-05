@@ -230,7 +230,7 @@ export const ProductPageExample: React.FC = () => (
           <div className="flex items-center space-x-2 mb-4">
             <div className="flex items-center">
               {[1, 2, 3, 4, 5].map((star) => (
-                <Star key={star} className="h-5 w-5 text-yellow-400 fill-current" />
+                <Star key={star} className="h-5 w-5 text-warning-400 fill-current" />
               ))}
             </div>
             <span className="text-gray-600 dark:text-gray-400">(128 reviews)</span>
@@ -280,15 +280,15 @@ export const ProductPageExample: React.FC = () => (
             <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Key Features</h3>
             <ul className="space-y-2 text-gray-600 dark:text-gray-400">
               <li className="flex items-center">
-                <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                <CheckCircle className="h-4 w-4 text-success-500 mr-2" />
                 Active Noise Cancellation
               </li>
               <li className="flex items-center">
-                <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                <CheckCircle className="h-4 w-4 text-success-500 mr-2" />
                 30-Hour Battery Life
               </li>
               <li className="flex items-center">
-                <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                <CheckCircle className="h-4 w-4 text-success-500 mr-2" />
                 Premium Build Quality
               </li>
             </ul>

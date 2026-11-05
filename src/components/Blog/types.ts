@@ -1,10 +1,23 @@
 // Blog system TypeScript interfaces and types
+export interface BlogAttachment {
+  id: string;
+  url: string;
+  originalName: string;
+  mimeType?: string;
+  extension?: string;
+  category?: 'image' | 'video' | 'audio' | 'pdf' | 'document' | 'archive';
+  size?: number;
+  uploadedAt?: string;
+}
+
 export interface BlogPost {
   id: string;
   title: string;
   slug: string;
   content: string;
   excerpt: string;
+  coverImage?: string;
+  attachments?: BlogAttachment[];
   author: {
     id: string;
     name: string;
