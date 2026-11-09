@@ -89,6 +89,12 @@ interface DashboardLayoutProps {
 
   /** Whether to show profile in DashboardHeader (supports boolean or { mobile, desktop }) */
   showProfile?: ResponsiveShow;
+  /** Explicit alias for showProfile in DashboardHeader */
+  headerShowProfile?: ResponsiveShow;
+  /** Explicit alias for showProfileSection in Sidebar */
+  sidebarShowProfile?: ResponsiveShow;
+  /** Explicit alias for showProfileSection in Sidebar */
+  sidebarShowProfileSection?: ResponsiveShow;
   /** Whether to show menu button in DashboardHeader (supports boolean or { mobile, desktop }) */
   showMenuButton?: ResponsiveShow;
 
@@ -134,6 +140,8 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
     avatarUrl,
     avatarFallback,
     showProfileSection = true,
+    sidebarShowProfile,
+    sidebarShowProfileSection,
     profileDropdownItems,
     profileDropdownProps,
     showProfileDropdown = true,
@@ -153,6 +161,7 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
     sidebarIconsPlacement,
     sidebarActions,
     showProfile,
+    headerShowProfile,
     showMenuButton,
     showDarkMode,
     sidebarShowDarkMode,
@@ -178,6 +187,7 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
 
     const resolvedShowProfile =
       dashboardHeaderProps?.showProfile ??
+      headerShowProfile ??
       (showProfile !== undefined
         ? showProfile
         : typeof showProfileSection === "object" &&
@@ -185,6 +195,11 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
           showProfileSection?.desktop === false
         ? { mobile: false, desktop: true }
         : true);
+
+    const resolvedShowProfileSection =
+      sidebarShowProfileSection ??
+      sidebarShowProfile ??
+      showProfileSection;
 
     const resolvedSidebarShowNotifications =
       sidebarShowNotifications !== undefined
@@ -261,7 +276,7 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
           profileButtonProps={profileButtonProps}
           logoutButtonProps={logoutButtonProps}
           profileSectionProps={mergedProfileSectionProps}
-          showProfileSection={showProfileSection}
+          showProfileSection={resolvedShowProfileSection}
           showDarkMode={resolvedSidebarShowDarkMode}
           showNotifications={resolvedSidebarShowNotifications}
           notificationCount={notificationCount}

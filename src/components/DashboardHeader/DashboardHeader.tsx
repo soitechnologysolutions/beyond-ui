@@ -389,115 +389,120 @@ const DashboardHeader = React.forwardRef<HTMLDivElement, DashboardHeaderProps>(
             </div>
 
             {/* User Profile */}
-            <div
-              className={cn(
-                getVisibilityClasses(showProfile, "flex"),
-                "items-center pl-3 border-l border-gray-200 dark:border-gray-800"
-              )}
-            >
-              {showProfileDropdown ? (
-                <Dropdown
-                  align="right"
-                  placement="bottom"
-                  showArrow={showProfileDropdownArrow}
-                  arrowReverse={profileDropdownArrowReverse}
-                  arrowDirection={profileDropdownArrowDirection}
-                  triggerClassName="px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-800"
-                  header={
-                    <div>
-                      <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                        {resolvedName}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                        {resolvedEmail}
-                      </p>
-                    </div>
-                  }
-                  items={
-                    profileDropdownItems ?? [
-                      {
-                        id: "profile",
-                        label: "Profile",
-                        icon: <User className="h-4 w-4" />,
-                        onClick: () => onProfileClick?.(),
-                      },
-                      ...(onLogoutClick
-                        ? [
-                            {
-                              id: "logout",
-                              label: "Logout",
-                              icon: <LogOut className="h-4 w-4" />,
-                              variant: "danger" as const,
-                              divider: true,
-                              onClick: () => onLogoutClick(),
-                            },
-                          ]
-                        : []),
-                    ]
-                  }
-                  trigger={
-                    <div className="flex items-center space-x-3">
-                      <div className="hidden sm:block text-right">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+            {Boolean(
+              showProfile !== false &&
+              (typeof showProfile !== "object" || showProfile.mobile || showProfile.desktop)
+            ) && (
+              <div
+                className={cn(
+                  getVisibilityClasses(showProfile, "flex"),
+                  "items-center pl-3 border-l border-gray-200 dark:border-gray-800"
+                )}
+              >
+                {showProfileDropdown ? (
+                  <Dropdown
+                    align="right"
+                    placement="bottom"
+                    showArrow={showProfileDropdownArrow}
+                    arrowReverse={profileDropdownArrowReverse}
+                    arrowDirection={profileDropdownArrowDirection}
+                    triggerClassName="px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    header={
+                      <div>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
                           {resolvedName}
                         </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                           {resolvedEmail}
                         </p>
                       </div>
-                      <Avatar size="sm">
-                        <AvatarImage src={resolvedAvatarUrl} />
-                        <AvatarFallback>{resolvedAvatarFallback}</AvatarFallback>
-                      </Avatar>
-                    </div>
-                  }
-                  {...profileDropdownProps}
-                />
-              ) : (
-                <div
-                  className={cn(
-                    "flex items-center space-x-3 px-2 py-1 rounded-lg",
-                    onProfileClick
-                      ? "cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition"
-                      : ""
-                  )}
-                  onClick={onProfileClick}
-                  tabIndex={onProfileClick ? 0 : undefined}
-                  role={onProfileClick ? "button" : undefined}
-                  onKeyDown={
-                    onProfileClick
-                      ? (e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            e.preventDefault();
-                            onProfileClick();
+                    }
+                    items={
+                      profileDropdownItems ?? [
+                        {
+                          id: "profile",
+                          label: "Profile",
+                          icon: <User className="h-4 w-4" />,
+                          onClick: () => onProfileClick?.(),
+                        },
+                        ...(onLogoutClick
+                          ? [
+                              {
+                                id: "logout",
+                                label: "Logout",
+                                icon: <LogOut className="h-4 w-4" />,
+                                variant: "danger" as const,
+                                divider: true,
+                                onClick: () => onLogoutClick(),
+                              },
+                            ]
+                          : []),
+                      ]
+                    }
+                    trigger={
+                      <div className="flex items-center space-x-3">
+                        <div className="hidden sm:block text-right">
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            {resolvedName}
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {resolvedEmail}
+                          </p>
+                        </div>
+                        <Avatar size="sm">
+                          <AvatarImage src={resolvedAvatarUrl} />
+                          <AvatarFallback>{resolvedAvatarFallback}</AvatarFallback>
+                        </Avatar>
+                      </div>
+                    }
+                    {...profileDropdownProps}
+                  />
+                ) : (
+                  <div
+                    className={cn(
+                      "flex items-center space-x-3 px-2 py-1 rounded-lg",
+                      onProfileClick
+                        ? "cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+                        : ""
+                    )}
+                    onClick={onProfileClick}
+                    tabIndex={onProfileClick ? 0 : undefined}
+                    role={onProfileClick ? "button" : undefined}
+                    onKeyDown={
+                      onProfileClick
+                        ? (e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              onProfileClick();
+                            }
                           }
-                        }
-                      : undefined
-                  }
-                  aria-label={onProfileClick ? "Profile section" : undefined}
-                >
-                  <div className="hidden sm:block text-right">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">
-                      {resolvedName}
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {resolvedEmail}
-                    </p>
+                        : undefined
+                    }
+                    aria-label={onProfileClick ? "Profile section" : undefined}
+                  >
+                    <div className="hidden sm:block text-right">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        {resolvedName}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {resolvedEmail}
+                      </p>
+                    </div>
+                    <Avatar size="sm">
+                      <AvatarImage src={resolvedAvatarUrl} />
+                      <AvatarFallback>{resolvedAvatarFallback}</AvatarFallback>
+                    </Avatar>
+                    {showProfileDropdownArrow && (
+                      <DropdownArrow
+                        size="md"
+                        reverse={profileDropdownArrowReverse}
+                        direction={profileDropdownArrowDirection}
+                      />
+                    )}
                   </div>
-                  <Avatar size="sm">
-                    <AvatarImage src={resolvedAvatarUrl} />
-                    <AvatarFallback>{resolvedAvatarFallback}</AvatarFallback>
-                  </Avatar>
-                  {showProfileDropdownArrow && (
-                    <DropdownArrow
-                      size="md"
-                      reverse={profileDropdownArrowReverse}
-                      direction={profileDropdownArrowDirection}
-                    />
-                  )}
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </header>
