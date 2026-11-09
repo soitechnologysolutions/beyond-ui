@@ -101,6 +101,10 @@ interface DashboardLayoutProps {
 
   /** Props to customize DashboardHeader */
   dashboardHeaderProps?: DashboardHeaderProps;
+  /** Whether to enable icon mode on mobile (sidebar stays visible at w-16 and expands via arrow opener) */
+  mobileIconMode?: boolean;
+  /** Alias for mobileIconMode */
+  enableMobileIconMode?: boolean;
 }
 
 const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
@@ -152,8 +156,12 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
     onDarkModeToggle,
     darkModeSwitchProps,
     dashboardHeaderProps,
+    mobileIconMode,
+    enableMobileIconMode,
     ...props
   }, ref) => {
+    const resolvedMobileIconMode = Boolean(mobileIconMode ?? enableMobileIconMode);
+
     const mergedProfileSectionProps: SidebarProfileSectionProps | undefined =
       profileSectionProps || name || email || avatarUrl || avatarFallback
         ? {
@@ -227,6 +235,7 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
         <Sidebar
           collapsed={sidebarCollapsed}
           onToggle={toggleSidebar}
+          mobileIconMode={resolvedMobileIconMode}
           menuItems={sidebarMenuItems}
           activeItem={activeSidebarItem}
           onItemClick={(id) => {
@@ -316,8 +325,14 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
           {...dashboardHeaderProps}
           className={cn(
             "transition-all duration-300 ease-in-out",
-            "max-lg:left-0 max-lg:w-full",
-            sidebarCollapsed ? "lg:left-16 lg:w-[calc(100%-4rem)]" : "lg:left-72 lg:w-[calc(100%-18rem)]",
+            resolvedMobileIconMode
+              ? (sidebarCollapsed
+                  ? "left-16 w-[calc(100%-4rem)]"
+                  : "max-lg:left-0 max-lg:w-full lg:left-72 lg:w-[calc(100%-18rem)]")
+              : cn(
+                  "max-lg:left-0 max-lg:w-full",
+                  sidebarCollapsed ? "lg:left-16 lg:w-[calc(100%-4rem)]" : "lg:left-72 lg:w-[calc(100%-18rem)]"
+                ),
             dashboardHeaderProps?.className
           )}
           style={{
@@ -332,9 +347,15 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
         <div
           className={cn(
             "relative h-full transition-all duration-300 ease-in-out",
-            disableSidebarMargin ? "w-full" : cn(
-              "max-lg:ml-0 max-lg:w-full",
-              sidebarCollapsed ? "lg:ml-16 lg:w-[calc(100%-4rem)]" : "lg:ml-72 lg:w-[calc(100%-18rem)]"
+            disableSidebarMargin ? "w-full" : (
+              resolvedMobileIconMode
+                ? (sidebarCollapsed
+                    ? "ml-16 w-[calc(100%-4rem)]"
+                    : "max-lg:ml-0 max-lg:w-full lg:ml-72 lg:w-[calc(100%-18rem)]")
+                : cn(
+                    "max-lg:ml-0 max-lg:w-full",
+                    sidebarCollapsed ? "lg:ml-16 lg:w-[calc(100%-4rem)]" : "lg:ml-72 lg:w-[calc(100%-18rem)]"
+                  )
             )
           )}
           style={{

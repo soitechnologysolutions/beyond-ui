@@ -36,16 +36,33 @@ import {
 } from "../DashboardHeader";
 
 const sidebarVariants = cva(
-  "fixed left-0 top-0 z-40 h-screen bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300 ease-in-out",
+  "fixed left-0 top-0 z-40 max-lg:z-50 h-screen bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300 ease-in-out",
   {
     variants: {
       collapsed: {
         false: "w-72 max-lg:translate-x-0",
         true: "lg:w-16 max-lg:w-72 max-lg:-translate-x-full",
       },
+      mobileIconMode: {
+        true: "",
+        false: "",
+      },
     },
+    compoundVariants: [
+      {
+        collapsed: true,
+        mobileIconMode: true,
+        className: "w-16 max-lg:w-16 max-lg:translate-x-0",
+      },
+      {
+        collapsed: false,
+        mobileIconMode: true,
+        className: "w-72 max-lg:translate-x-0",
+      },
+    ],
     defaultVariants: {
       collapsed: false,
+      mobileIconMode: false,
     },
   },
 );
@@ -178,6 +195,10 @@ interface SidebarProps extends VariantProps<typeof sidebarVariants> {
   darkModeSwitchProps?: Partial<NightModeSwitchProps>;
   /** Extra content to render in sidebar profile section */
   profileSectionExtra?: React.ReactNode;
+  /** Whether to keep the sidebar in icon mode on mobile instead of sliding off-canvas */
+  mobileIconMode?: boolean;
+  /** Alias for mobileIconMode */
+  enableMobileIconMode?: boolean;
 }
 
 const defaultMenuItems: MenuItem[] = [
@@ -277,10 +298,13 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       onDarkModeToggle,
       darkModeSwitchProps,
       profileSectionExtra,
+      mobileIconMode,
+      enableMobileIconMode,
       ...props
     },
     ref,
   ) => {
+    const isMobileIconMode = Boolean(mobileIconMode || enableMobileIconMode);
     const [expandedItems, setExpandedItems] = React.useState<string[]>([]);
 
     const toggleExpanded = (itemId: string) => {
@@ -304,12 +328,27 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       const isExpanded = expandedItems.includes(item.id);
       const hasChildren = item.children && item.children.length > 0;
 
+      const Component = item.href && !hasChildren ? "a" : "button";
+      const itemProps = item.href && !hasChildren
+        ? {
+            href: item.href,
+            onClick: (e: React.MouseEvent) => {
+              e.preventDefault();
+              handleItemClick(item);
+            },
+          }
+        : {
+            type: "button" as const,
+            onClick: () => handleItemClick(item),
+          };
+
       return (
         <div key={item.id}>
-          <button
-            onClick={() => handleItemClick(item)}
+          <Component
+            {...itemProps}
             className={cn(
               menuItemVariants({ active: isActive, collapsed }),
+              collapsed && isMobileIconMode && "justify-center px-2 max-lg:justify-center max-lg:px-2",
               level > 0 && "ml-4 pl-8",
               "relative",
             )}
@@ -319,7 +358,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
               <div
                 className={cn(
                   "flex flex-1 items-center min-w-0",
-                  collapsed ? "lg:hidden" : "",
+                  collapsed ? (isMobileIconMode ? "hidden" : "lg:hidden") : "",
                 )}
               >
                 <span className="ml-3 truncate">{item.label}</span>
@@ -338,10 +377,10 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                 )}
               </div>
             </div>
-          </button>
+          </Component>
 
           {hasChildren && isExpanded && (
-            <div className={cn("mt-1 space-y-1", collapsed ? "lg:hidden" : "")}>
+            <div className={cn("mt-1 space-y-1", collapsed ? (isMobileIconMode ? "hidden" : "lg:hidden") : "")}>
               {item.children?.map((child) => renderMenuItem(child, level + 1))}
             </div>
           )}
@@ -398,11 +437,15 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       sidebarIconsPlacement ?? sectionSidebarIconsPlacement ?? "in-profile";
     const resolvedSidebarActions = sidebarActions ?? sectionSidebarActions;
 
-    const hasSidebarIcons = Boolean(
+    const hasOtherIcons = Boolean(
       resolvedShowNotifications ||
       resolvedShowSettings ||
-      resolvedShowDarkMode ||
       resolvedSidebarActions
+    );
+
+    const hasSidebarIcons = Boolean(
+      hasOtherIcons ||
+      resolvedShowDarkMode
     );
 
     const isProfileSectionVisible =
@@ -469,45 +512,53 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         <div
           className={cn(
             "flex items-center justify-between px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-800/60 border border-gray-100 dark:border-gray-800",
-            collapsed ? "lg:hidden" : ""
+            collapsed ? (isMobileIconMode ? "hidden" : "lg:hidden") : ""
           )}
         >
           <div className="flex items-center space-x-1 sm:space-x-2">
-            {resolvedShowNotifications && (
-              <button
-                type="button"
-                onClick={resolvedOnNotificationClick}
-                className={cn(
-                  "relative p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-700/60 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500",
-                  getVisibilityClasses(resolvedShowNotifications, "flex")
-                )}
-                aria-label="Notifications"
-              >
-                <Bell className="h-4 w-4" />
-                {resolvedNotificationCount > 0 && (
-                  <Badge
-                    variant="danger"
-                    className="absolute -top-1 -right-1 h-4 w-4 text-[10px] p-0 flex items-center justify-center pointer-events-none"
+            {hasOtherIcons ? (
+              <>
+                {resolvedShowNotifications && (
+                  <button
+                    type="button"
+                    onClick={resolvedOnNotificationClick}
+                    className={cn(
+                      "relative p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-700/60 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500",
+                      getVisibilityClasses(resolvedShowNotifications, "flex")
+                    )}
+                    aria-label="Notifications"
                   >
-                    {resolvedNotificationCount}
-                  </Badge>
+                    <Bell className="h-4 w-4" />
+                    {resolvedNotificationCount > 0 && (
+                      <Badge
+                        variant="danger"
+                        className="absolute -top-1 -right-1 h-4 w-4 text-[10px] p-0 flex items-center justify-center pointer-events-none"
+                      >
+                        {resolvedNotificationCount}
+                      </Badge>
+                    )}
+                  </button>
                 )}
-              </button>
-            )}
-            {resolvedShowSettings && (
-              <button
-                type="button"
-                onClick={resolvedOnSettingsClick}
-                className={cn(
-                  "p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-700/60 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500",
-                  getVisibilityClasses(resolvedShowSettings, "flex")
+                {resolvedShowSettings && (
+                  <button
+                    type="button"
+                    onClick={resolvedOnSettingsClick}
+                    className={cn(
+                      "p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-700/60 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500",
+                      getVisibilityClasses(resolvedShowSettings, "flex")
+                    )}
+                    aria-label="Settings"
+                  >
+                    <Settings className="h-4 w-4" />
+                  </button>
                 )}
-                aria-label="Settings"
-              >
-                <Settings className="h-4 w-4" />
-              </button>
+                {resolvedSidebarActions}
+              </>
+            ) : (
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                Theme
+              </span>
             )}
-            {resolvedSidebarActions}
           </div>
           {resolvedShowDarkMode && (
             <div className={cn(getVisibilityClasses(resolvedShowDarkMode, "flex"), "items-center")}>
@@ -531,15 +582,24 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         ref={ref}
         className={cn(
           "flex flex-col h-screen",
-          sidebarVariants({ collapsed }),
+          sidebarVariants({ collapsed, mobileIconMode: isMobileIconMode }),
           className,
         )}
         style={props.style}
         {...props}
       >
         {/* Sidebar Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
-          <div className={cn(collapsed ? "lg:hidden" : "")}>
+        <div
+          className={cn(
+            "flex items-center p-4 border-b border-gray-200 dark:border-gray-800",
+            collapsed
+              ? isMobileIconMode
+                ? "justify-center"
+                : "lg:justify-center justify-between"
+              : "justify-between"
+          )}
+        >
+          <div className={cn(collapsed ? (isMobileIconMode ? "hidden" : "lg:hidden") : "")}>
             <SidebarHeader
               title={title}
               letter={titleLetter}
@@ -554,7 +614,11 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             <ChevronLeft
               className={cn(
                 "h-4 w-4 text-gray-600 dark:text-gray-400 transition-transform duration-200",
-                collapsed ? "lg:rotate-180 max-lg:rotate-0" : "",
+                collapsed
+                  ? isMobileIconMode
+                    ? "rotate-180"
+                    : "lg:rotate-180 max-lg:rotate-0"
+                  : "",
               )}
             />
           </button>
@@ -582,10 +646,62 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           >
             <div
               className={cn(
-                "flex justify-center",
-                collapsed ? "max-lg:hidden" : "hidden",
+                "flex flex-col items-center justify-center space-y-3",
+                collapsed ? (isMobileIconMode ? "flex" : "max-lg:hidden") : "hidden",
               )}
             >
+              {resolvedShowNotifications && (
+                <button
+                  type="button"
+                  onClick={resolvedOnNotificationClick}
+                  className={cn(
+                    "relative p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500",
+                    getVisibilityClasses(resolvedShowNotifications, "flex")
+                  )}
+                  aria-label="Notifications"
+                >
+                  <Bell className="h-4 w-4" />
+                  {resolvedNotificationCount > 0 && (
+                    <Badge
+                      variant="danger"
+                      className="absolute -top-1 -right-1 h-3.5 w-3.5 text-[9px] p-0 flex items-center justify-center pointer-events-none"
+                    >
+                      {resolvedNotificationCount}
+                    </Badge>
+                  )}
+                </button>
+              )}
+              {resolvedShowSettings && (
+                <button
+                  type="button"
+                  onClick={resolvedOnSettingsClick}
+                  className={cn(
+                    "p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500",
+                    getVisibilityClasses(resolvedShowSettings, "flex")
+                  )}
+                  aria-label="Settings"
+                >
+                  <Settings className="h-4 w-4" />
+                </button>
+              )}
+              {resolvedShowDarkMode && (
+                <div
+                  className={cn(
+                    getVisibilityClasses(resolvedShowDarkMode, "flex"),
+                    "items-center justify-center"
+                  )}
+                >
+                  <NightModeSwitch
+                    size="sm"
+                    className="text-gray-700 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-800"
+                    onClick={(e) => {
+                      onDarkModeToggle?.();
+                      darkModeSwitchProps?.onClick?.(e);
+                    }}
+                    {...darkModeSwitchProps}
+                  />
+                </div>
+              )}
               {resolvedShowDropdown ? (
                 <Dropdown
                   placement="top"
@@ -637,7 +753,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                 </div>
               )}
             </div>
-            <div className={cn("space-y-3", collapsed ? "lg:hidden" : "")}>
+            <div className={cn("space-y-3", collapsed ? (isMobileIconMode ? "hidden" : "lg:hidden") : "")}>
               {resolvedIconsPlacement === "in-profile" && hasSidebarIcons && (
                 renderSidebarIconsBar()
               )}
@@ -756,6 +872,25 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {!isProfileSectionVisible && resolvedShowDarkMode && (
+          <div
+            className={cn(
+              "border-t border-gray-200 dark:border-gray-800 p-3 flex justify-center items-center",
+              getVisibilityClasses(resolvedShowDarkMode, "flex")
+            )}
+          >
+            <NightModeSwitch
+              size="sm"
+              className="text-gray-700 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-800"
+              onClick={(e) => {
+                onDarkModeToggle?.();
+                darkModeSwitchProps?.onClick?.(e);
+              }}
+              {...darkModeSwitchProps}
+            />
           </div>
         )}
       </div>
