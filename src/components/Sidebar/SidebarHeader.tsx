@@ -12,25 +12,52 @@ import { cn } from "../../utils/cn";
  * <SidebarHeader title="Admin Panel" letter="A" />
  */
 export interface SidebarHeaderProps {
-  /** Main title text (default: "Beyond") */
-  title?: string;
+  /** Main title text or node (default: "Beyond") */
+  title?: React.ReactNode;
   /** Letter/initial in colored box (default: "B") */
-  letter?: string;
+  letter?: React.ReactNode;
+  /** Custom logo or icon element */
+  logo?: React.ReactNode;
   /** Optional className for root element */
   className?: string;
+  /** Optional children for custom content */
+  children?: React.ReactNode;
 }
 
 export const SidebarHeader: React.FC<SidebarHeaderProps> = ({
   title = "Beyond",
-  letter = "B",
+  letter,
+  logo,
   className,
-}) => (
-  <div className={cn("flex items-center space-x-2", className)}>
-    <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-      <span className="text-white font-bold text-sm">{letter}</span>
+  children,
+}) => {
+  const showLetterBox = !logo && (letter !== undefined ? Boolean(letter) : true);
+  const letterContent = letter ?? "B";
+
+  return (
+    <div className={cn("flex items-center space-x-2.5 min-w-0", className)}>
+      {logo ? (
+        <div className="flex items-center justify-center shrink-0">
+          {logo}
+        </div>
+      ) : showLetterBox ? (
+        <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center shrink-0">
+          {typeof letterContent === "string" ? (
+            <span className="text-white font-bold text-sm">{letterContent}</span>
+          ) : (
+            letterContent
+          )}
+        </div>
+      ) : null}
+      {children ? (
+        children
+      ) : typeof title === "string" ? (
+        <span className="font-bold text-xl text-gray-900 dark:text-white truncate">{title}</span>
+      ) : (
+        title
+      )}
     </div>
-    <span className="font-bold text-xl text-gray-900 dark:text-white">{title}</span>
-  </div>
-);
+  );
+};
 
 SidebarHeader.displayName = "SidebarHeader";

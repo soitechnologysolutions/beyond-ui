@@ -147,9 +147,11 @@ interface SidebarProps extends VariantProps<typeof sidebarVariants> {
   activeItem?: string;
   onItemClick?: (itemId: string) => void;
   /** Sidebar header title (default: "Beyond") */
-  title?: string;
+  title?: React.ReactNode;
   /** Sidebar header letter (default: "B") */
-  titleLetter?: string;
+  titleLetter?: React.ReactNode;
+  /** Custom logo or icon element for sidebar header */
+  logo?: React.ReactNode;
   /** Optional className for SidebarHeader */
   headerClassName?: string;
   style?: React.CSSProperties;
@@ -275,7 +277,8 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       activeItem = "dashboard",
       onItemClick,
       title = "Beyond",
-      titleLetter = "B",
+      titleLetter,
+      logo,
       headerClassName,
       profileButtonProps,
       logoutButtonProps,
@@ -603,6 +606,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             <SidebarHeader
               title={title}
               letter={titleLetter}
+              logo={logo}
               className={headerClassName}
             />
           </div>

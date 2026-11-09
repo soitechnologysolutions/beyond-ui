@@ -24,9 +24,11 @@ interface DashboardLayoutProps {
   sidebarClassName?: string;
   disableSidebarMargin?: boolean;
   /** Sidebar header title (default: "Beyond") */
-  sidebarTitle?: string;
+  sidebarTitle?: React.ReactNode;
   /** Sidebar header letter (default: "B") */
-  sidebarTitleLetter?: string;
+  sidebarTitleLetter?: React.ReactNode;
+  /** Custom logo or icon for SidebarHeader */
+  sidebarLogo?: React.ReactNode;
   /** Optional className for SidebarHeader */
   sidebarHeaderClassName?: string;
   /** Props for ProfileButton in Sidebar */
@@ -122,6 +124,7 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
     disableSidebarMargin,
     sidebarTitle,
     sidebarTitleLetter,
+    sidebarLogo,
     sidebarHeaderClassName,
     profileButtonProps,
     logoutButtonProps,
@@ -250,6 +253,7 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
           )}
           title={sidebarTitle}
           titleLetter={sidebarTitleLetter}
+          logo={sidebarLogo}
           headerClassName={sidebarHeaderClassName}
           style={{
             zIndex: 50,
