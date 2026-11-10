@@ -86,6 +86,22 @@ interface DashboardLayoutProps {
   sidebarIconsPlacement?: "above-profile" | "in-profile";
   /** Custom action icons or buttons to display in sidebar */
   sidebarActions?: React.ReactNode;
+  /** Whether to show the quick action / theme icons bar panel in sidebar (supports boolean or { mobile, desktop }) */
+  showSidebarIcons?: ResponsiveShow;
+  /** Alias for showSidebarIcons */
+  sidebarShowIcons?: ResponsiveShow;
+  /** Alias for showSidebarIcons */
+  showSidebarIconPanel?: ResponsiveShow;
+  /** Alias for showSidebarIcons */
+  sidebarShowIconPanel?: ResponsiveShow;
+  /** Whether to show the collapse/expand chevron button in sidebar header (supports boolean or { mobile, desktop }) */
+  showCollapseButton?: ResponsiveShow;
+  /** Alias for showCollapseButton */
+  sidebarShowCollapseButton?: ResponsiveShow;
+  /** Alias for showCollapseButton */
+  collapsible?: ResponsiveShow;
+  /** Alias for showCollapseButton */
+  sidebarCollapsible?: ResponsiveShow;
 
   /** Whether to show profile in DashboardHeader (supports boolean or { mobile, desktop }) */
   showProfile?: ResponsiveShow;
@@ -160,6 +176,14 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
     onSettingsClick,
     sidebarIconsPlacement,
     sidebarActions,
+    showSidebarIcons,
+    sidebarShowIcons,
+    showSidebarIconPanel,
+    sidebarShowIconPanel,
+    showCollapseButton,
+    sidebarShowCollapseButton,
+    collapsible,
+    sidebarCollapsible,
     showProfile,
     headerShowProfile,
     showMenuButton,
@@ -228,6 +252,18 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
         ? { mobile: true, desktop: false }
         : undefined;
 
+    const resolvedSidebarShowIcons =
+      sidebarShowIconPanel ??
+      sidebarShowIcons ??
+      showSidebarIconPanel ??
+      showSidebarIcons;
+
+    const resolvedSidebarShowCollapseButton =
+      sidebarShowCollapseButton ??
+      showCollapseButton ??
+      sidebarCollapsible ??
+      collapsible;
+
     const { currentBreakpoint } = useBreakpoint();
 
     const [sidebarCollapsed, setSidebarCollapsed] = React.useState(() => {
@@ -285,6 +321,10 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
           onSettingsClick={onSettingsClick}
           sidebarIconsPlacement={sidebarIconsPlacement}
           sidebarActions={sidebarActions}
+          showSidebarIcons={resolvedSidebarShowIcons}
+          showSidebarIconPanel={resolvedSidebarShowIcons}
+          showCollapseButton={resolvedSidebarShowCollapseButton}
+          collapsible={resolvedSidebarShowCollapseButton}
           onDarkModeToggle={onDarkModeToggle}
           darkModeSwitchProps={darkModeSwitchProps}
           profileDropdownItems={profileDropdownItems}

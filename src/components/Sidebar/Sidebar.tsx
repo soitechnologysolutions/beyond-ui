@@ -136,6 +136,10 @@ export interface SidebarProfileSectionProps {
   sidebarIconsPlacement?: "above-profile" | "in-profile";
   /** Custom action icons or buttons to display alongside notifications/settings */
   sidebarActions?: React.ReactNode;
+  /** Whether to show the quick action / theme icons bar panel in sidebar (supports boolean or { mobile, desktop }) */
+  showSidebarIcons?: ResponsiveShow;
+  /** Alias for showSidebarIcons */
+  showSidebarIconPanel?: ResponsiveShow;
   /** Extra content to render in sidebar profile section */
   extraContent?: React.ReactNode;
 }
@@ -191,6 +195,14 @@ interface SidebarProps extends VariantProps<typeof sidebarVariants> {
   sidebarIconsPlacement?: "above-profile" | "in-profile";
   /** Custom action icons or buttons to display alongside notifications/settings */
   sidebarActions?: React.ReactNode;
+  /** Whether to show the quick action / theme icons bar panel in sidebar (supports boolean or { mobile, desktop }) */
+  showSidebarIcons?: ResponsiveShow;
+  /** Alias for showSidebarIcons */
+  showSidebarIconPanel?: ResponsiveShow;
+  /** Whether to show the collapse/expand chevron button in sidebar header (supports boolean or { mobile, desktop }) */
+  showCollapseButton?: ResponsiveShow;
+  /** Alias for showCollapseButton */
+  collapsible?: ResponsiveShow;
   /** Callback when dark mode toggle is clicked */
   onDarkModeToggle?: () => void;
   /** Optional props to pass to NightModeSwitch */
@@ -298,6 +310,10 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       onSettingsClick,
       sidebarIconsPlacement,
       sidebarActions,
+      showSidebarIcons,
+      showSidebarIconPanel,
+      showCollapseButton,
+      collapsible,
       onDarkModeToggle,
       darkModeSwitchProps,
       profileSectionExtra,
@@ -415,6 +431,8 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       onSettingsClick: sectionOnSettingsClick,
       sidebarIconsPlacement: sectionSidebarIconsPlacement,
       sidebarActions: sectionSidebarActions,
+      showSidebarIcons: sectionShowSidebarIcons,
+      showSidebarIconPanel: sectionShowSidebarIconPanel,
       extraContent: sectionExtraContent,
     } = profileSectionProps || {};
     const avatarUrl = rawAvatarUrl || rawAvatar || "";
@@ -440,6 +458,49 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       sidebarIconsPlacement ?? sectionSidebarIconsPlacement ?? "in-profile";
     const resolvedSidebarActions = sidebarActions ?? sectionSidebarActions;
 
+    const resolvedShowSidebarIcons =
+      showSidebarIconPanel ??
+      showSidebarIcons ??
+      sectionShowSidebarIconPanel ??
+      sectionShowSidebarIcons;
+
+    const hasMobileActionIcons = Boolean(
+      (resolvedShowNotifications !== false && (typeof resolvedShowNotifications !== "object" || resolvedShowNotifications.mobile !== false)) ||
+      (resolvedShowSettings !== false && (typeof resolvedShowSettings !== "object" || resolvedShowSettings.mobile !== false)) ||
+      Boolean(resolvedSidebarActions) ||
+      (resolvedShowDarkMode !== false && (typeof resolvedShowDarkMode !== "object" || resolvedShowDarkMode.mobile !== false))
+    );
+
+    const hasDesktopActionIcons = Boolean(
+      (resolvedShowNotifications !== false && (typeof resolvedShowNotifications !== "object" || resolvedShowNotifications.desktop !== false)) ||
+      (resolvedShowSettings !== false && (typeof resolvedShowSettings !== "object" || resolvedShowSettings.desktop !== false)) ||
+      Boolean(resolvedSidebarActions) ||
+      (resolvedShowDarkMode !== false && (typeof resolvedShowDarkMode !== "object" || resolvedShowDarkMode.desktop !== false))
+    );
+
+    const autoShowSidebarIcons: ResponsiveShow =
+      hasMobileActionIcons && hasDesktopActionIcons
+        ? true
+        : hasMobileActionIcons && !hasDesktopActionIcons
+        ? { mobile: true, desktop: false }
+        : !hasMobileActionIcons && hasDesktopActionIcons
+        ? { mobile: false, desktop: true }
+        : false;
+
+    const finalShowSidebarIcons = resolvedShowSidebarIcons ?? autoShowSidebarIcons;
+    const isSidebarIconPanelVisible =
+      finalShowSidebarIcons !== false &&
+      !(
+        typeof finalShowSidebarIcons === "object" &&
+        !finalShowSidebarIcons.mobile &&
+        !finalShowSidebarIcons.desktop
+      );
+
+    const resolvedShowCollapseButton =
+      showCollapseButton ??
+      collapsible ??
+      true;
+
     const hasOtherIcons = Boolean(
       resolvedShowNotifications ||
       resolvedShowSettings ||
@@ -447,8 +508,8 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
     );
 
     const hasSidebarIcons = Boolean(
-      hasOtherIcons ||
-      resolvedShowDarkMode
+      isSidebarIconPanelVisible &&
+      (hasOtherIcons || resolvedShowDarkMode)
     );
 
     const isProfileSectionVisible =
@@ -510,12 +571,13 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       ];
 
     const renderSidebarIconsBar = () => {
-      if (!hasSidebarIcons) return null;
+      if (!hasSidebarIcons || !isSidebarIconPanelVisible) return null;
       return (
         <div
           className={cn(
             "flex items-center justify-between px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-800/60 border border-gray-100 dark:border-gray-800",
-            collapsed ? (isMobileIconMode ? "hidden" : "lg:hidden") : ""
+            collapsed ? (isMobileIconMode ? "hidden" : "lg:hidden") : "",
+            getVisibilityClasses(finalShowSidebarIcons, "flex")
           )}
         >
           <div className="flex items-center space-x-1 sm:space-x-2">
@@ -612,7 +674,10 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           </div>
           <button
             onClick={onToggle}
-            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+            className={cn(
+              "p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500",
+              getVisibilityClasses(resolvedShowCollapseButton, "inline-flex")
+            )}
             aria-label={collapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
             <ChevronLeft
@@ -635,7 +700,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
 
         {/* Action icons above profile section */}
         {resolvedIconsPlacement === "above-profile" && hasSidebarIcons && (
-          <div className={cn("px-4 pb-2", getVisibilityClasses(showProfileSection, "block"))}>
+          <div className={cn("px-4 pb-2", getVisibilityClasses(showProfileSection, "block"), getVisibilityClasses(finalShowSidebarIcons, "block"))}>
             {renderSidebarIconsBar()}
           </div>
         )}
@@ -841,11 +906,11 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                   )}
                 </div>
               )}
-              {resolvedShowDarkMode && !hasSidebarIcons && (
+              {resolvedShowDarkMode && !hasSidebarIcons && isSidebarIconPanelVisible && (
                 <div
                   className={cn(
                     "flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-gray-50 dark:bg-gray-800/60 border border-gray-100 dark:border-gray-800",
-                    getVisibilityClasses(resolvedShowDarkMode, "flex"),
+                    getVisibilityClasses(finalShowSidebarIcons ?? resolvedShowDarkMode, "flex"),
                   )}
                 >
                   <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
