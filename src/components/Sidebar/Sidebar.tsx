@@ -326,6 +326,25 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
     const isMobileIconMode = Boolean(mobileIconMode || enableMobileIconMode);
     const [expandedItems, setExpandedItems] = React.useState<string[]>([]);
 
+    // Auto-expand parent items when activeItem is a descendant
+    React.useEffect(() => {
+      if (!activeItem || !menuItems || menuItems.length === 0) return;
+      const findAncestors = (items: MenuItem[], targetId: string, parents: string[] = []): string[] => {
+        for (const item of items) {
+          if (item.id === targetId) return parents;
+          if (item.children && item.children.length > 0) {
+            const found = findAncestors(item.children, targetId, [...parents, item.id]);
+            if (found.length > 0) return found;
+          }
+        }
+        return [];
+      };
+      const ancestors = findAncestors(menuItems, activeItem);
+      if (ancestors.length > 0) {
+        setExpandedItems((prev) => Array.from(new Set([...prev, ...ancestors])));
+      }
+    }, [activeItem, menuItems]);
+
     const toggleExpanded = (itemId: string) => {
       setExpandedItems((prev) =>
         prev.includes(itemId)
