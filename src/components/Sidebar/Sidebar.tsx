@@ -279,7 +279,7 @@ const defaultMenuItems: MenuItem[] = [
   },
 ];
 
-const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
+const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
   (
     {
       className,
@@ -662,7 +662,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
     };
 
     return (
-      <div
+      <aside
         ref={ref}
         className={cn(
           "flex flex-col h-screen",
@@ -981,7 +981,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             />
           </div>
         )}
-      </div>
+      </aside>
     );
   },
 );
