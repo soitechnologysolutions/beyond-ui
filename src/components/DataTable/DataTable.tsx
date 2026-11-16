@@ -332,7 +332,7 @@ export const DataTable = <T extends Record<string, any>>({
     return [];
   }, [dataSource, (props as any).data]);
 
-  const resolvedEmptyLabel = (props as any).emptyMessage ?? emptyLabel;
+  const resolvedEmptyLabel = (props as any).emptyMessage ?? (props as any).emptyTitle ?? emptyLabel;
 
   const resolvedColumns = useMemo<Column<T>[]>(() => {
     if (!Array.isArray(columns)) return [];
@@ -349,8 +349,15 @@ export const DataTable = <T extends Record<string, any>>({
         col.title ??
         (typeof col.header === 'function' ? col.header({}) : col.header) ??
         key;
+      const align = col.align ?? (col.alignRight ? 'right' : 'left');
       let render = col.render;
-      if (!render && typeof col.cell === 'function') {
+      if (typeof render === 'function') {
+        const originalRender = render;
+        render = (value: any, record: T, rowIdx: number) => {
+          const valToPass = (dataIndex !== '' && value !== undefined) ? value : record;
+          return originalRender(valToPass, record, rowIdx);
+        };
+      } else if (!render && typeof col.cell === 'function') {
         render = (value: any, record: T, rowIdx: number) =>
           col.cell({
             row: {
@@ -369,6 +376,7 @@ export const DataTable = <T extends Record<string, any>>({
         key,
         title,
         dataIndex,
+        align,
         sortable:
           col.sortable ??
           (Boolean((props as any).enableSorting) && Boolean(dataIndex)),
@@ -468,14 +476,15 @@ export const DataTable = <T extends Record<string, any>>({
   }, [processedData.length, pageSize, internalPage, isControlled]);
 
   // Get row key function
+  const resolvedRowKey = rowKey ?? (props as any).keyExtractor ?? 'id';
   const getRowKey = useCallback((record: T, index: number): React.Key => {
-    if (typeof rowKey === 'function') {
-      const k = rowKey(record);
+    if (typeof resolvedRowKey === 'function') {
+      const k = resolvedRowKey(record, index);
       return k !== undefined && k !== null && k !== '' ? k : `row-${index}`;
     }
-    const val = record?.[rowKey];
+    const val = record?.[resolvedRowKey];
     return val !== undefined && val !== null && val !== '' ? val : `row-${index}`;
-  }, [rowKey]);
+  }, [resolvedRowKey]);
 
   // Handle sorting
   const handleSort = useCallback((columnKey: string) => {

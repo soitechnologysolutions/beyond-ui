@@ -14,6 +14,7 @@ export interface Column<T = any> {
   render?: (value: any, record: T, index: number) => React.ReactNode;
   cell?: (info: { row: { original: T; index: number }; getValue?: () => any; value?: any }) => React.ReactNode;
   align?: 'left' | 'center' | 'right' | string;
+  alignRight?: boolean;
   className?: string;
   [key: string]: any;
 }
@@ -52,6 +53,7 @@ export interface DataTableProps<T = any> {
   data?: T[];
   loading?: boolean;
   rowKey?: string | ((record: T, index?: number) => React.Key);
+  keyExtractor?: (record: T, index?: number) => React.Key;
   pagination?: PaginationConfig | boolean;
   rowSelection?: RowSelection<T>;
   scroll?: { x?: number | string; y?: number | string };
@@ -60,6 +62,10 @@ export interface DataTableProps<T = any> {
   showHeader?: boolean;
   title?: () => React.ReactNode;
   footer?: () => React.ReactNode;
+  emptyLabel?: React.ReactNode;
+  emptyMessage?: React.ReactNode;
+  emptyTitle?: React.ReactNode;
+  emptyDescription?: React.ReactNode;
   expandable?: {
     expandedRowRender?: (record: T, index: number) => React.ReactNode;
     rowExpandable?: (record: T) => boolean;
