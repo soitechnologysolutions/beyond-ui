@@ -360,6 +360,7 @@ export const DataTable = <T extends Record<string, any>>({
       } else if (!render && typeof col.cell === 'function') {
         render = (value: any, record: T, rowIdx: number) =>
           col.cell({
+            ...(record && typeof record === 'object' ? record : {}),
             row: {
               original: record,
               index: rowIdx,
